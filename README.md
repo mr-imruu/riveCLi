@@ -7,7 +7,7 @@ Everything for turning Figma designs into Rive, with the Rive CLI.
 Figma to Rive/   the Figma plugin + the local helper (see its README.md and START-HELPER.md)
 Fonts Library/   .ttf files the converter needs (Geist). Names must match what the plugin reports
 Projects/        Rive CLI projects: Mascot, Start with strategic clarity_Kit 01
-Exports/         created locally by the helper (git-ignored: private design data and backups)
+Exports/        made by the helper: claude-inbox/ (design reports for Claude) and backups/ (scene backups). Private data, so keep this repo private
 ```
 
 ## Set up on a new computer

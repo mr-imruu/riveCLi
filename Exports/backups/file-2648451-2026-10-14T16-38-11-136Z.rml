@@ -1,0 +1,1392 @@
+<Rive version="1" kind="fragment">
+    <Artboard defaultStateMachineId="0:101" clip="true" width="672" height="875.5" styleId="0:100" name="Dialog (FigShot — localhost)" id="0:457">
+        <LayoutComponentStyle flexDirectionValue="column" maxWidth="672" name="Artboard Style" id="0:100"/>
+        <Fill name="Fill" id="0:458">
+            <SolidColor colorValue="FF18181B" name="Color" id="0:459"/>
+        </Fill>
+        <LayoutComponent width="670" height="75" styleId="0:103" name="Container" id="0:144">
+            <LayoutComponentStyle paddingLeft="24" paddingRight="24" paddingTop="16" paddingBottom="16" layoutAlignmentType="spaceBetweenCenter" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:103"/>
+            <Fill name="Fill" id="0:460">
+                <SolidColor colorValue="CC09090B" name="Color" id="0:461"/>
+            </Fill>
+            <LayoutComponent width="394.98401" height="42" styleId="0:104" name="Container" id="0:137">
+                <LayoutComponentStyle gapHorizontal="12" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:104"/>
+                <LayoutComponent width="36" height="36" styleId="0:105" name="Container" id="0:117">
+                    <LayoutComponentStyle paddingLeft="8" paddingRight="8" paddingTop="8" paddingBottom="8" flexDirectionValue="column" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:105"/>
+                    <Fill name="Fill" id="0:462">
+                        <SolidColor colorValue="1A3B82F6" name="Color" id="0:463"/>
+                    </Fill>
+                    <Stroke cap="round" join="round" name="Stroke" id="0:464">
+                        <SolidColor colorValue="333B82F6" name="Color" id="0:465"/>
+                    </Stroke>
+                    <LayoutComponent clip="true" width="18" height="18" styleId="0:106" name="Icon" id="0:116">
+                        <LayoutComponentStyle name="Icon Style" id="0:106"/>
+                        <Node name="Content" id="0:466">
+                            <Shape x="9" y="9" name="Vector" id="0:107">
+                                <PointsPath isClosed="true" name="Path" id="0:467">
+                                    <StraightVertex x="-6" y="-6" id="0:468"/>
+                                    <StraightVertex x="6" y="-6" id="0:469"/>
+                                    <StraightVertex x="7.5" y="-4.5" id="0:470"/>
+                                    <StraightVertex x="7.5" y="4.5" id="0:471"/>
+                                    <StraightVertex x="6" y="6" id="0:472"/>
+                                    <StraightVertex x="-6" y="6" id="0:473"/>
+                                    <StraightVertex x="-7.5" y="4.5" id="0:474"/>
+                                    <StraightVertex x="-7.5" y="-4.5" id="0:475"/>
+                                    <StraightVertex x="-6" y="-6" id="0:476"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:477">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:478"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="6.0040002" y="9" name="Vector" id="0:108">
+                                <PointsPath name="Path" id="0:479">
+                                    <StraightVertex x="-0.0040000002" id="0:480"/>
+                                    <StraightVertex x="0.0040000002" id="0:481"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:482">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:483"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="9" y="12" name="Vector" id="0:109">
+                                <PointsPath name="Path" id="0:484">
+                                    <StraightVertex x="-3.75" id="0:485"/>
+                                    <StraightVertex x="3.75" id="0:486"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:487">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:488"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="4.5040002" y="6" name="Vector" id="0:110">
+                                <PointsPath name="Path" id="0:489">
+                                    <StraightVertex x="-0.0040000002" id="0:490"/>
+                                    <StraightVertex x="0.0040000002" id="0:491"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:492">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:493"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="13.504" y="6" name="Vector" id="0:111">
+                                <PointsPath name="Path" id="0:494">
+                                    <StraightVertex x="-0.0040000002" id="0:495"/>
+                                    <StraightVertex x="0.0040000002" id="0:496"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:497">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:498"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="12.004" y="9" name="Vector" id="0:112">
+                                <PointsPath name="Path" id="0:499">
+                                    <StraightVertex x="-0.0040000002" id="0:500"/>
+                                    <StraightVertex x="0.0040000002" id="0:501"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:502">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:503"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="10.504" y="6" name="Vector" id="0:113">
+                                <PointsPath name="Path" id="0:504">
+                                    <StraightVertex x="-0.0040000002" id="0:505"/>
+                                    <StraightVertex x="0.0040000002" id="0:506"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:507">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:508"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="9.0039997" y="9" name="Vector" id="0:114">
+                                <PointsPath name="Path" id="0:509">
+                                    <StraightVertex x="-0.0040000002" id="0:510"/>
+                                    <StraightVertex x="0.0040000002" id="0:511"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:512">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:513"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="7.5040002" y="6" name="Vector" id="0:115">
+                                <PointsPath name="Path" id="0:514">
+                                    <StraightVertex x="-0.0040000002" id="0:515"/>
+                                    <StraightVertex x="0.0040000002" id="0:516"/>
+                                </PointsPath>
+                                <Stroke thickness="1.5" cap="round" join="round" name="Stroke" id="0:517">
+                                    <SolidColor colorValue="FF60A5FA" name="Color" id="0:518"/>
+                                </Stroke>
+                            </Shape>
+                        </Node>
+                    </LayoutComponent>
+                </LayoutComponent>
+                <LayoutComponent width="346.98401" height="42" styleId="0:118" name="Container" id="0:136">
+                    <LayoutComponentStyle flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:118"/>
+                    <LayoutComponent width="346.98401" height="26" styleId="0:119" name="Heading 2" id="0:130">
+                        <LayoutComponentStyle gapHorizontal="8" layoutAlignmentType="centerLeft" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Heading 2 Style" id="0:119"/>
+                        <LayoutComponent width="135" height="20" styleId="0:120" name="Text" id="0:124">
+                            <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:120"/>
+                            <Text name="Keyboard Shortcuts" id="0:123">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Keyboard Shortcuts Layout" id="0:519"/>
+                                <TextStylePaint fontSize="14" lineHeight="20" fontAssetId="0:121" familyName="Inter" styleName="Semi Bold" name="Style 1" id="0:122">
+                                    <Fill name="Fill" id="0:520">
+                                        <SolidColor colorValue="FFF4F4F5" name="Color" id="0:521"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:122" text="Keyboard Shortcuts" name="Run 1" id="0:522"/>
+                            </Text>
+                        </LayoutComponent>
+                        <LayoutComponent width="45" height="26" styleId="0:125" name="Text" id="0:129">
+                            <LayoutComponentStyle paddingLeft="6" paddingRight="6" paddingTop="2" paddingBottom="2" flexDirectionValue="column" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:125"/>
+                            <Fill name="Fill" id="0:523">
+                                <SolidColor colorValue="FF27272A" name="Color" id="0:524"/>
+                            </Fill>
+                            <Stroke cap="round" join="round" name="Stroke" id="0:525">
+                                <SolidColor colorValue="FF3F3F46" name="Color" id="0:526"/>
+                            </Stroke>
+                            <Text name="macOS" id="0:128">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="macOS Layout" id="0:527"/>
+                                <TextStylePaint fontSize="10" lineHeight="20" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:127">
+                                    <Fill name="Fill" id="0:528">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:529"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:127" text="macOS" name="Run 1" id="0:530"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="346.98401" height="16" styleId="0:131" name="Paragraph" id="0:135">
+                        <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Paragraph Style" id="0:131"/>
+                        <Text name="Speed up your split scene workflow across canvas a" id="0:134">
+                            <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Speed up your split scene workflow across canvas a Layout" id="0:531"/>
+                            <TextStylePaint lineHeight="16" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:133">
+                                <Fill name="Fill" id="0:532">
+                                    <SolidColor colorValue="FFA1A1AA" name="Color" id="0:533"/>
+                                </Fill>
+                            </TextStylePaint>
+                            <TextValueRun styleId="0:133" text="Speed up your split scene workflow across canvas and video" name="Run 1" id="0:534"/>
+                        </Text>
+                    </LayoutComponent>
+                </LayoutComponent>
+            </LayoutComponent>
+            <LayoutComponent width="28" height="28" styleId="0:138" name="Button" id="0:143">
+                <LayoutComponentStyle paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6" layoutAlignmentType="centerLeft" flexDirectionValue="column" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:138"/>
+                <LayoutComponent clip="true" width="16" height="16" styleId="0:139" name="Icon" id="0:142">
+                    <LayoutComponentStyle name="Icon Style" id="0:139"/>
+                    <Node name="Content" id="0:535">
+                        <Shape x="8" y="8" name="Vector" id="0:140">
+                            <PointsPath name="Path" id="0:536">
+                                <StraightVertex x="-4" y="-4" id="0:537"/>
+                                <StraightVertex x="4" y="4" id="0:538"/>
+                            </PointsPath>
+                            <Stroke thickness="1.3329999" cap="round" join="round" name="Stroke" id="0:539">
+                                <SolidColor colorValue="FF71717A" name="Color" id="0:540"/>
+                            </Stroke>
+                        </Shape>
+                        <Shape x="8" y="8" name="Vector" id="0:141">
+                            <PointsPath name="Path" id="0:541">
+                                <StraightVertex x="4" y="-4" id="0:542"/>
+                                <StraightVertex x="-4" y="4" id="0:543"/>
+                            </PointsPath>
+                            <Stroke thickness="1.3329999" cap="round" join="round" name="Stroke" id="0:544">
+                                <SolidColor colorValue="FF71717A" name="Color" id="0:545"/>
+                            </Stroke>
+                        </Shape>
+                    </Node>
+                </LayoutComponent>
+            </LayoutComponent>
+        </LayoutComponent>
+        <LayoutComponent width="670" height="95" styleId="0:145" name="Container" id="0:223">
+            <LayoutComponentStyle paddingLeft="24" paddingRight="24" paddingTop="12" paddingBottom="12" flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:145"/>
+            <Fill name="Fill" id="0:546">
+                <SolidColor colorValue="6609090B" name="Color" id="0:547"/>
+            </Fill>
+            <LayoutComponent width="622" height="30" styleId="0:146" name="Container" id="0:155">
+                <LayoutComponentStyle layoutWidthScaleType="fill" name="Container Style" id="0:146"/>
+                <Node name="Content" id="0:548">
+                    <LayoutComponent clip="true" width="622" height="30" styleId="0:147" name="Text Input" id="0:150">
+                        <LayoutComponentStyle paddingLeft="36" paddingRight="32" paddingTop="6" paddingBottom="6" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="centerLeft" positionTypeValue="absolute" flexDirectionValue="column" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Text Input Style" id="0:147"/>
+                        <Fill name="Fill" id="0:549">
+                            <SolidColor colorValue="FF18181B" name="Color" id="0:550"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:551">
+                            <SolidColor colorValue="FF27272A" name="Color" id="0:552"/>
+                        </Stroke>
+                        <Text sizingValue="autoHeight" width="552" name="Search shortcuts by name, action, or key..." id="0:149">
+                            <LayoutParticipant layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Search shortcuts by name, action, or key... Layout" id="0:553"/>
+                            <TextStylePaint fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:148">
+                                <Fill name="Fill" id="0:554">
+                                    <SolidColor colorValue="FF71717A" name="Color" id="0:555"/>
+                                </Fill>
+                            </TextStylePaint>
+                            <TextValueRun styleId="0:148" text="Search shortcuts by name, action, or key..." name="Run 1" id="0:556"/>
+                        </Text>
+                    </LayoutComponent>
+                    <LayoutComponent clip="true" width="14" height="14" styleId="0:151" name="Icon" id="0:154">
+                        <LayoutComponentStyle positionLeft="12" positionTop="8" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Icon Style" id="0:151"/>
+                        <Node name="Content" id="0:557">
+                            <Shape x="10.996" y="10.996" name="Vector" id="0:152">
+                                <PointsPath isClockwise="false" name="Path" id="0:558">
+                                    <StraightVertex x="1.2539999" y="1.2539999" id="0:559"/>
+                                    <StraightVertex x="-1.2539999" y="-1.2539999" id="0:560"/>
+                                </PointsPath>
+                                <Stroke thickness="1.1670001" cap="round" join="round" name="Stroke" id="0:561">
+                                    <SolidColor colorValue="FFA1A1AA" name="Color" id="0:562"/>
+                                </Stroke>
+                            </Shape>
+                            <Shape x="6.4169998" y="6.4169998" name="Vector" id="0:153">
+                                <PointsPath isClosed="true" name="Path" id="0:563">
+                                    <StraightVertex x="4.6669998" id="0:564"/>
+                                    <StraightVertex y="4.6669998" id="0:565"/>
+                                    <StraightVertex x="-4.6669998" id="0:566"/>
+                                    <StraightVertex y="-4.6669998" id="0:567"/>
+                                    <StraightVertex x="4.6669998" id="0:568"/>
+                                </PointsPath>
+                                <Stroke thickness="1.1670001" cap="round" join="round" name="Stroke" id="0:569">
+                                    <SolidColor colorValue="FFA1A1AA" name="Color" id="0:570"/>
+                                </Stroke>
+                            </Shape>
+                        </Node>
+                    </LayoutComponent>
+                </Node>
+            </LayoutComponent>
+            <LayoutComponent width="622" height="40" styleId="0:156" name="Container:margin" id="0:222">
+                <LayoutComponentStyle paddingTop="12" flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container:margin Style" id="0:156"/>
+                <LayoutComponent clip="true" width="622" height="28" styleId="0:157" name="Container" id="0:221">
+                    <LayoutComponentStyle gapHorizontal="6" paddingBottom="2" layoutAlignmentType="centerLeft" layoutWidthScaleType="fill" name="Container Style" id="0:157"/>
+                    <LayoutComponent width="41" height="26" styleId="0:158" name="Button" id="0:164">
+                        <LayoutComponentStyle gapHorizontal="6" paddingLeft="12" paddingRight="12" paddingTop="4" paddingBottom="4" layoutAlignmentType="centerLeft" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:158"/>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:571">
+                            <SolidColor colorValue="00000000" name="Color" id="0:572"/>
+                        </Stroke>
+                        <LayoutComponent width="15" height="16" styleId="0:159" name="Text" id="0:163">
+                            <LayoutComponentStyle layoutAlignmentType="topCenter" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:159"/>
+                            <Text alignValue="center" name="All" id="0:162">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="All Layout" id="0:573"/>
+                                <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:161">
+                                    <Fill name="Fill" id="0:574">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:575"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:161" text="All" name="Run 1" id="0:576"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="87" height="26" styleId="0:165" name="Button" id="0:173">
+                        <LayoutComponentStyle gapHorizontal="6" paddingLeft="12" paddingRight="12" paddingTop="4" paddingBottom="4" layoutAlignmentType="centerLeft" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:165"/>
+                        <Fill name="Fill" id="0:577">
+                            <SolidColor colorValue="263B82F6" name="Color" id="0:578"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:579">
+                            <SolidColor colorValue="4D3B82F6" name="Color" id="0:580"/>
+                        </Stroke>
+                        <LayoutComponent clip="true" width="12" height="12" styleId="0:166" name="Icon" id="0:168">
+                            <LayoutComponentStyle name="Icon Style" id="0:166"/>
+                            <Node name="Content" id="0:581">
+                                <Shape x="6.2490001" y="6.2490001" name="Vector" id="0:167">
+                                    <PointsPath isClosed="true" name="Path" id="0:582">
+                                        <StraightVertex x="-4.23" y="-3.905" id="0:583"/>
+                                        <StraightVertex x="-4.2459998" y="-4.0500002" id="0:584"/>
+                                        <StraightVertex x="-4.178" y="-4.178" id="0:585"/>
+                                        <StraightVertex x="-4.0500002" y="-4.2459998" id="0:586"/>
+                                        <StraightVertex x="-3.905" y="-4.23" id="0:587"/>
+                                        <StraightVertex x="4.0949998" y="-0.98000002" id="0:588"/>
+                                        <StraightVertex x="4.2129998" y="-0.88099998" id="0:589"/>
+                                        <StraightVertex x="4.25" y="-0.73199999" id="0:590"/>
+                                        <StraightVertex x="4.1929998" y="-0.58899999" id="0:591"/>
+                                        <StraightVertex x="4.0640001" y="-0.50700003" id="0:592"/>
+                                        <StraightVertex x="1.002" y="0.28299999" id="0:593"/>
+                                        <StraightVertex x="0.54400003" y="0.54400003" id="0:594"/>
+                                        <StraightVertex x="0.28299999" y="1.001" id="0:595"/>
+                                        <StraightVertex x="-0.50700003" y="4.0640001" id="0:596"/>
+                                        <StraightVertex x="-0.58899999" y="4.1929998" id="0:597"/>
+                                        <StraightVertex x="-0.73199999" y="4.25" id="0:598"/>
+                                        <StraightVertex x="-0.88099998" y="4.2129998" id="0:599"/>
+                                        <StraightVertex x="-0.98000002" y="4.0949998" id="0:600"/>
+                                        <StraightVertex x="-4.23" y="-3.905" id="0:601"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:602">
+                                        <SolidColor colorValue="FF60A5FA" name="Color" id="0:603"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                        <LayoutComponent width="43" height="16" styleId="0:169" name="Text" id="0:172">
+                            <LayoutComponentStyle layoutAlignmentType="topCenter" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:169"/>
+                            <Text alignValue="center" name="Canvas" id="0:171">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Canvas Layout" id="0:604"/>
+                                <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:170">
+                                    <Fill name="Fill" id="0:605">
+                                        <SolidColor colorValue="FF60A5FA" name="Color" id="0:606"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:170" text="Canvas" name="Run 1" id="0:607"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="98" height="26" styleId="0:174" name="Button" id="0:185">
+                        <LayoutComponentStyle gapHorizontal="6" paddingLeft="12" paddingRight="12" paddingTop="4" paddingBottom="4" layoutAlignmentType="centerLeft" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:174"/>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:608">
+                            <SolidColor colorValue="00000000" name="Color" id="0:609"/>
+                        </Stroke>
+                        <LayoutComponent clip="true" width="12" height="12" styleId="0:175" name="Icon" id="0:180">
+                            <LayoutComponentStyle name="Icon Style" id="0:175"/>
+                            <Node name="Content" id="0:610">
+                                <Shape x="5.974" y="7" name="Vector" id="0:176">
+                                    <PointsPath name="Path" id="0:611">
+                                        <StraightVertex x="3.026" y="-3" id="0:612"/>
+                                        <StraightVertex x="3.319" y="-3.707" id="0:613"/>
+                                        <StraightVertex x="4.026" y="-4" id="0:614"/>
+                                        <StraightVertex x="4.7329998" y="-3.707" id="0:615"/>
+                                        <StraightVertex x="5.026" y="-3" id="0:616"/>
+                                        <StraightVertex x="5.026" id="0:617"/>
+                                        <StraightVertex x="3.855" y="2.8280001" id="0:618"/>
+                                        <StraightVertex x="1.026" y="4" id="0:619"/>
+                                        <StraightVertex x="0.026000001" y="4" id="0:620"/>
+                                        <StraightVertex x="-2.9690001" y="2.8299999" id="0:621"/>
+                                        <StraightVertex x="-4.7690001" y="1.03" id="0:622"/>
+                                        <StraightVertex x="-5.026" y="0.333" id="0:623"/>
+                                        <StraightVertex x="-4.7319999" y="-0.34900001" id="0:624"/>
+                                        <StraightVertex x="-4.0489998" y="-0.63999999" id="0:625"/>
+                                        <StraightVertex x="-3.3540001" y="-0.38" id="0:626"/>
+                                        <StraightVertex x="-2.474" y="0.5" id="0:627"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:628">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:629"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="4" y="4.5" name="Vector" id="0:177">
+                                    <PointsPath isClockwise="false" name="Path" id="0:630">
+                                        <StraightVertex x="1" y="0.75" id="0:631"/>
+                                        <StraightVertex x="1" y="-1.5" id="0:632"/>
+                                        <StraightVertex x="0.70700002" y="-2.207" id="0:633"/>
+                                        <StraightVertex y="-2.5" id="0:634"/>
+                                        <StraightVertex x="-0.70700002" y="-2.207" id="0:635"/>
+                                        <StraightVertex x="-1" y="-1.5" id="0:636"/>
+                                        <StraightVertex x="-1" y="2.5" id="0:637"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:638">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:639"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="6" y="3" name="Vector" id="0:178">
+                                    <PointsPath isClockwise="false" name="Path" id="0:640">
+                                        <StraightVertex x="1" y="2" id="0:641"/>
+                                        <StraightVertex x="1" y="-1" id="0:642"/>
+                                        <StraightVertex x="0.70700002" y="-1.707" id="0:643"/>
+                                        <StraightVertex y="-2" id="0:644"/>
+                                        <StraightVertex x="-0.70700002" y="-1.707" id="0:645"/>
+                                        <StraightVertex x="-1" y="-1" id="0:646"/>
+                                        <StraightVertex x="-1" id="0:647"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:648">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:649"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="8" y="3.75" name="Vector" id="0:179">
+                                    <PointsPath isClockwise="false" name="Path" id="0:650">
+                                        <StraightVertex x="1" y="1.75" id="0:651"/>
+                                        <StraightVertex x="1" y="-0.75" id="0:652"/>
+                                        <StraightVertex x="0.70700002" y="-1.457" id="0:653"/>
+                                        <StraightVertex y="-1.75" id="0:654"/>
+                                        <StraightVertex x="-0.70700002" y="-1.457" id="0:655"/>
+                                        <StraightVertex x="-1" y="-0.75" id="0:656"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:657">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:658"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                        <LayoutComponent width="54" height="16" styleId="0:181" name="Text" id="0:184">
+                            <LayoutComponentStyle layoutAlignmentType="topCenter" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:181"/>
+                            <Text alignValue="center" name="Selection" id="0:183">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Selection Layout" id="0:659"/>
+                                <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:182">
+                                    <Fill name="Fill" id="0:660">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:661"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:182" text="Selection" name="Run 1" id="0:662"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="122" height="26" styleId="0:186" name="Button" id="0:195">
+                        <LayoutComponentStyle gapHorizontal="6" paddingLeft="12" paddingRight="12" paddingTop="4" paddingBottom="4" layoutAlignmentType="centerLeft" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:186"/>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:663">
+                            <SolidColor colorValue="00000000" name="Color" id="0:664"/>
+                        </Stroke>
+                        <LayoutComponent clip="true" width="12" height="12" styleId="0:187" name="Icon" id="0:190">
+                            <LayoutComponentStyle name="Icon Style" id="0:187"/>
+                            <Node name="Content" id="0:665">
+                                <Shape x="6" y="7.25" name="Vector" id="0:188">
+                                    <PointsPath name="Path" id="0:666">
+                                        <StraightVertex x="-4" y="-2.75" id="0:667"/>
+                                        <StraightVertex x="1.25" y="-2.75" id="0:668"/>
+                                        <StraightVertex x="2.302" y="-2.5409999" id="0:669"/>
+                                        <StraightVertex x="3.1949999" y="-1.9450001" id="0:670"/>
+                                        <StraightVertex x="3.7909999" y="-1.052" id="0:671"/>
+                                        <StraightVertex x="4" id="0:672"/>
+                                        <StraightVertex x="3.7909999" y="1.052" id="0:673"/>
+                                        <StraightVertex x="3.1949999" y="1.9450001" id="0:674"/>
+                                        <StraightVertex x="2.302" y="2.5409999" id="0:675"/>
+                                        <StraightVertex x="1.25" y="2.75" id="0:676"/>
+                                        <StraightVertex x="-0.5" y="2.75" id="0:677"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:678">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:679"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="3.25" y="4.5" name="Vector" id="0:189">
+                                    <PointsPath name="Path" id="0:680">
+                                        <StraightVertex x="1.25" y="2.5" id="0:681"/>
+                                        <StraightVertex x="-1.25" id="0:682"/>
+                                        <StraightVertex x="1.25" y="-2.5" id="0:683"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:684">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:685"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                        <LayoutComponent width="78" height="16" styleId="0:191" name="Text" id="0:194">
+                            <LayoutComponentStyle layoutAlignmentType="topCenter" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:191"/>
+                            <Text alignValue="center" name="History &amp; Edit" id="0:193">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="History &amp; Edit Layout" id="0:686"/>
+                                <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:192">
+                                    <Fill name="Fill" id="0:687">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:688"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:192" text="History &amp; Edit" name="Run 1" id="0:689"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="140" height="26" styleId="0:196" name="Button" id="0:211">
+                        <LayoutComponentStyle gapHorizontal="6" paddingLeft="12" paddingRight="12" paddingTop="4" paddingBottom="4" layoutAlignmentType="centerLeft" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:196"/>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:690">
+                            <SolidColor colorValue="00000000" name="Color" id="0:691"/>
+                        </Stroke>
+                        <LayoutComponent clip="true" width="12" height="12" styleId="0:197" name="Icon" id="0:206">
+                            <LayoutComponentStyle name="Icon Style" id="0:197"/>
+                            <Node name="Content" id="0:692">
+                                <Shape x="9.5" y="8.25" name="Vector" id="0:198">
+                                    <PointsPath name="Path" id="0:693">
+                                        <StraightVertex x="-1" id="0:694"/>
+                                        <StraightVertex x="1" id="0:695"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:696">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:697"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="9.5" y="3.75" name="Vector" id="0:199">
+                                    <PointsPath name="Path" id="0:698">
+                                        <StraightVertex x="-1" id="0:699"/>
+                                        <StraightVertex x="1" id="0:700"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:701">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:702"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="8.5" y="6" name="Vector" id="0:200">
+                                    <PointsPath name="Path" id="0:703">
+                                        <StraightVertex y="-4.5" id="0:704"/>
+                                        <StraightVertex y="4.5" id="0:705"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:706">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:707"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="2.5" y="8.25" name="Vector" id="0:201">
+                                    <PointsPath name="Path" id="0:708">
+                                        <StraightVertex x="-1" id="0:709"/>
+                                        <StraightVertex x="1" id="0:710"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:711">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:712"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="6" y="6" name="Vector" id="0:202">
+                                    <PointsPath name="Path" id="0:713">
+                                        <StraightVertex x="-4.5" id="0:714"/>
+                                        <StraightVertex x="4.5" id="0:715"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:716">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:717"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="2.5" y="3.75" name="Vector" id="0:203">
+                                    <PointsPath name="Path" id="0:718">
+                                        <StraightVertex x="-1" id="0:719"/>
+                                        <StraightVertex x="1" id="0:720"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:721">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:722"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="3.5" y="6" name="Vector" id="0:204">
+                                    <PointsPath name="Path" id="0:723">
+                                        <StraightVertex y="-4.5" id="0:724"/>
+                                        <StraightVertex y="4.5" id="0:725"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:726">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:727"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="6" y="6" name="Vector" id="0:205">
+                                    <PointsPath isClosed="true" name="Path" id="0:728">
+                                        <StraightVertex x="-3.5" y="-4.5" id="0:729"/>
+                                        <StraightVertex x="3.5" y="-4.5" id="0:730"/>
+                                        <StraightVertex x="4.5" y="-3.5" id="0:731"/>
+                                        <StraightVertex x="4.5" y="3.5" id="0:732"/>
+                                        <StraightVertex x="3.5" y="4.5" id="0:733"/>
+                                        <StraightVertex x="-3.5" y="4.5" id="0:734"/>
+                                        <StraightVertex x="-4.5" y="3.5" id="0:735"/>
+                                        <StraightVertex x="-4.5" y="-3.5" id="0:736"/>
+                                        <StraightVertex x="-3.5" y="-4.5" id="0:737"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:738">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:739"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                        <LayoutComponent width="96" height="16" styleId="0:207" name="Text" id="0:210">
+                            <LayoutComponentStyle layoutAlignmentType="topCenter" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:207"/>
+                            <Text alignValue="center" name="Video &amp; Timeline" id="0:209">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Video &amp; Timeline Layout" id="0:740"/>
+                                <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:208">
+                                    <Fill name="Fill" id="0:741">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:742"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:208" text="Video &amp; Timeline" name="Run 1" id="0:743"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="89" height="26" styleId="0:212" name="Button" id="0:220">
+                        <LayoutComponentStyle gapHorizontal="6" paddingLeft="12" paddingRight="12" paddingTop="4" paddingBottom="4" layoutAlignmentType="centerLeft" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Button Style" id="0:212"/>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:744">
+                            <SolidColor colorValue="00000000" name="Color" id="0:745"/>
+                        </Stroke>
+                        <LayoutComponent clip="true" width="12" height="12" styleId="0:213" name="Icon" id="0:215">
+                            <LayoutComponentStyle name="Icon Style" id="0:213"/>
+                            <Node name="Content" id="0:746">
+                                <Shape x="6" y="6" name="Vector" id="0:214">
+                                    <PointsPath isClosed="true" isClockwise="false" name="Path" id="0:747">
+                                        <StraightVertex x="1.5" y="-3" id="0:748"/>
+                                        <StraightVertex x="1.5" y="3" id="0:749"/>
+                                        <StraightVertex x="1.753" y="3.8329999" id="0:750"/>
+                                        <StraightVertex x="2.4260001" y="4.3860002" id="0:751"/>
+                                        <StraightVertex x="3.293" y="4.4710002" id="0:752"/>
+                                        <StraightVertex x="4.0609999" y="4.0609999" id="0:753"/>
+                                        <StraightVertex x="4.4710002" y="3.293" id="0:754"/>
+                                        <StraightVertex x="4.3860002" y="2.4260001" id="0:755"/>
+                                        <StraightVertex x="3.8329999" y="1.753" id="0:756"/>
+                                        <StraightVertex x="3" y="1.5" id="0:757"/>
+                                        <StraightVertex x="-3" y="1.5" id="0:758"/>
+                                        <StraightVertex x="-3.8329999" y="1.753" id="0:759"/>
+                                        <StraightVertex x="-4.3860002" y="2.4260001" id="0:760"/>
+                                        <StraightVertex x="-4.4710002" y="3.293" id="0:761"/>
+                                        <StraightVertex x="-4.0609999" y="4.0609999" id="0:762"/>
+                                        <StraightVertex x="-3.293" y="4.4710002" id="0:763"/>
+                                        <StraightVertex x="-2.4260001" y="4.3860002" id="0:764"/>
+                                        <StraightVertex x="-1.753" y="3.8329999" id="0:765"/>
+                                        <StraightVertex x="-1.5" y="3" id="0:766"/>
+                                        <StraightVertex x="-1.5" y="-3" id="0:767"/>
+                                        <StraightVertex x="-1.753" y="-3.8329999" id="0:768"/>
+                                        <StraightVertex x="-2.4260001" y="-4.3860002" id="0:769"/>
+                                        <StraightVertex x="-3.293" y="-4.4710002" id="0:770"/>
+                                        <StraightVertex x="-4.0609999" y="-4.0609999" id="0:771"/>
+                                        <StraightVertex x="-4.4710002" y="-3.293" id="0:772"/>
+                                        <StraightVertex x="-4.3860002" y="-2.4260001" id="0:773"/>
+                                        <StraightVertex x="-3.8329999" y="-1.753" id="0:774"/>
+                                        <StraightVertex x="-3" y="-1.5" id="0:775"/>
+                                        <StraightVertex x="3" y="-1.5" id="0:776"/>
+                                        <StraightVertex x="3.8329999" y="-1.753" id="0:777"/>
+                                        <StraightVertex x="4.3860002" y="-2.4260001" id="0:778"/>
+                                        <StraightVertex x="4.4710002" y="-3.293" id="0:779"/>
+                                        <StraightVertex x="4.0609999" y="-4.0609999" id="0:780"/>
+                                        <StraightVertex x="3.293" y="-4.4710002" id="0:781"/>
+                                        <StraightVertex x="2.4260001" y="-4.3860002" id="0:782"/>
+                                        <StraightVertex x="1.753" y="-3.8329999" id="0:783"/>
+                                        <StraightVertex x="1.5" y="-3" id="0:784"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:785">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:786"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                        <LayoutComponent width="45" height="16" styleId="0:216" name="Text" id="0:219">
+                            <LayoutComponentStyle layoutAlignmentType="topCenter" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:216"/>
+                            <Text alignValue="center" name="General" id="0:218">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="General Layout" id="0:787"/>
+                                <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:217">
+                                    <Fill name="Fill" id="0:788">
+                                        <SolidColor colorValue="FFA1A1AA" name="Color" id="0:789"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:217" text="General" name="Run 1" id="0:790"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                </LayoutComponent>
+            </LayoutComponent>
+        </LayoutComponent>
+        <LayoutComponent clip="true" width="670" height="656.5" styleId="0:224" name="Container" id="0:432">
+            <LayoutComponentStyle paddingLeft="24" paddingRight="24" paddingTop="24" paddingBottom="24" flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:224"/>
+            <LayoutComponent width="622" height="608.5" styleId="0:225" name="Container" id="0:431">
+                <LayoutComponentStyle layoutWidthScaleType="fill" name="Container Style" id="0:225"/>
+                <Node name="Content" id="0:791">
+                    <LayoutComponent width="622" height="60.5" styleId="0:226" name="Container" id="0:241">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="548" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:226"/>
+                        <Fill name="Fill" id="0:792">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:793"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:794">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:795"/>
+                        </Stroke>
+                        <LayoutComponent width="291.85901" height="35" styleId="0:227" name="Container" id="0:236">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:227"/>
+                            <LayoutComponent width="275.85901" height="16" styleId="0:228" name="Container" id="0:231">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:228"/>
+                                <Text name="Toggle Inspector Panel" id="0:230">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Toggle Inspector Panel Layout" id="0:796"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:229">
+                                        <Fill name="Fill" id="0:797">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:798"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:229" text="Toggle Inspector Panel" name="Run 1" id="0:799"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="275.85901" height="19" styleId="0:232" name="Paragraph" id="0:235">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:232"/>
+                                <Text name="Show or hide the right metadata and relations draw" id="0:234">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Show or hide the right metadata and relations draw Layout" id="0:800"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:233">
+                                        <Fill name="Fill" id="0:801">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:802"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:233" text="Show or hide the right metadata and relations drawer" name="Run 1" id="0:803"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="22" height="22" styleId="0:237" name="Kbd" id="0:240">
+                            <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:237"/>
+                            <Fill name="Fill" id="0:804">
+                                <SolidColor colorValue="E527272A" name="Color" id="0:805"/>
+                            </Fill>
+                            <Stroke cap="round" join="round" name="Stroke" id="0:806">
+                                <SolidColor colorValue="FF3F3F46" name="Color" id="0:807"/>
+                            </Stroke>
+                            <Text name="I" id="0:239">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="I Layout" id="0:808"/>
+                                <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:238">
+                                    <Fill name="Fill" id="0:809">
+                                        <SolidColor colorValue="FFE4E4E7" name="Color" id="0:810"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:238" text="I" name="Run 1" id="0:811"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:242" name="Container" id="0:270">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="479.5" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:242"/>
+                        <Fill name="Fill" id="0:812">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:813"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:814">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:815"/>
+                        </Stroke>
+                        <LayoutComponent width="310.51599" height="35" styleId="0:243" name="Container" id="0:252">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:243"/>
+                            <LayoutComponent width="294.51599" height="16" styleId="0:244" name="Container" id="0:247">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:244"/>
+                                <Text name="Zoom In / Out" id="0:246">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Zoom In / Out Layout" id="0:816"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:245">
+                                        <Fill name="Fill" id="0:817">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:818"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:245" text="Zoom In / Out" name="Run 1" id="0:819"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="294.51599" height="19" styleId="0:248" name="Paragraph" id="0:251">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:248"/>
+                                <Text name="Hold ⌘ / Ctrl and scroll mouse wheel (or pinch tra" id="0:250">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Hold ⌘ / Ctrl and scroll mouse wheel (or pinch tra Layout" id="0:820"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:249">
+                                        <Fill name="Fill" id="0:821">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:822"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:249" text="Hold ⌘ / Ctrl and scroll mouse wheel (or pinch trackpad)" name="Run 1" id="0:823"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="89" height="22" styleId="0:253" name="Container" id="0:269">
+                            <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:253"/>
+                            <LayoutComponent width="37" height="22" styleId="0:254" name="Text" id="0:264">
+                                <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:254"/>
+                                <LayoutComponent width="22" height="22" styleId="0:255" name="Kbd" id="0:258">
+                                    <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:255"/>
+                                    <Fill name="Fill" id="0:824">
+                                        <SolidColor colorValue="E527272A" name="Color" id="0:825"/>
+                                    </Fill>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:826">
+                                        <SolidColor colorValue="FF3F3F46" name="Color" id="0:827"/>
+                                    </Stroke>
+                                    <Text name="⌘" id="0:257">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="⌘ Layout" id="0:828"/>
+                                        <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:256">
+                                            <Fill name="Fill" id="0:829">
+                                                <SolidColor colorValue="FFE4E4E7" name="Color" id="0:830"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:256" text="⌘" name="Run 1" id="0:831"/>
+                                    </Text>
+                                </LayoutComponent>
+                                <LayoutComponent width="11" height="15" styleId="0:259" name="Text" id="0:263">
+                                    <LayoutComponentStyle paddingLeft="2" paddingRight="2" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:259"/>
+                                    <Text name="+" id="0:262">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="+ Layout" id="0:832"/>
+                                        <TextStylePaint fontSize="10" lineHeight="15" fontAssetId="0:260" familyName="Inter" styleName="Bold" name="Style 1" id="0:261">
+                                            <Fill name="Fill" id="0:833">
+                                                <SolidColor colorValue="FF71717A" name="Color" id="0:834"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:261" text="+" name="Run 1" id="0:835"/>
+                                    </Text>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                            <LayoutComponent width="48" height="22" styleId="0:265" name="Kbd" id="0:268">
+                                <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" layoutWidthScaleType="hug" name="Kbd Style" id="0:265"/>
+                                <Fill name="Fill" id="0:836">
+                                    <SolidColor colorValue="E527272A" name="Color" id="0:837"/>
+                                </Fill>
+                                <Stroke cap="round" join="round" name="Stroke" id="0:838">
+                                    <SolidColor colorValue="FF3F3F46" name="Color" id="0:839"/>
+                                </Stroke>
+                                <Text name="Wheel" id="0:267">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Wheel Layout" id="0:840"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:266">
+                                        <Fill name="Fill" id="0:841">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:842"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:266" text="Wheel" name="Run 1" id="0:843"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:271" name="Container" id="0:298">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="411" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:271"/>
+                        <Fill name="Fill" id="0:844">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:845"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:846">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:847"/>
+                        </Stroke>
+                        <LayoutComponent width="291.797" height="35" styleId="0:272" name="Container" id="0:281">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:272"/>
+                            <LayoutComponent width="275.797" height="16" styleId="0:273" name="Container" id="0:276">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:273"/>
+                                <Text name="Scroll Canvas Horizontally" id="0:275">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Scroll Canvas Horizontally Layout" id="0:848"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:274">
+                                        <Fill name="Fill" id="0:849">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:850"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:274" text="Scroll Canvas Horizontally" name="Run 1" id="0:851"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="275.797" height="19" styleId="0:277" name="Paragraph" id="0:280">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:277"/>
+                                <Text name="Hold Shift and scroll mouse wheel to pan horizonta" id="0:279">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Hold Shift and scroll mouse wheel to pan horizonta Layout" id="0:852"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:278">
+                                        <Fill name="Fill" id="0:853">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:854"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:278" text="Hold Shift and scroll mouse wheel to pan horizontally" name="Run 1" id="0:855"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="89" height="22" styleId="0:282" name="Container" id="0:297">
+                            <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:282"/>
+                            <LayoutComponent width="37" height="22" styleId="0:283" name="Text" id="0:292">
+                                <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:283"/>
+                                <LayoutComponent width="22" height="22" styleId="0:284" name="Kbd" id="0:287">
+                                    <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:284"/>
+                                    <Fill name="Fill" id="0:856">
+                                        <SolidColor colorValue="E527272A" name="Color" id="0:857"/>
+                                    </Fill>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:858">
+                                        <SolidColor colorValue="FF3F3F46" name="Color" id="0:859"/>
+                                    </Stroke>
+                                    <Text name="⇧" id="0:286">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="⇧ Layout" id="0:860"/>
+                                        <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:285">
+                                            <Fill name="Fill" id="0:861">
+                                                <SolidColor colorValue="FFE4E4E7" name="Color" id="0:862"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:285" text="⇧" name="Run 1" id="0:863"/>
+                                    </Text>
+                                </LayoutComponent>
+                                <LayoutComponent width="11" height="15" styleId="0:288" name="Text" id="0:291">
+                                    <LayoutComponentStyle paddingLeft="2" paddingRight="2" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:288"/>
+                                    <Text name="+" id="0:290">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="+ Layout" id="0:864"/>
+                                        <TextStylePaint fontSize="10" lineHeight="15" fontAssetId="0:260" familyName="Inter" styleName="Bold" name="Style 1" id="0:289">
+                                            <Fill name="Fill" id="0:865">
+                                                <SolidColor colorValue="FF71717A" name="Color" id="0:866"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:289" text="+" name="Run 1" id="0:867"/>
+                                    </Text>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                            <LayoutComponent width="48" height="22" styleId="0:293" name="Kbd" id="0:296">
+                                <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" layoutWidthScaleType="hug" name="Kbd Style" id="0:293"/>
+                                <Fill name="Fill" id="0:868">
+                                    <SolidColor colorValue="E527272A" name="Color" id="0:869"/>
+                                </Fill>
+                                <Stroke cap="round" join="round" name="Stroke" id="0:870">
+                                    <SolidColor colorValue="FF3F3F46" name="Color" id="0:871"/>
+                                </Stroke>
+                                <Text name="Wheel" id="0:295">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Wheel Layout" id="0:872"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:294">
+                                        <Fill name="Fill" id="0:873">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:874"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:294" text="Wheel" name="Run 1" id="0:875"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:299" name="Container" id="0:314">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="342.5" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:299"/>
+                        <Fill name="Fill" id="0:876">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:877"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:878">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:879"/>
+                        </Stroke>
+                        <LayoutComponent width="265.23401" height="35" styleId="0:300" name="Container" id="0:309">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:300"/>
+                            <LayoutComponent width="249.23399" height="16" styleId="0:301" name="Container" id="0:304">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:301"/>
+                                <Text name="Scroll Canvas Vertically" id="0:303">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Scroll Canvas Vertically Layout" id="0:880"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:302">
+                                        <Fill name="Fill" id="0:881">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:882"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:302" text="Scroll Canvas Vertically" name="Run 1" id="0:883"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="249.23399" height="19" styleId="0:305" name="Paragraph" id="0:308">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:305"/>
+                                <Text name="Scroll mouse wheel up or down to pan vertically" id="0:307">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Scroll mouse wheel up or down to pan vertically Layout" id="0:884"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:306">
+                                        <Fill name="Fill" id="0:885">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:886"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:306" text="Scroll mouse wheel up or down to pan vertically" name="Run 1" id="0:887"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="48" height="22" styleId="0:310" name="Kbd" id="0:313">
+                            <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" layoutWidthScaleType="hug" name="Kbd Style" id="0:310"/>
+                            <Fill name="Fill" id="0:888">
+                                <SolidColor colorValue="E527272A" name="Color" id="0:889"/>
+                            </Fill>
+                            <Stroke cap="round" join="round" name="Stroke" id="0:890">
+                                <SolidColor colorValue="FF3F3F46" name="Color" id="0:891"/>
+                            </Stroke>
+                            <Text name="Wheel" id="0:312">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Wheel Layout" id="0:892"/>
+                                <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:311">
+                                    <Fill name="Fill" id="0:893">
+                                        <SolidColor colorValue="FFE4E4E7" name="Color" id="0:894"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:311" text="Wheel" name="Run 1" id="0:895"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:315" name="Container" id="0:342">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="274" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:315"/>
+                        <Fill name="Fill" id="0:896">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:897"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:898">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:899"/>
+                        </Stroke>
+                        <LayoutComponent width="193.71899" height="35" styleId="0:316" name="Container" id="0:325">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:316"/>
+                            <LayoutComponent width="177.71899" height="16" styleId="0:317" name="Container" id="0:320">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:317"/>
+                                <Text name="Fit Content Alternative" id="0:319">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Fit Content Alternative Layout" id="0:900"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:318">
+                                        <Fill name="Fill" id="0:901">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:902"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:318" text="Fit Content Alternative" name="Run 1" id="0:903"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="177.71899" height="19" styleId="0:321" name="Paragraph" id="0:324">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:321"/>
+                                <Text name="Quick shortcut to frame all scenes" id="0:323">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Quick shortcut to frame all scenes Layout" id="0:904"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:322">
+                                        <Fill name="Fill" id="0:905">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:906"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:322" text="Quick shortcut to frame all scenes" name="Run 1" id="0:907"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="63" height="22" styleId="0:326" name="Container" id="0:341">
+                            <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:326"/>
+                            <LayoutComponent width="37" height="22" styleId="0:327" name="Text" id="0:336">
+                                <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:327"/>
+                                <LayoutComponent width="22" height="22" styleId="0:328" name="Kbd" id="0:331">
+                                    <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:328"/>
+                                    <Fill name="Fill" id="0:908">
+                                        <SolidColor colorValue="E527272A" name="Color" id="0:909"/>
+                                    </Fill>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:910">
+                                        <SolidColor colorValue="FF3F3F46" name="Color" id="0:911"/>
+                                    </Stroke>
+                                    <Text name="⇧" id="0:330">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="⇧ Layout" id="0:912"/>
+                                        <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:329">
+                                            <Fill name="Fill" id="0:913">
+                                                <SolidColor colorValue="FFE4E4E7" name="Color" id="0:914"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:329" text="⇧" name="Run 1" id="0:915"/>
+                                    </Text>
+                                </LayoutComponent>
+                                <LayoutComponent width="11" height="15" styleId="0:332" name="Text" id="0:335">
+                                    <LayoutComponentStyle paddingLeft="2" paddingRight="2" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:332"/>
+                                    <Text name="+" id="0:334">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="+ Layout" id="0:916"/>
+                                        <TextStylePaint fontSize="10" lineHeight="15" fontAssetId="0:260" familyName="Inter" styleName="Bold" name="Style 1" id="0:333">
+                                            <Fill name="Fill" id="0:917">
+                                                <SolidColor colorValue="FF71717A" name="Color" id="0:918"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:333" text="+" name="Run 1" id="0:919"/>
+                                    </Text>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                            <LayoutComponent width="22" height="22" styleId="0:337" name="Kbd" id="0:340">
+                                <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:337"/>
+                                <Fill name="Fill" id="0:920">
+                                    <SolidColor colorValue="E527272A" name="Color" id="0:921"/>
+                                </Fill>
+                                <Stroke cap="round" join="round" name="Stroke" id="0:922">
+                                    <SolidColor colorValue="FF3F3F46" name="Color" id="0:923"/>
+                                </Stroke>
+                                <Text name="1" id="0:339">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="1 Layout" id="0:924"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:338">
+                                        <Fill name="Fill" id="0:925">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:926"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:338" text="1" name="Run 1" id="0:927"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:343" name="Container" id="0:370">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="205.5" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:343"/>
+                        <Fill name="Fill" id="0:928">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:929"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:930">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:931"/>
+                        </Stroke>
+                        <LayoutComponent width="283.23401" height="35" styleId="0:344" name="Container" id="0:353">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:344"/>
+                            <LayoutComponent width="267.23401" height="16" styleId="0:345" name="Container" id="0:348">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:345"/>
+                                <Text name="Fit All Content to View" id="0:347">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Fit All Content to View Layout" id="0:932"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:346">
+                                        <Fill name="Fill" id="0:933">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:934"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:346" text="Fit All Content to View" name="Run 1" id="0:935"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="267.23401" height="19" styleId="0:349" name="Paragraph" id="0:352">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:349"/>
+                                <Text name="Frame and center all scenes in the current viewpor" id="0:351">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Frame and center all scenes in the current viewpor Layout" id="0:936"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:350">
+                                        <Fill name="Fill" id="0:937">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:938"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:350" text="Frame and center all scenes in the current viewport" name="Run 1" id="0:939"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="63" height="22" styleId="0:354" name="Container" id="0:369">
+                            <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:354"/>
+                            <LayoutComponent width="37" height="22" styleId="0:355" name="Text" id="0:364">
+                                <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:355"/>
+                                <LayoutComponent width="22" height="22" styleId="0:356" name="Kbd" id="0:359">
+                                    <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:356"/>
+                                    <Fill name="Fill" id="0:940">
+                                        <SolidColor colorValue="E527272A" name="Color" id="0:941"/>
+                                    </Fill>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:942">
+                                        <SolidColor colorValue="FF3F3F46" name="Color" id="0:943"/>
+                                    </Stroke>
+                                    <Text name="⌘" id="0:358">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="⌘ Layout" id="0:944"/>
+                                        <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:357">
+                                            <Fill name="Fill" id="0:945">
+                                                <SolidColor colorValue="FFE4E4E7" name="Color" id="0:946"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:357" text="⌘" name="Run 1" id="0:947"/>
+                                    </Text>
+                                </LayoutComponent>
+                                <LayoutComponent width="11" height="15" styleId="0:360" name="Text" id="0:363">
+                                    <LayoutComponentStyle paddingLeft="2" paddingRight="2" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:360"/>
+                                    <Text name="+" id="0:362">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="+ Layout" id="0:948"/>
+                                        <TextStylePaint fontSize="10" lineHeight="15" fontAssetId="0:260" familyName="Inter" styleName="Bold" name="Style 1" id="0:361">
+                                            <Fill name="Fill" id="0:949">
+                                                <SolidColor colorValue="FF71717A" name="Color" id="0:950"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:361" text="+" name="Run 1" id="0:951"/>
+                                    </Text>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                            <LayoutComponent width="22" height="22" styleId="0:365" name="Kbd" id="0:368">
+                                <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:365"/>
+                                <Fill name="Fill" id="0:952">
+                                    <SolidColor colorValue="E527272A" name="Color" id="0:953"/>
+                                </Fill>
+                                <Stroke cap="round" join="round" name="Stroke" id="0:954">
+                                    <SolidColor colorValue="FF3F3F46" name="Color" id="0:955"/>
+                                </Stroke>
+                                <Text name="0" id="0:367">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="0 Layout" id="0:956"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:366">
+                                        <Fill name="Fill" id="0:957">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:958"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:366" text="0" name="Run 1" id="0:959"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:371" name="Container" id="0:398">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="137" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:371"/>
+                        <Fill name="Fill" id="0:960">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:961"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:962">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:963"/>
+                        </Stroke>
+                        <LayoutComponent width="285.84399" height="35" styleId="0:372" name="Container" id="0:381">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:372"/>
+                            <LayoutComponent width="269.84399" height="16" styleId="0:373" name="Container" id="0:376">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:373"/>
+                                <Text name="Temporary Pan Canvas" id="0:375">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Temporary Pan Canvas Layout" id="0:964"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:374">
+                                        <Fill name="Fill" id="0:965">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:966"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:374" text="Temporary Pan Canvas" name="Run 1" id="0:967"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="269.84399" height="19" styleId="0:377" name="Paragraph" id="0:380">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:377"/>
+                                <Text name="Hold Space and click-drag anywhere across canvas" id="0:379">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Hold Space and click-drag anywhere across canvas Layout" id="0:968"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:378">
+                                        <Fill name="Fill" id="0:969">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:970"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:378" text="Hold Space and click-drag anywhere across canvas" name="Run 1" id="0:971"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="108" height="22" styleId="0:382" name="Container" id="0:397">
+                            <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:382"/>
+                            <LayoutComponent width="63" height="22" styleId="0:383" name="Text" id="0:392">
+                                <LayoutComponentStyle gapHorizontal="4" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:383"/>
+                                <LayoutComponent width="48" height="22" styleId="0:384" name="Kbd" id="0:387">
+                                    <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" layoutWidthScaleType="hug" name="Kbd Style" id="0:384"/>
+                                    <Fill name="Fill" id="0:972">
+                                        <SolidColor colorValue="E527272A" name="Color" id="0:973"/>
+                                    </Fill>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:974">
+                                        <SolidColor colorValue="FF3F3F46" name="Color" id="0:975"/>
+                                    </Stroke>
+                                    <Text name="Space" id="0:386">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Space Layout" id="0:976"/>
+                                        <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:385">
+                                            <Fill name="Fill" id="0:977">
+                                                <SolidColor colorValue="FFE4E4E7" name="Color" id="0:978"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:385" text="Space" name="Run 1" id="0:979"/>
+                                    </Text>
+                                </LayoutComponent>
+                                <LayoutComponent width="11" height="15" styleId="0:388" name="Text" id="0:391">
+                                    <LayoutComponentStyle paddingLeft="2" paddingRight="2" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:388"/>
+                                    <Text name="+" id="0:390">
+                                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="+ Layout" id="0:980"/>
+                                        <TextStylePaint fontSize="10" lineHeight="15" fontAssetId="0:260" familyName="Inter" styleName="Bold" name="Style 1" id="0:389">
+                                            <Fill name="Fill" id="0:981">
+                                                <SolidColor colorValue="FF71717A" name="Color" id="0:982"/>
+                                            </Fill>
+                                        </TextStylePaint>
+                                        <TextValueRun styleId="0:389" text="+" name="Run 1" id="0:983"/>
+                                    </Text>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                            <LayoutComponent width="41" height="22" styleId="0:393" name="Kbd" id="0:396">
+                                <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" layoutWidthScaleType="hug" name="Kbd Style" id="0:393"/>
+                                <Fill name="Fill" id="0:984">
+                                    <SolidColor colorValue="E527272A" name="Color" id="0:985"/>
+                                </Fill>
+                                <Stroke cap="round" join="round" name="Stroke" id="0:986">
+                                    <SolidColor colorValue="FF3F3F46" name="Color" id="0:987"/>
+                                </Stroke>
+                                <Text name="Drag" id="0:395">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Drag Layout" id="0:988"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:394">
+                                        <Fill name="Fill" id="0:989">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:990"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:394" text="Drag" name="Run 1" id="0:991"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:399" name="Container" id="0:414">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionTop="68.5" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:399"/>
+                        <Fill name="Fill" id="0:992">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:993"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:994">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:995"/>
+                        </Stroke>
+                        <LayoutComponent width="210.813" height="35" styleId="0:400" name="Container" id="0:409">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:400"/>
+                            <LayoutComponent width="194.813" height="16" styleId="0:401" name="Container" id="0:404">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:401"/>
+                                <Text name="Hand / Pan Tool" id="0:403">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Hand / Pan Tool Layout" id="0:996"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:402">
+                                        <Fill name="Fill" id="0:997">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:998"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:402" text="Hand / Pan Tool" name="Run 1" id="0:999"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="194.813" height="19" styleId="0:405" name="Paragraph" id="0:408">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:405"/>
+                                <Text name="Switch to canvas panning hand mode" id="0:407">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Switch to canvas panning hand mode Layout" id="0:1000"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:406">
+                                        <Fill name="Fill" id="0:1001">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:1002"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:406" text="Switch to canvas panning hand mode" name="Run 1" id="0:1003"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="22" height="22" styleId="0:410" name="Kbd" id="0:413">
+                            <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:410"/>
+                            <Fill name="Fill" id="0:1004">
+                                <SolidColor colorValue="E527272A" name="Color" id="0:1005"/>
+                            </Fill>
+                            <Stroke cap="round" join="round" name="Stroke" id="0:1006">
+                                <SolidColor colorValue="FF3F3F46" name="Color" id="0:1007"/>
+                            </Stroke>
+                            <Text name="H" id="0:412">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="H Layout" id="0:1008"/>
+                                <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:411">
+                                    <Fill name="Fill" id="0:1009">
+                                        <SolidColor colorValue="FFE4E4E7" name="Color" id="0:1010"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:411" text="H" name="Run 1" id="0:1011"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                    <LayoutComponent width="622" height="60.5" styleId="0:415" name="Container" id="0:430">
+                        <LayoutComponentStyle paddingLeft="12" paddingRight="12" paddingTop="12" paddingBottom="12" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="spaceBetweenCenter" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Container Style" id="0:415"/>
+                        <Fill name="Fill" id="0:1012">
+                            <SolidColor colorValue="9909090B" name="Color" id="0:1013"/>
+                        </Fill>
+                        <Stroke cap="round" join="round" name="Stroke" id="0:1014">
+                            <SolidColor colorValue="CC27272A" name="Color" id="0:1015"/>
+                        </Stroke>
+                        <LayoutComponent width="251.063" height="35" styleId="0:416" name="Container" id="0:425">
+                            <LayoutComponentStyle paddingRight="16" flexDirectionValue="column" layoutHeightScaleType="hug" name="Container Style" id="0:416"/>
+                            <LayoutComponent width="235.063" height="16" styleId="0:417" name="Container" id="0:420">
+                                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:417"/>
+                                <Text name="Select Tool" id="0:419">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Select Tool Layout" id="0:1016"/>
+                                    <TextStylePaint lineHeight="16" fontAssetId="0:160" familyName="Inter" styleName="Medium" name="Style 1" id="0:418">
+                                        <Fill name="Fill" id="0:1017">
+                                            <SolidColor colorValue="FFE4E4E7" name="Color" id="0:1018"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:418" text="Select Tool" name="Run 1" id="0:1019"/>
+                                </Text>
+                            </LayoutComponent>
+                            <LayoutComponent width="235.063" height="19" styleId="0:421" name="Paragraph" id="0:424">
+                                <LayoutComponentStyle paddingTop="2" flexDirectionValue="column" name="Paragraph Style" id="0:421"/>
+                                <Text name="Switch to box selection and scene movement" id="0:423">
+                                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Switch to box selection and scene movement Layout" id="0:1020"/>
+                                    <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:422">
+                                        <Fill name="Fill" id="0:1021">
+                                            <SolidColor colorValue="FFA1A1AA" name="Color" id="0:1022"/>
+                                        </Fill>
+                                    </TextStylePaint>
+                                    <TextValueRun styleId="0:422" text="Switch to box selection and scene movement" name="Run 1" id="0:1023"/>
+                                </Text>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="22" height="22" styleId="0:426" name="Kbd" id="0:429">
+                            <LayoutComponentStyle paddingLeft="6" paddingRight="6" layoutAlignmentType="center" cornerRadiusTL="6" cornerRadiusTR="6" cornerRadiusBL="6" cornerRadiusBR="6" minWidth="22" name="Kbd Style" id="0:426"/>
+                            <Fill name="Fill" id="0:1024">
+                                <SolidColor colorValue="E527272A" name="Color" id="0:1025"/>
+                            </Fill>
+                            <Stroke cap="round" join="round" name="Stroke" id="0:1026">
+                                <SolidColor colorValue="FF3F3F46" name="Color" id="0:1027"/>
+                            </Stroke>
+                            <Text name="V" id="0:428">
+                                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="V Layout" id="0:1028"/>
+                                <TextStylePaint fontSize="11" lineHeight="16.5" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:427">
+                                    <Fill name="Fill" id="0:1029">
+                                        <SolidColor colorValue="FFE4E4E7" name="Color" id="0:1030"/>
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:427" text="V" name="Run 1" id="0:1031"/>
+                            </Text>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                </Node>
+            </LayoutComponent>
+        </LayoutComponent>
+        <LayoutComponent width="670" height="47" styleId="0:433" name="Container" id="0:456">
+            <LayoutComponentStyle paddingLeft="24" paddingRight="24" paddingTop="12" paddingBottom="12" layoutAlignmentType="spaceBetweenCenter" layoutWidthScaleType="fill" layoutHeightScaleType="hug" name="Container Style" id="0:433"/>
+            <Fill name="Fill" id="0:1032">
+                <SolidColor colorValue="9909090B" name="Color" id="0:1033"/>
+            </Fill>
+            <LayoutComponent width="249" height="22" styleId="0:434" name="Container" id="0:451">
+                <LayoutComponentStyle gapHorizontal="8" layoutAlignmentType="centerLeft" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:434"/>
+                <LayoutComponent width="20" height="16" styleId="0:435" name="Text" id="0:438">
+                    <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:435"/>
+                    <Text name="Tip:" id="0:437">
+                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Tip: Layout" id="0:1034"/>
+                        <TextStylePaint fontSize="11" lineHeight="16" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:436">
+                            <Fill name="Fill" id="0:1035">
+                                <SolidColor colorValue="FF71717A" name="Color" id="0:1036"/>
+                            </Fill>
+                        </TextStylePaint>
+                        <TextValueRun styleId="0:436" text="Tip:" name="Run 1" id="0:1037"/>
+                    </Text>
+                </LayoutComponent>
+                <LayoutComponent width="29" height="16" styleId="0:439" name="Text" id="0:442">
+                    <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:439"/>
+                    <Text name="Press" id="0:441">
+                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Press Layout" id="0:1038"/>
+                        <TextStylePaint fontSize="11" lineHeight="16" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:440">
+                            <Fill name="Fill" id="0:1039">
+                                <SolidColor colorValue="FFA1A1AA" name="Color" id="0:1040"/>
+                            </Fill>
+                        </TextStylePaint>
+                        <TextValueRun styleId="0:440" text="Press" name="Run 1" id="0:1041"/>
+                    </Text>
+                </LayoutComponent>
+                <LayoutComponent width="21" height="22" styleId="0:443" name="Kbd" id="0:446">
+                    <LayoutComponentStyle paddingLeft="6" paddingRight="6" paddingTop="2" paddingBottom="2" flexDirectionValue="column" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Kbd Style" id="0:443"/>
+                    <Fill name="Fill" id="0:1042">
+                        <SolidColor colorValue="FF27272A" name="Color" id="0:1043"/>
+                    </Fill>
+                    <Stroke cap="round" join="round" name="Stroke" id="0:1044">
+                        <SolidColor colorValue="FF3F3F46" name="Color" id="0:1045"/>
+                    </Stroke>
+                    <Text name="?" id="0:445">
+                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="? Layout" id="0:1046"/>
+                        <TextStylePaint fontSize="10" lineHeight="16" fontAssetId="0:126" familyName="Menlo" styleName="Regular" name="Style 1" id="0:444">
+                            <Fill name="Fill" id="0:1047">
+                                <SolidColor colorValue="FFD4D4D8" name="Color" id="0:1048"/>
+                            </Fill>
+                        </TextStylePaint>
+                        <TextValueRun styleId="0:444" text="?" name="Run 1" id="0:1049"/>
+                    </Text>
+                </LayoutComponent>
+                <LayoutComponent width="155" height="16" styleId="0:447" name="Text" id="0:450">
+                    <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Text Style" id="0:447"/>
+                    <Text name="anywhere to toggle this guide" id="0:449">
+                        <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="anywhere to toggle this guide Layout" id="0:1050"/>
+                        <TextStylePaint fontSize="11" lineHeight="16" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:448">
+                            <Fill name="Fill" id="0:1051">
+                                <SolidColor colorValue="FFA1A1AA" name="Color" id="0:1052"/>
+                            </Fill>
+                        </TextStylePaint>
+                        <TextValueRun styleId="0:448" text="anywhere to toggle this guide" name="Run 1" id="0:1053"/>
+                    </Text>
+                </LayoutComponent>
+            </LayoutComponent>
+            <LayoutComponent width="60" height="16" styleId="0:452" name="Container" id="0:455">
+                <LayoutComponentStyle flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Container Style" id="0:452"/>
+                <Text name="9 shortcuts" id="0:454">
+                    <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="9 shortcuts Layout" id="0:1054"/>
+                    <TextStylePaint fontSize="11" lineHeight="16" fontAssetId="0:132" familyName="Inter" styleName="Regular" name="Style 1" id="0:453">
+                        <Fill name="Fill" id="0:1055">
+                            <SolidColor colorValue="FF71717A" name="Color" id="0:1056"/>
+                        </Fill>
+                    </TextStylePaint>
+                    <TextValueRun styleId="0:453" text="9 shortcuts" name="Run 1" id="0:1057"/>
+                </Text>
+            </LayoutComponent>
+        </LayoutComponent>
+        <StateMachine name="State Machine 1" id="0:101">
+            <StateMachineLayer name="Layer 1" id="0:102">
+                <AnyState x="200" y="-120" id="0:1058"/>
+                <ExitState x="400" y="-120" id="0:1059"/>
+                <EntryState id="0:1060"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+    <FontAsset file="Inter Semi Bold.ttf" assetId="4228759" name="Inter Semi Bold" id="0:121"/>
+    <FontAsset file="Menlo Regular.ttf" assetId="1763901" name="Menlo Regular" id="0:126"/>
+    <FontAsset file="Inter Regular.ttf" assetId="4228759" name="Inter Regular" id="0:132"/>
+    <FontAsset file="Inter Medium.ttf" assetId="4228759" name="Inter Medium" id="0:160"/>
+    <FontAsset file="Inter Bold.ttf" assetId="4228759" name="Inter Bold" id="0:260"/>
+</Rive>

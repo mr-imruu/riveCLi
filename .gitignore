@@ -1,5 +1,4 @@
-# private / generated: never commit these
-Exports/
+# private / generated: never commit these (Exports IS committed on purpose; this repo is private)
 .token
 **/build/
 node_modules/
