@@ -1,0 +1,261 @@
+#!/usr/bin/env node
+// Local helper for the Figma plugin. Listens on 127.0.0.1 only.
+//   POST /export  {name, rml, yaml, fonts:[{file}]}  -> writes Exports/<name>/, adds fonts, runs `rive --verify`
+//   POST /push    {name}                              -> runs `rive push` for that export (only when you click Push)
+//   GET  /status                                      -> versions, config
+// Every request needs the token printed at startup (x-token header).
+// It runs two fixed commands (`rive <dir> --verify`, `rive push`); it never executes anything the plugin sends.
+const http = require('http'), fs = require('fs'), path = require('path'), os = require('os'), crypto = require('crypto');
+const { execFile } = require('child_process');
+
+const ROOT = __dirname;
+const PORT = +process.env.PORT || 4747;
+const RIVE = process.env.RIVE_BIN || path.join(os.homedir(), '.rive', 'bin', 'rive');
+const CONFIG = path.join(ROOT, 'config.json');
+const cfg = fs.existsSync(CONFIG) ? JSON.parse(fs.readFileSync(CONFIG, 'utf8')) : {};
+// Exports and the fonts library live NEXT TO the plugin folder (not inside it), so the plugin folder holds only code and
+// is safe to put on GitHub. Change them in config.json with "exportsDir" / "fontsDir" (absolute, or relative to this folder).
+const EXPORTS = path.resolve(ROOT, cfg.exportsDir || '../Exports');
+const FONTS = path.resolve(ROOT, cfg.fontsDir || '../Fonts Library');
+fs.mkdirSync(EXPORTS, { recursive: true }); fs.mkdirSync(FONTS, { recursive: true });
+// projectId: the Rive project new files are created in. Run `rive ls --plain` to list yours.
+
+const tokenFile = path.join(ROOT, '.token');
+const TOKEN = fs.existsSync(tokenFile) ? fs.readFileSync(tokenFile, 'utf8').trim() : (() => {
+  const t = crypto.randomBytes(12).toString('hex'); fs.writeFileSync(tokenFile, t, { mode: 0o600 }); return t;
+})();
+
+function safeName(n) { return String(n || 'figma-import').replace(/[^A-Za-z0-9 _-]/g, '').trim().slice(0, 60) || 'figma-import'; }
+function run(args, cwd) {
+  return new Promise(res => execFile(RIVE, args, { cwd, timeout: 180000, maxBuffer: 8e6 }, (err, so, se) =>
+    res({ ok: !err, output: (so + '\n' + se).replace(/\x1b\[[0-9;]*m/g, '').trim() })));
+}
+function writeImages(dir, images) {
+  const written = [];
+  for (const im of images || []) {
+    const base = path.basename(String(im.file));
+    if (!/^[A-Za-z0-9_-]+\.(png|jpe?g|gif|webp)$/i.test(base)) continue;
+    fs.mkdirSync(path.join(dir, 'images'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'images', base), Buffer.from(String(im.base64), 'base64'));
+    written.push(base);
+  }
+  return written;
+}
+function standInFont() {
+  const v = path.join(os.homedir(), '.rive', 'versions');
+  for (const d of fs.existsSync(v) ? fs.readdirSync(v) : []) {
+    const f = path.join(v, d, 'samples', 'text_island', 'Inter.ttf');
+    if (fs.existsSync(f)) return f;
+  }
+  return null;
+}
+
+// ---- add the import to an existing Rive file ------------------------------
+// Pull the live file, append the imported artboards (ids moved to a free namespace so
+// nothing collides), keep what is already there. Nothing is removed from the file.
+function mergeIntoExisting(existing, incoming) {
+  const used = [...existing.matchAll(/"(\d+):\d+"/g)].map(m => +m[1]);
+  const ns = (used.length ? Math.max(...used) : 0) + 1;
+  const inc = incoming.replace(/((?:id|Id|Ids)=")0:(\d+)"/g, (_, a, n) => a + ns + ':' + n + '"');
+  const body = inc.replace(/^[\s\S]*?<Rive[^>]*>/, '').replace(/<\/Rive>\s*$/, '');
+  let artboards = body.match(/<Artboard[\s\S]*?<\/Artboard>/g) || [];
+  // Reuse fonts / images the file already has (same file path) instead of adding a second copy.
+  const remap = [];   // [[attrName, from, to]]
+  const keepAssets = [];
+  const esc = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const [tag, ref] of [['FontAsset', 'fontAssetId'], ['ImageAsset', 'assetId']]) {
+    for (const ax of body.match(new RegExp('<' + tag + ' [^>]*\\/>', 'g')) || []) {
+      const file = (ax.match(/file="([^"]+)"/) || [])[1], mine = (ax.match(/ id="([^"]+)"/) || [])[1];
+      const hit = file && existing.match(new RegExp('<' + tag + ' [^>]*file="' + esc(file) + '"[^>]* id="([^"]+)"'));
+      if (hit) remap.push([ref, mine, hit[1]]); else keepAssets.push(ax);
+    }
+  }
+  let compAssets = body.match(/<ComponentAsset [^>]*\/>/g) || [];
+  const names = new Set([...existing.matchAll(/<Artboard [^>]*name="([^"]*)"/g)].map(m => m[1]));
+  // Put new artboards to the right of everything already on the editor's stage.
+  let edge = 0;
+  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) {
+    const x = +((m[0].match(/\sx="(-?[\d.]+)"/) || [])[1] || 0), w = +((m[0].match(/\swidth="([\d.]+)"/) || [])[1] || 0);
+    edge = Math.max(edge, x + w);
+  }
+  let cursor = existing.match(/<Artboard\s/) ? edge + 120 : 0;
+  const added = [];
+  artboards = artboards.map(a => {
+    const w = +((a.match(/<Artboard\s[^>]*?\swidth="([\d.]+)"/) || [])[1] || 0);
+    // Drop the converter's own stage position; place it after what is already in the file.
+    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + cursor + '" y="0" ');
+    cursor += w + 120;
+    remap.forEach(([ref, from, to]) => { a = a.split(ref + '="' + from + '"').join(ref + '="' + to + '"'); });
+    a = a.replace(/(<Artboard [^>]*?name=")([^"]*)(")/, (m, pre, nm, post) => {
+      // Re-importing the same frame: the new artboard is called "<name> - updated" (then "- updated 2" ...) and the old one is kept.
+      let n = nm, i = 1; while (names.has(n)) n = nm + ' - updated' + (i++ > 1 ? ' ' + (i - 1) : '');
+      names.add(n); added.push(n);
+      const aid = (a.match(/<Artboard [^>]*? id="([^"]+)"/) || [])[1];
+      if (n !== nm && aid) compAssets = compAssets.map(c => c.includes('artboardId="' + aid + '"') ? c.replace(/name="[^"]*"/, 'name="' + n + '"') : c);
+      return pre + n + post;
+    });
+    return a;
+  });
+  const merged = existing.replace(/<\/Rive>\s*$/, artboards.join('\n    ') + '\n    ' + keepAssets.join('\n    ') + '\n    ' + compAssets.join('\n    ') + '\n</Rive>\n');
+  return { merged, added, namespace: ns };
+}
+
+// ---- inbox: a design report Claude can read ---------------------------------
+const INBOX = path.join(EXPORTS, 'claude-inbox');
+function summaryMd(name, rep, previews) {
+  const sevName = { error: 'Fix before importing', warning: 'Will look different', info: 'Tips' };
+  let md = '# Design report: ' + name + '\n\n';
+  md += 'Sent: ' + new Date().toISOString() + '\n\n';
+  md += '**' + rep.verdict + '** (score ' + rep.score + '): ' + rep.counts.error + ' to fix, ' + rep.counts.warning + ' differences, ' + rep.counts.info + ' tips.\n';
+  md += rep.stats.nodes + ' layers, ' + rep.stats.frames + ' frames, ' + rep.stats.autoLayoutFrames + ' with auto layout, ' + rep.stats.texts + ' text, ' + rep.stats.images + ' images.\n\n';
+  for (const sev of ['error', 'warning', 'info']) {
+    const g = rep.issues.filter(i => i.severity === sev);
+    if (!g.length) continue;
+    md += '## ' + sevName[sev] + '\n\n';
+    for (const i of g) {
+      md += '- **' + i.title + '**' + (i.count > 1 ? ' x' + i.count : '') + ': ' + i.why + '\n';
+      md += '  - Fix: ' + i.fix + '\n';
+      if (i.nodes.length) md += '  - Layers: ' + i.nodes.slice(0, 10).map(n => n.name + ' (' + n.id + ')').join(', ') + (i.count > 10 ? ', and ' + (i.count - 10) + ' more' : '') + '\n';
+    }
+    md += '\n';
+  }
+  if (rep.fonts && rep.fonts.length) md += '## Fonts needed\n\n' + rep.fonts.map(f => '- ' + f.family + ' ' + f.style + ' -> ' + f.file).join('\n') + '\n\n';
+  md += '## Files\n\n- `report.json`: this report as data\n- `snapshot.json`: the full design data (large; open only for specific layers)\n' + previews.map(p => '- `' + p + '`: preview image').join('\n') + '\n';
+  return md;
+}
+function doInbox(body) {
+  const name = safeName(body.name), dir = path.join(INBOX, name);
+  fs.rmSync(dir, { recursive: true, force: true });   // our own previous report for this design only
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'report.json'), JSON.stringify(body.report, null, 1));
+  fs.writeFileSync(path.join(dir, 'snapshot.json'), JSON.stringify(body.snapshot));
+  const saved = [];
+  (body.previews || []).forEach((p, i) => {
+    const f = 'preview-' + (i + 1) + '-' + safeName(p.name).replace(/\s+/g, '-').slice(0, 30) + '.png';
+    fs.writeFileSync(path.join(dir, f), Buffer.from(String(p.base64), 'base64')); saved.push(f);
+  });
+  const md = summaryMd(name, body.report, saved);
+  fs.writeFileSync(path.join(dir, 'summary.md'), md);
+  fs.mkdirSync(INBOX, { recursive: true });
+  fs.writeFileSync(path.join(INBOX, 'latest.md'), md + '\nFolder: `' + dir + '`\n');
+  return { ok: true, dir, summary: path.join(INBOX, 'latest.md'), previews: saved.length };
+}
+
+// The plugin just keeps the selected frame's name here so Claude can read it when you ask for something.
+function doFrame(body) {
+  fs.mkdirSync(INBOX, { recursive: true });
+  const rec = {
+    name: safeName(body.name), frames: (body.names || []).slice(0, 8), types: (body.types || []).slice(0, 8), ids: (body.ids || []).slice(0, 8),
+    sizes: (body.sizes || []).slice(0, 8), page: String(body.page || '').slice(0, 80), file: String(body.file || '').slice(0, 80), savedAt: new Date().toISOString()
+  };
+  fs.writeFileSync(path.join(INBOX, 'current-frame.json'), JSON.stringify(rec, null, 1));
+  fs.writeFileSync(path.join(INBOX, 'current-frame.md'), '# Current frame\n\n**' + rec.name + '**  (artboard and Rive file name)\n\n' +
+    rec.frames.map((f, i) => '- ' + f + ' [' + rec.types[i] + ', ' + (rec.sizes[i] || []).join('x') + ', ' + rec.ids[i] + ']').join('\n') +
+    '\n\nFigma file: ' + rec.file + ', page: ' + rec.page + '\nSaved: ' + rec.savedAt + '\n');
+  return { ok: true, name: rec.name };
+}
+
+async function doExport(body) {
+  if (body.fileId) return doExportExisting(body);
+  const name = safeName(body.name), dir = path.join(EXPORTS, name);
+  fs.mkdirSync(path.join(dir, 'fonts'), { recursive: true });
+  fs.writeFileSync(path.join(dir, 'scene.rml'), String(body.rml));
+  // Keep the push link (rive.yaml `push:`) across re-exports so a re-send updates the same file.
+  const yamlPath = path.join(dir, 'rive.yaml');
+  const prev = fs.existsSync(yamlPath) ? fs.readFileSync(yamlPath, 'utf8') : '';
+  const push = prev.match(/^push:[\s\S]*$/m);
+  fs.writeFileSync(yamlPath, String(body.yaml).replace(/\s*$/, '\n') + (push ? push[0] + '\n' : ''));
+  writeImages(dir, body.images);
+  const stand = standInFont(), real = [], standIn = [], missing = [];
+  for (const f of body.fonts || []) {
+    const base = path.basename(String(f.file));
+    const dest = path.join(dir, 'fonts', base), lib = path.join(FONTS, base);
+    if (fs.existsSync(lib)) { fs.copyFileSync(lib, dest); real.push(base); }
+    else if (fs.existsSync(dest)) real.push(base);
+    else if (stand) { fs.copyFileSync(stand, dest); standIn.push(base); }
+    else missing.push(base);
+  }
+  const verify = await run([dir, '--verify'], dir);
+  return { dir, name, verify, fonts: { real, standIn, missing }, linked: !!push };
+}
+
+async function doExportExisting(body) {
+  const fileId = String(body.fileId).replace(/\D/g, '');
+  if (!fileId) throw new Error('That is not a Rive file id or link.');
+  const dir = path.join(EXPORTS, 'file-' + fileId);
+  const linked = fs.existsSync(path.join(dir, 'rive.yaml'));
+  // Always start from the live file so editor changes since last time are kept.
+  const dl = linked ? await run(['pull', dir, '--yes'], ROOT) : await run(['create', dir, '--from-remote-file=' + fileId], ROOT);
+  if (!dl.ok) return { dir, name: 'file-' + fileId, mode: 'existing', verify: { ok: false, output: 'Could not download your Rive file ' + fileId + ':\n' + dl.output }, fonts: { real: [], standIn: [], missing: [] }, added: [] };
+  const scenePath = path.join(dir, 'scene.rml');
+  const before = await run([dir, '--verify'], dir);
+  if (!before.ok) return { dir, name: 'file-' + fileId, mode: 'existing', verify: { ok: false, output: 'Your file does not verify on its own, so I did not touch it:\n' + before.output }, fonts: { real: [], standIn: [], missing: [] }, added: [] };
+  const existing = fs.readFileSync(scenePath, 'utf8');
+  // Backup of the file as it is now. Kept OUTSIDE the project folder: the CLI compiles every .rml
+  // it finds in there, and ships any other file type as an asset.
+  fs.mkdirSync(path.join(EXPORTS, 'backups'), { recursive: true });
+  fs.writeFileSync(path.join(EXPORTS, 'backups', 'file-' + fileId + '-' + new Date().toISOString().replace(/[:.]/g, '-') + '.rml'), existing);
+  const m = mergeIntoExisting(existing, String(body.rml));
+  fs.writeFileSync(scenePath, m.merged);
+  fs.mkdirSync(path.join(dir, 'fonts'), { recursive: true });
+  writeImages(dir, body.images);
+  const stand = standInFont(), real = [], standIn = [], missing = [];
+  for (const f of body.fonts || []) {
+    const base = path.basename(String(f.file)), dest = path.join(dir, 'fonts', base), lib = path.join(FONTS, base);
+    if (fs.existsSync(lib)) { fs.copyFileSync(lib, dest); real.push(base); }
+    else if (fs.existsSync(dest)) real.push(base);
+    else if (stand) { fs.copyFileSync(stand, dest); standIn.push(base); }
+    else missing.push(base);
+  }
+  const verify = await run([dir, '--verify'], dir);
+  if (!verify.ok) fs.writeFileSync(scenePath, existing); // never leave a broken merge behind
+  return { dir, name: 'file-' + fileId, mode: 'existing', fileId, added: m.added, verify, fonts: { real, standIn, missing }, linked: true };
+}
+
+async function doPush(body) {
+  const name = String(body.name).replace(/[^A-Za-z0-9 _-]/g, '').slice(0, 70) || 'figma-import', dir = path.join(EXPORTS, name);
+  if (!fs.existsSync(path.join(dir, 'scene.rml'))) return { ok: false, output: 'Nothing exported yet for "' + name + '".' };
+  const args = ['push', dir, '--yes', '--name=' + (body.label || 'Figma import')];
+  if (!/^push:/m.test(fs.readFileSync(path.join(dir, 'rive.yaml'), 'utf8'))) {
+    if (!cfg.projectId) return { ok: false, output: 'Set "projectId" in config.json (see `rive ls --plain`) for first push.' };
+    args.push('--project=' + cfg.projectId);
+  }
+  const r = await run(args, dir);
+  const m = r.output.match(/file (\d+) updated/) || r.output.match(/created file (\d+)/);
+  return { ok: r.ok, output: r.output, fileId: m && m[1], url: m && 'https://editor.rive.app/file/' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '/' + m[1] };
+}
+
+function handler(req, res) {
+  const h = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'content-type, x-token', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' };
+  const send = (code, obj) => { res.writeHead(code, Object.assign({ 'content-type': 'application/json' }, h)); res.end(JSON.stringify(obj)); };
+  if (req.method === 'OPTIONS') { res.writeHead(204, h); return res.end(); }
+  if (req.headers['x-token'] !== TOKEN) return send(401, { error: 'bad token' });
+  let data = '';
+  req.on('data', c => { data += c; if (data.length > 30e6) req.destroy(); });
+  req.on('end', async () => {
+    try {
+      const body = data ? JSON.parse(data) : {};
+      if (req.method === 'GET' && req.url === '/status') {
+        const v = await run(['--version'], ROOT);
+        return send(200, { ok: v.ok, rive: v.output, projectId: cfg.projectId || null, realFonts: fs.readdirSync(FONTS).filter(f => /\.(ttf|otf)$/i.test(f)) });
+      }
+      if (req.method === 'POST' && req.url === '/frame') return send(200, doFrame(body));
+      if (req.method === 'POST' && req.url === '/inbox') return send(200, doInbox(body));
+      if (req.method === 'POST' && req.url === '/export') return send(200, await doExport(body));
+      if (req.method === 'POST' && req.url === '/push') return send(200, await doPush(body));
+      send(404, { error: 'not found' });
+    } catch (e) { send(500, { error: String(e.message || e) }); }
+  });
+}
+// "localhost" can resolve to IPv4 or IPv6, so answer on both loopbacks (never on the network).
+['127.0.0.1', '::1'].forEach(host => {
+  const srv = http.createServer(handler);
+  srv.on('error', e => { if (host === '127.0.0.1') { console.error(e.message); process.exit(1); } });
+  srv.listen(PORT, host, () => {
+    if (host === '127.0.0.1') {
+      console.log('Figma to Rive helper on http://localhost:' + PORT);
+      console.log('Token (paste into the plugin once): ' + TOKEN);
+      console.log('Real fonts go in: ' + FONTS);
+    }
+  });
+});

@@ -1,0 +1,6 @@
+# private / generated: never commit these
+Exports/
+.token
+**/build/
+node_modules/
+.DS_Store

@@ -1,0 +1,1220 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: dark; --bg:#1e1e1e; --panel:#2a2a2a; --panel2:#262626; --line:#3d3d3d; --text:#e8e8e8; --muted:#9b9b9b; --accent:#0d99ff;
+    --code:#383838; --err:#f87171; --warn:#fbbf24; --ok:#4ade80; --info:#60a5fa; --fixbg:#12372a; --fixfg:#86efac; --chip:#27304d; --chipline:#3b4a7a; --chiptext:#c7d2fe; }
+  html, body { background: var(--bg); }
+  body { font: 12px/1.45 Inter, system-ui, sans-serif; margin: 0; padding: 16px; color: var(--text); }
+  h1 { font-size: 14px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: var(--muted); }
+  p b, p code { color: var(--text); }
+  a { color: var(--accent); }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 0; background: var(--accent); color: #fff; cursor: pointer; margin-right: 6px; }
+  button:hover { filter: brightness(1.1); }
+  button.alt { background: #3a3a3a; color: var(--text); }
+  button[disabled] { opacity: .4; cursor: default; }
+  input { font: inherit; width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel2); color: var(--text); outline: none; }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: #6f6f6f; }
+  .box { margin-top: 12px; padding: 10px; border-radius: 6px; background: var(--panel); color: var(--text); }
+  /* colour only as a thin marker, never as text */
+  .box.ok { border-left: 3px solid var(--ok); } .box.warn { border-left: 3px solid var(--warn); } .box.bad { border-left: 3px solid var(--err); } .box.info { border-left: 3px solid var(--info); }
+  .box.warn li, .box.info li { color: #cfcfcf; }
+  code { background: var(--code); color: var(--text); padding: 1px 4px; border-radius: 3px; }
+  ul { margin: 4px 0 0 16px; padding: 0; } pre { white-space: pre-wrap; margin: 6px 0 0; font-size: 11px; max-height: 120px; overflow: auto; color: var(--text); }
+  label { display: block; margin: 8px 0 4px; color: var(--muted); }
+  label.chk { display: flex; gap: 8px; align-items: flex-start; color: var(--text); margin: 6px 0; }
+  label.chk input { width: auto; margin-top: 2px; accent-color: var(--accent); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px 0 12px; }
+  .tab { background: none; color: var(--muted); border-radius: 6px 6px 0 0; padding: 8px 12px; margin: 0; }
+  .tab:hover { color: var(--text); filter: none; }
+  .tab.on { color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); font-weight: 600; }
+  .score { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; background: var(--panel); }
+  .score b.n { font-size: 26px; line-height: 1; color: var(--text); }
+  .pill { display: inline-block; padding: 1px 8px 1px 6px; border-radius: 10px; font-size: 11px; margin-right: 4px; color: #cfcfcf; background: #363636; }
+  .pill::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+  .pill.error::before { background: #ef4444; } .pill.warning::before { background: #f59e0b; } .pill.info::before { background: #3b82f6; }
+  .issue { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 10px; margin-top: 8px; }
+  .issue.error { border-left: 4px solid #ef4444; } .issue.warning { border-left: 4px solid #f59e0b; } .issue.info { border-left: 4px solid #3b82f6; }
+  .issue h3 { font-size: 12px; margin: 0 0 4px; color: var(--text); }
+  .issue .fix { margin-top: 6px; padding: 6px 8px; background: #323232; border-radius: 6px; color: var(--text); }
+  .issue .why { color: #b5b5b5; }
+  button.sm { padding: 3px 8px; font-size: 11px; margin: 6px 6px 0 0; }
+  .muted { color: var(--muted); }
+  .layers { margin-top: 8px; }
+  .layers .row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .chip { background: #333; color: #ddd; border: 1px solid #4a4a4a; border-radius: 12px; padding: 2px 9px; font-size: 11px; margin: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip:hover { background: #3f3f3f; } .chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .linkbtn { background: none; color: var(--accent); padding: 2px 4px; margin: 4px 0 0; font-size: 11px; }
+  .more[hidden] { display: none; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; border: 2px solid var(--bg); } ::-webkit-scrollbar-track { background: var(--bg); }
+</style>
+<div class="tabs">
+  <button class="tab on" id="tabImport">Import</button>
+  <button class="tab" id="tabAnalysis">Design analysis</button>
+</div>
+<div id="paneAnalysis" hidden>
+  <p>Check the selected frames <b>before</b> importing. See what will break or look different in Rive, and how to fix it in Figma.</p>
+  <button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, frame previews and design data in the helper's claude-inbox folder">Send to Claude</button>
+  <span class="muted" id="selInfo"></span>
+  <div id="analysisOut"></div>
+</div>
+<div id="paneImport">
+<h1>Figma To Rive</h1>
+<div class="box" id="detected" style="margin-top:0">Select a frame in Figma to begin.</div>
+<label>File name in Rive <span class="muted">(the artboard keeps the frame name)</span></label>
+<input id="projname" placeholder="detected from the selected frame">
+<p>Auto layout becomes Rive layout. Text stays live text.</p>
+<label>Helper token (printed by <code>node serve.js</code>, saved after first use)</label>
+<input id="token" placeholder="paste token">
+<label>Your open Rive file: paste its link or id (leave empty to create a new file)</label>
+<input id="filelink" placeholder="https://editor.rive.app/file/.../1234567">
+<label class="chk"><input type="checkbox" id="optArtboard" checked><span><b>Frame properties become the artboard's</b> (size, fill, layout). Uncheck to import the frame as a layout box inside a plain artboard.</span></label>
+<label class="chk"><input type="checkbox" id="optComp" checked><span><b>Components:</b> instances are detached into layout, and each main component is also added as a Rive component artboard.</span></label>
+<label class="chk"><input type="checkbox" id="optInner" checked><span><b>Inner shadows also cover the layers inside</b> (like Figma). Uncheck to keep them under the contents.</span></label>
+<p style="margin-top:12px">
+  <button id="send">Send to Rive</button><button id="zip" class="alt">Zip only</button>
+</p>
+
+<div id="out"></div>
+</div>
+<script>/* Figma snapshot -> Rive RML.
+ *
+ * Pure function, no Figma API: it takes the plain-JSON snapshot that code.js
+ * extracts, so the same file runs inside the plugin UI and in Node for tests.
+ *
+ * The two rules this plugin exists for:
+ *   1. Auto layout is never flattened. An auto layout frame becomes a
+ *      LayoutComponent (+ LayoutComponentStyle); children that sit in the flow
+ *      get a LayoutParticipant. Gap, padding, alignment, wrap, hug/fill/fixed and
+ *      absolute positioning all carry over as layout properties.
+ *   2. Text is never outlined. A TEXT node always becomes Text + TextStylePaint +
+ *      TextValueRun, and the font it needs is reported, never baked into paths.
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.FigmaToRive = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  function convert(snapshot, options) {
+    options = options || {};
+    var warnings = [];
+    var fonts = {}; // key -> {family, style, file, assetId}
+    var nextId = 100;
+    var fontAssetIds = {};
+    var imageAssets = {};   // hash -> {file, id, hash, ext}
+    var notes = [];
+    var detached = 0;
+    var seenWarn = {};
+    var frameAsLayout = options.frameMode === 'layout';
+    var componentArtboards = options.componentArtboards !== false;
+
+    function id() { return '0:' + nextId++; }
+    function warn(node, msg) {
+      var k = msg + '|' + (node && node.type);
+      var line = (node ? '"' + node.name + '" (' + node.type + '): ' : '') + msg;
+      if (seenWarn[line]) return;
+      seenWarn[line] = true;
+      warnings.push(line);
+    }
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/\r?\n/g, '&#10;');
+    }
+    function num(v) { return String(Math.round(v * 1000) / 1000); }
+    function attr(name, v) { return v === undefined || v === null ? '' : ' ' + name + '="' + esc(v) + '"'; }
+
+    // ---- colour -------------------------------------------------------
+    function hex2(v) { var s = Math.max(0, Math.min(255, Math.round(v * 255))).toString(16); return s.length < 2 ? '0' + s : s; }
+    function colorHex(c, opacity) {
+      var a = (c.a === undefined ? 1 : c.a) * (opacity === undefined ? 1 : opacity);
+      return (hex2(a) + hex2(c.r) + hex2(c.g) + hex2(c.b)).toUpperCase();
+    }
+
+    // ---- paint --------------------------------------------------------
+    function invert(t) { // 2x3 affine [[a,c,e],[b,d,f]]
+      var a = t[0][0], c = t[0][1], e = t[0][2], b = t[1][0], d = t[1][1], f = t[1][2];
+      var det = a * d - b * c;
+      if (!det) return [[1, 0, 0], [0, 1, 0]];
+      return [[d / det, -c / det, (c * f - d * e) / det], [-b / det, a / det, (b * e - a * f) / det]];
+    }
+    function apply(t, x, y) { return [t[0][0] * x + t[0][1] * y + t[0][2], t[1][0] * x + t[1][1] * y + t[1][2]]; }
+
+    // centered: the paint belongs to a Shape, whose local origin is its centre. A layout box (and the artboard) measures from its top-left.
+    function paintBody(paint, node, w, h, extraOpacity, centered) {
+      var gx = centered ? w / 2 : 0, gy = centered ? h / 2 : 0;
+      var op = (paint.opacity === undefined ? 1 : paint.opacity) * (extraOpacity === undefined ? 1 : extraOpacity);
+      if (paint.type === 'SOLID') {
+        return '<SolidColor colorValue="' + colorHex(paint.color, op) + '" name="Color"/>';
+      }
+      if (paint.type === 'GRADIENT_LINEAR' && paint.gradientTransform && paint.gradientStops) {
+        var inv = invert(paint.gradientTransform);
+        var s = apply(inv, 0, 0.5), e = apply(inv, 1, 0.5);
+        var stops = paint.gradientStops.map(function (st) {
+          return '<GradientStop colorValue="' + colorHex(st.color, op) + '" position="' + num(st.position) + '"/>';
+        }).join('');
+        return '<LinearGradient startX="' + num(s[0] * w - gx) + '" startY="' + num(s[1] * h - gy) + '" endX="' + num(e[0] * w - gx) +
+          '" endY="' + num(e[1] * h - gy) + '" name="Gradient">' + stops + '</LinearGradient>';
+      }
+      if (paint.type === 'GRADIENT_RADIAL' && paint.gradientTransform && paint.gradientStops) {
+        // Figma's gradient space has the centre at (0.5,0.5) and the radius running to (1,0.5).
+        var invR = invert(paint.gradientTransform);
+        var c0 = apply(invR, 0.5, 0.5), c1 = apply(invR, 1, 0.5), c2 = apply(invR, 0.5, 1);
+        var rx = Math.hypot((c1[0] - c0[0]) * w, (c1[1] - c0[1]) * h), ry = Math.hypot((c2[0] - c0[0]) * w, (c2[1] - c0[1]) * h);
+        if (Math.abs(rx - ry) > Math.max(rx, ry) * 0.12) warn(node, 'elliptical radial gradient imported as a circular one');
+        var rstops = paint.gradientStops.map(function (st) {
+          return '<GradientStop colorValue="' + colorHex(st.color, op) + '" position="' + num(st.position) + '"/>';
+        }).join('');
+        var cx0 = c0[0] * w - gx, cy0 = c0[1] * h - gy;
+        return '<RadialGradient startX="' + num(cx0) + '" startY="' + num(cy0) + '" endX="' + num(cx0 + (rx + ry) / 2) + '" endY="' + num(cy0) +
+          '" name="Gradient">' + rstops + '</RadialGradient>';
+      }
+      if (paint.type.indexOf('GRADIENT') === 0) {
+        warn(node, paint.type + ' fill is not converted yet; using its first stop as a solid colour');
+        var st0 = paint.gradientStops && paint.gradientStops[0];
+        return st0 ? '<SolidColor colorValue="' + colorHex(st0.color, op) + '" name="Color"/>' : null;
+      }
+      return null; // IMAGE paints are placed as Image drawables, not as a paint
+    }
+    function visiblePaints(list) {
+      return (list || []).filter(function (p) { return p.visible !== false && p.opacity !== 0; });
+    }
+    function findImage(node) {
+      var imgs = visiblePaints(node.fills).filter(function (p) { return p.type === 'IMAGE'; });
+      return imgs.length ? imgs[imgs.length - 1] : null;
+    }
+    // Plain fills only (artboard background).
+    function plainFills(node, w, h) {
+      return visiblePaints(node.fills).filter(function (p) { return p.type !== 'IMAGE'; }).map(function (p) {
+        var body = paintBody(p, node, w, h);
+        return body ? '<Fill' + paintBlend(p, node) + ' name="Fill">' + body + '</Fill>' : '';
+      }).join('');
+    }
+
+    // All the paints of one shape / layout box, in Rive's draw order (later paints draw on top):
+    //   drop shadows (feathered fills) -> outside stroke -> fills -> inner shadows -> strokes
+    // Shadows and layer blur use Feather; INSIDE strokes are a 2x stroke the caller clips to the shape.
+    function paintsXml(node, w, h, o) {
+      o = o || {};
+      var fx = (node.effects || []).filter(function (e) { return e.visible !== false; });
+      var drops = fx.filter(function (e) { return e.type === 'DROP_SHADOW'; });
+      var inners = fx.filter(function (e) { return e.type === 'INNER_SHADOW'; });
+      var blur = fx.filter(function (e) { return e.type === 'LAYER_BLUR'; })[0];
+      if (fx.some(function (e) { return e.type === 'BACKGROUND_BLUR'; })) warn(node, 'background blur is not supported');
+      var fills = o.lineOnly ? [] : visiblePaints(node.fills).filter(function (p) { return p.type !== 'IMAGE'; });
+      var strokes = visiblePaints(node.strokes);
+      var sw = typeof node.strokeWeight === 'number' ? node.strokeWeight : 0;
+      var hasStroke = strokes.length && sw > 0;
+      var surface = fills.length || hasStroke || o.hasImage;
+      var blurFx = blur ? '<Feather strength="' + num(blur.radius) + '" name="Feather"/>' : '';
+      if (blur && o.hasChildren) warn(node, 'layer blur only blurs this box\'s own paint, not the things inside it');
+
+      function featherFill(e, inner) {
+        if (e.spread) warn(node, 'shadow spread is ignored');
+        // An inner shadow cannot spread further than the shape is wide; huge blur values (Figma allows them) would just wash
+        // everything out when drawn over the contents, so the strength is capped relative to the shape's smaller side.
+        var strength = e.radius;
+        if (inner && o.splitInner) strength = Math.min(e.radius * (options.innerShadowScale || 1), (options.innerShadowCap || 0.35) * Math.min(w, h));
+        return '<Fill fillRule="clockwise"' + (options.effectBlendModes === false ? '' : paintBlend(e, node)) + ' name="' + (inner ? 'Inner Shadow' : 'Shadow') + '"><SolidColor colorValue="' + colorHex(e.color) +
+          '" name="Color"/><Feather strength="' + num(strength) + '" offsetX="' + num(e.offset ? e.offset.x : 0) + '" offsetY="' +
+          num(e.offset ? e.offset.y : 0) + '"' + (inner ? ' inner="true"' : '') + ' name="Feather"/></Fill>';
+      }
+      var dashFx = '';
+      if (node.dashPattern && node.dashPattern.length) {
+        var dp = node.dashPattern.length % 2 ? node.dashPattern.concat(node.dashPattern) : node.dashPattern;
+        dashFx = '<DashPath name="Dashes">' + dp.map(function (d, i) { return '<Dash length="' + num(d) + '" name="' + (i % 2 ? 'Gap' : 'Dash') + '"/>'; }).join('') + '</DashPath>';
+      }
+      // Stroke ends and corners follow Figma. Old snapshots do not carry them: keep the previous round look, except for
+      // dashed strokes where round ends would swallow the gaps.
+      var CAP = { NONE: 'butt', ROUND: 'round', SQUARE: 'square' }, JOIN = { MITER: 'miter', ROUND: 'round', BEVEL: 'bevel' };
+      var capV = CAP[node.strokeCap] || (dashFx ? 'butt' : 'round'), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
+      if (node.strokeCap && !CAP[node.strokeCap]) warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
+      function strokesAt(thickness) {
+        return strokes.map(function (p) {
+          var body = paintBody(p, node, w, h, undefined, o.centered);
+          return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + '</Stroke>' : '';
+        }).join('');
+      }
+
+      var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', innerOut = '';
+      if (surface) drops.forEach(function (e) { var f = featherFill(e, false); if (o.splitShadow) shadowOut += f; else out += f; shadowed = true; });
+      var shadowBlocksClip = shadowed && !o.splitShadow;
+      var align = o.forceCenter ? 'CENTER' : (node.strokeAlign || 'CENTER');
+      if (hasStroke) {
+        var opaque = fills.some(function (p) { return p.type === 'SOLID' && (p.opacity === undefined || p.opacity >= 0.99) && (p.color.a === undefined || p.color.a >= 0.99); });
+        if (align === 'INSIDE' && !shadowBlocksClip && !o.noClip) { tail += strokesAt(sw * 2); clip = true; }
+        else if (align === 'OUTSIDE' && opaque) { out += strokesAt(sw * 2); }
+        else {
+          if (align !== 'CENTER') warn(node, 'stroke is ' + align + ' but ' + (align === 'INSIDE' ? 'it also has a shadow that cannot be separated here' : 'the fill is not opaque') + '; it is drawn centred instead');
+          tail += strokesAt(sw);
+        }
+      }
+      fills.forEach(function (p) {
+        var body = paintBody(p, node, w, h, undefined, o.centered);
+        if (body) out += '<Fill' + (blur ? ' fillRule="clockwise"' : node.__evenOdd ? ' fillRule="evenOdd"' : '') + paintBlend(p, node) + ' name="Fill">' + body + blurFx + '</Fill>';
+      });
+      if (surface) inners.forEach(function (e) { var f = featherFill(e, true); if (o.splitInner) innerOut += f; else out += f; });
+      return { xml: out + tail, shadowXml: shadowOut, innerXml: innerOut, clip: clip, shadowed: shadowed };
+    }
+
+    // ---- blend modes --------------------------------------------------
+    var BLEND = { LINEAR_DODGE: 'additive', SCREEN: 'screen', MULTIPLY: 'multiply', OVERLAY: 'overlay', DARKEN: 'darken', LIGHTEN: 'lighten',
+      COLOR_DODGE: 'colorDodge', COLOR_BURN: 'colorBurn', HARD_LIGHT: 'hardLight', SOFT_LIGHT: 'softLight', DIFFERENCE: 'difference',
+      EXCLUSION: 'exclusion', HUE: 'hue', SATURATION: 'saturation', COLOR: 'color', LUMINOSITY: 'luminosity' };
+    // A single fill or stroke can have its own blend mode too (Figma: the blend icon in the paint popover).
+    function paintBlend(paint, node) {
+      var b = paint && paint.blendMode;
+      if (!b || b === 'NORMAL' || b === 'PASS_THROUGH') return '';
+      if (BLEND[b]) return ' blendModeValue="' + BLEND[b] + '"';
+      warn(node, 'a fill or stroke uses the ' + b + ' blend mode, which Rive does not have; drawn normally');
+      return '';
+    }
+    function blendAttr(node) {
+      var b = node.blendMode;
+      if (!b || b === 'NORMAL' || b === 'PASS_THROUGH') return '';
+      if (BLEND[b]) return ' blendModeValue="' + BLEND[b] + '"';
+      warn(node, 'blend mode ' + b + ' has no Rive equivalent; drawn normally');
+      return '';
+    }
+
+    // ---- placement (position + rotation) ------------------------------
+    // Figma gives x,y of the rotated node's top-left corner; Rive rotates about a centre point.
+    function place(node) {
+      var w = node.width, h = node.height, m = node.relativeTransform;
+      if (m) {
+        var a = m[0][0], c = m[0][1], tx = m[0][2], b = m[1][0], d = m[1][1], ty = m[1][2];
+        var cx = tx + a * w / 2 + c * h / 2, cy = ty + b * w / 2 + d * h / 2;
+        var rot = Math.atan2(b, a);
+        if (Math.abs(rot) < 1e-4) rot = 0;
+        return { cx: cx, cy: cy, x: cx - w / 2, y: cy - h / 2, rot: rot };
+      }
+      var r = node.rotation ? -node.rotation * Math.PI / 180 : 0;
+      return { cx: node.x + w / 2, cy: node.y + h / 2, x: node.x, y: node.y, rot: r };
+    }
+    function rotAttr(p) { return p.rot ? ' rotation="' + num(p.rot) + '"' : ''; }
+
+    // ---- corner radius -----------------------------------------------
+    function radii(node) {
+      if (node.topLeftRadius !== undefined) {
+        return [node.topLeftRadius || 0, node.topRightRadius || 0, node.bottomLeftRadius || 0, node.bottomRightRadius || 0];
+      }
+      var r = typeof node.cornerRadius === 'number' ? node.cornerRadius : 0;
+      return [r, r, r, r];
+    }
+    function radiusAttrs(r) {
+      if (!r[0] && !r[1] && !r[2] && !r[3]) return '';
+      return ' cornerRadiusTL="' + num(r[0]) + '" cornerRadiusTR="' + num(r[1]) + '" cornerRadiusBL="' + num(r[2]) + '" cornerRadiusBR="' + num(r[3]) + '"';
+    }
+
+    // ---- layout -------------------------------------------------------
+    var SCALE = { FIXED: 'fixed', HUG: 'hug', FILL: 'fill' };
+    function hasAutoLayout(n) { return n.layoutMode === 'HORIZONTAL' || n.layoutMode === 'VERTICAL'; }
+
+    function sizing(node, parentLayoutMode) {
+      var h = node.layoutSizingHorizontal, v = node.layoutSizingVertical;
+      if (!h || !v) { // older snapshots: derive from grow/align
+        var row = parentLayoutMode === 'HORIZONTAL';
+        h = h || ((row ? node.layoutGrow : node.layoutAlign === 'STRETCH') ? 'FILL' : 'FIXED');
+        v = v || ((row ? node.layoutAlign === 'STRETCH' : node.layoutGrow) ? 'FILL' : 'FIXED');
+      }
+      return { h: SCALE[h] || 'fixed', v: SCALE[v] || 'fixed' };
+    }
+
+    function alignment(node) {
+      var row = node.layoutMode === 'HORIZONTAL';
+      var prim = node.primaryAxisAlignItems || 'MIN';
+      var cnt = node.counterAxisAlignItems || 'MIN';
+      if (cnt === 'BASELINE') cnt = 'MIN';
+      var map = { MIN: 0, CENTER: 1, MAX: 2 };
+      if (prim === 'SPACE_BETWEEN') {
+        return 'spaceBetween' + ['Start', 'Center', 'End'][map[cnt]];
+      }
+      var hor, ver;
+      if (row) { hor = map[prim]; ver = map[cnt]; } else { ver = map[prim]; hor = map[cnt]; }
+      var names = [['topLeft', 'topCenter', 'topRight'], ['centerLeft', 'center', 'centerRight'], ['bottomLeft', 'bottomCenter', 'bottomRight']];
+      return names[ver][hor];
+    }
+
+    function styleXml(node, o) {
+      // o: {styleId, name, w, h, sizing:{h,v}|null, abs:{x,y,w,h,parent}|null, isArtboard}
+      var a = '';
+      if (hasAutoLayout(node)) {
+        a += attr('flexDirectionValue', node.layoutMode === 'HORIZONTAL' ? 'row' : 'column');
+        a += attr('layoutAlignmentType', alignment(node));
+        var wrap = node.layoutWrap === 'WRAP';
+        if (wrap) a += attr('flexWrapValue', 'wrap');
+        var row = node.layoutMode === 'HORIZONTAL';
+        var gap = node.itemSpacing || 0, cgap = node.counterAxisSpacing;
+        if (cgap === undefined || cgap === null) cgap = gap;
+        var gh = row ? gap : (wrap ? cgap : 0), gv = row ? (wrap ? cgap : 0) : gap;
+        if (gh) a += ' gapHorizontal="' + num(gh) + '" gapHorizontalUnitsValue="points"';
+        if (gv) a += ' gapVertical="' + num(gv) + '" gapVerticalUnitsValue="points"';
+        var pads = [['paddingLeft', node.paddingLeft], ['paddingRight', node.paddingRight], ['paddingTop', node.paddingTop], ['paddingBottom', node.paddingBottom]];
+        pads.forEach(function (p) { if (p[1]) a += ' ' + p[0] + '="' + num(p[1]) + '" ' + p[0] + 'UnitsValue="points"'; });
+      }
+      if (o.sizing) {
+        a += attr('layoutWidthScaleType', o.sizing.h) + attr('layoutHeightScaleType', o.sizing.v);
+      } else {
+        a += attr('layoutWidthScaleType', 'fixed') + attr('layoutHeightScaleType', 'fixed');
+      }
+      if (node.minWidth) a += ' minWidth="' + num(node.minWidth) + '"';
+      if (node.maxWidth) a += ' maxWidth="' + num(node.maxWidth) + '"';
+      if (node.minHeight) a += ' minHeight="' + num(node.minHeight) + '"';
+      if (node.maxHeight) a += ' maxHeight="' + num(node.maxHeight) + '"';
+      if (o.pinned) {
+        var p = o.pinned;
+        a += ' positionTypeValue="absolute"';
+        a += ' positionLeft="' + num(p.x) + '" positionLeftUnitsValue="points"';
+        a += ' positionTop="' + num(p.y) + '" positionTopUnitsValue="points"';
+      }
+      if (!o.isArtboard) a += radiusAttrs(radii(node));
+      return '<LayoutComponentStyle' + a + ' name="' + esc(o.name) + ' Style" id="' + o.styleId + '"/>';
+    }
+
+    // ---- images -------------------------------------------------------
+    function registerImage(paint, node) {
+      var info = snapshot.images && snapshot.images[paint.imageHash];
+      if (!info) { warn(node, 'image fill has no image data (open the plugin from a file you can read)'); return null; }
+      if (!imageAssets[paint.imageHash]) {
+        imageAssets[paint.imageHash] = { hash: paint.imageHash, ext: info.ext, file: 'images/' + paint.imageHash + '.' + info.ext, id: id() };
+      }
+      return imageAssets[paint.imageHash].id;
+    }
+    // The image sits in a fixed, pinned, clipping box the size of its parent, drawn last (underneath).
+    function imageWrapper(node, paint, w, h) {
+      var aid = registerImage(paint, node);
+      if (!aid) return '';
+      if (paint.scaleMode === 'CROP' || paint.scaleMode === 'TILE') warn(node, 'image mode ' + paint.scaleMode + ' is shown as "fill"');
+      var fit = paint.scaleMode === 'FIT' ? 'contain' : 'cover';
+      var sid = id();
+      var op = (paint.opacity !== undefined && paint.opacity < 1) ? ' opacity="' + num(paint.opacity) + '"' : '';
+      return '<LayoutComponent width="' + num(w) + '" height="' + num(h) + '" styleId="' + sid + '" clip="true" name="Image Fill" id="' + id() + '">' +
+        '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" ' +
+        'positionLeft="0" positionLeftUnitsValue="points" positionTop="0" positionTopUnitsValue="points"' + radiusAttrs(radii(node)) +
+        ' name="Image Fill Style" id="' + sid + '"/>' +
+        '<Image assetId="' + aid + '" fit="' + fit + '"' + op + ' name="' + esc(node.name) + ' Image" id="' + id() + '">' +
+        '<LayoutParticipant layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Image Layout"/></Image></LayoutComponent>';
+    }
+
+    // ---- fonts / text -------------------------------------------------
+    function fontFile(family, style) {
+      var safe = function (s) { return String(s).replace(/[^A-Za-z0-9]+/g, ''); };
+      return 'fonts/' + safe(family) + '-' + safe(style) + '.ttf';
+    }
+    function fontAsset(family, style) {
+      var key = family + '|' + style;
+      if (!fontAssetIds[key]) {
+        fontAssetIds[key] = id();
+        fonts[key] = { family: family, style: style, file: fontFile(family, style), assetId: fontAssetIds[key] };
+      }
+      return fontAssetIds[key];
+    }
+
+    function textXml(node, ctx) {
+      var segs = node.segments && node.segments.length ? node.segments : [{
+        characters: node.characters || '', fontSize: node.fontSize, fontName: node.fontName,
+        letterSpacing: node.letterSpacing, lineHeight: node.lineHeight, fills: node.fills
+      }];
+      var styles = '', runs = '';
+      segs.forEach(function (s, i) {
+        var fn = s.fontName || { family: 'Inter', style: 'Regular' };
+        var fid = fontAsset(fn.family, fn.style);
+        var sid = id();
+        var size = s.fontSize || 14;
+        var ls = 0;
+        if (s.letterSpacing && s.letterSpacing.unit === 'PIXELS') ls = s.letterSpacing.value;
+        else if (s.letterSpacing && s.letterSpacing.unit === 'PERCENT') ls = s.letterSpacing.value / 100 * size;
+        var lh = -1;
+        if (s.lineHeight && s.lineHeight.unit === 'PIXELS') lh = s.lineHeight.value;
+        else if (s.lineHeight && s.lineHeight.unit === 'PERCENT') lh = s.lineHeight.value / 100 * size;
+        var paint = visiblePaints(s.fills)[0];
+        var body = paint ? paintBody(paint, node, node.width, node.height, node.opacity) : null;
+        if (!body) body = '<SolidColor colorValue="FF000000" name="Color"/>';
+        styles += '<TextStylePaint fontSize="' + num(size) + '" fontAssetId="' + fid + '" familyName="' + esc(fn.family) +
+          '" styleName="' + esc(fn.style) + '"' + (lh > 0 ? ' lineHeight="' + num(lh) + '"' : '') +
+          (ls ? ' letterSpacing="' + num(ls) + '"' : '') + ' name="Style ' + (i + 1) + '" id="' + sid + '"><Fill name="Fill">' + body + '</Fill></TextStylePaint>';
+        runs += '<TextValueRun styleId="' + sid + '" text="' + esc(s.characters) + '" name="Run ' + (i + 1) + '"/>';
+      });
+      var align = { LEFT: 'left', CENTER: 'center', RIGHT: 'right', JUSTIFIED: 'left' }[node.textAlignHorizontal || 'LEFT'];
+      if (node.textAlignHorizontal === 'JUSTIFIED') warn(node, 'justified text is left-aligned');
+      var vAlign = { TOP: 'top', CENTER: 'middle', BOTTOM: 'bottom' }[node.textAlignVertical || 'TOP'];
+      var sz = ctx.inLayout ? ctx.sizing : null;
+      var auto = node.textAutoResize || 'NONE';
+      var sizingValue = auto === 'WIDTH_AND_HEIGHT' ? 'autoWidth' : auto === 'HEIGHT' ? 'autoHeight' : 'fixed';
+      var a = attr('sizingValue', sizingValue) + attr('alignValue', align) + attr('verticalAlignValue', vAlign);
+      if (sizingValue !== 'autoWidth') a += ' width="' + num(node.width) + '"';
+      if (sizingValue === 'fixed') a += ' height="' + num(node.height) + '"';
+      var pl = place(node);
+      if ((node.effects || []).some(function (e) { return e.visible !== false && (e.type === 'DROP_SHADOW' || e.type === 'INNER_SHADOW' || e.type === 'LAYER_BLUR'); })) {
+        warn(node, 'shadow/blur on text is not converted');
+      }
+      if (!ctx.inLayout) {
+        if (pl.rot) a += ' originX="0.5" originY="0.5" x="' + num(pl.cx) + '" y="' + num(pl.cy) + '"';
+        else a += ' x="' + num(pl.x) + '" y="' + num(pl.y) + '"';
+      }
+      a += rotAttr(pl) + blendAttr(node);
+      if (node.opacity !== undefined && node.opacity < 1) a += ' opacity="' + num(node.opacity) + '"';
+      var part = '';
+      if (ctx.inLayout) {
+        part = '<LayoutParticipant layoutWidthScaleType="' + sz.h + '" layoutHeightScaleType="' + sz.v + '"' +
+          (sz.h === 'fixed' ? ' width="' + num(node.width) + '"' : '') + (sz.v === 'fixed' ? ' height="' + num(node.height) + '"' : '') +
+          ' name="' + esc(node.name) + ' Layout"/>';
+      }
+      return '<Text' + a + ' name="' + esc(node.name) + '" id="' + id() + '">' + part + styles + runs + '</Text>';
+    }
+
+    // ---- leaf shapes --------------------------------------------------
+    // SVG path data (M L H V C Q Z, absolute or relative) -> contours of anchors with bezier handles.
+    function parsePath(d) {
+      var toks = String(d || '').match(/[MmLlHhVvCcSsQqTtZz]|-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/g) || [];
+      var contours = [], cur = null, i = 0, cmd = '', x = 0, y = 0, sx = 0, sy = 0, lcx = 0, lcy = 0, lastC = false;
+      function n() { return parseFloat(toks[i++]); }
+      function start(px, py) { cur = { pts: [{ x: px, y: py, inx: 0, iny: 0, outx: 0, outy: 0 }], closed: false }; contours.push(cur); }
+      function line(px, py) { cur.pts.push({ x: px, y: py, inx: 0, iny: 0, outx: 0, outy: 0 }); }
+      function cubic(c1x, c1y, c2x, c2y, px, py) {
+        var p0 = cur.pts[cur.pts.length - 1];
+        p0.outx = c1x - p0.x; p0.outy = c1y - p0.y;
+        cur.pts.push({ x: px, y: py, inx: c2x - px, iny: c2y - py, outx: 0, outy: 0 });
+      }
+      while (i < toks.length) {
+        if (/[A-Za-z]/.test(toks[i])) cmd = toks[i++];
+        var rel = cmd === cmd.toLowerCase(), C = cmd.toUpperCase(), dx = rel ? x : 0, dy = rel ? y : 0;
+        if (C === 'M') { x = n() + dx; y = n() + dy; start(x, y); sx = x; sy = y; cmd = rel ? 'l' : 'L'; lastC = false; }
+        else if (C === 'L') { x = n() + dx; y = n() + dy; line(x, y); lastC = false; }
+        else if (C === 'H') { x = n() + dx; line(x, y); lastC = false; }
+        else if (C === 'V') { y = n() + dy; line(x, y); lastC = false; }
+        else if (C === 'C') { var a1 = n() + dx, a2 = n() + dy, a3 = n() + dx, a4 = n() + dy, a5 = n() + dx, a6 = n() + dy; cubic(a1, a2, a3, a4, a5, a6); lcx = a3; lcy = a4; x = a5; y = a6; lastC = true; }
+        else if (C === 'S') { var b3 = n() + dx, b4 = n() + dy, b5 = n() + dx, b6 = n() + dy; var rx = lastC ? 2 * x - lcx : x, ry = lastC ? 2 * y - lcy : y; cubic(rx, ry, b3, b4, b5, b6); lcx = b3; lcy = b4; x = b5; y = b6; lastC = true; }
+        else if (C === 'Q') { var q1 = n() + dx, q2 = n() + dy, q3 = n() + dx, q4 = n() + dy; cubic(x + 2 / 3 * (q1 - x), y + 2 / 3 * (q2 - y), q3 + 2 / 3 * (q1 - q3), q4 + 2 / 3 * (q2 - q4), q3, q4); x = q3; y = q4; lastC = false; }
+        else if (C === 'Z') {
+          cur.closed = true; x = sx; y = sy; lastC = false;
+          // Figma repeats the first point at the end of a closed contour: fold it into the first anchor.
+          var f = cur.pts[0], l = cur.pts[cur.pts.length - 1];
+          if (cur.pts.length > 1 && Math.abs(f.x - l.x) < 1e-3 && Math.abs(f.y - l.y) < 1e-3) { f.inx = l.inx; f.iny = l.iny; cur.pts.pop(); }
+          cmd = '';
+        } else { i++; }
+      }
+      return contours;
+    }
+    function vertexXml(p, cx, cy) {
+      var X = num(p.x - cx), Y = num(p.y - cy);
+      var inD = Math.hypot(p.inx, p.iny), outD = Math.hypot(p.outx, p.outy);
+      if (inD < 1e-3 && outD < 1e-3) return '<StraightVertex x="' + X + '" y="' + Y + '"/>';
+      return '<CubicDetachedVertex x="' + X + '" y="' + Y + '" inRotation="' + num(Math.atan2(p.iny, p.inx)) + '" inDistance="' + num(inD) +
+        '" outRotation="' + num(Math.atan2(p.outy, p.outx)) + '" outDistance="' + num(outD) + '"/>';
+    }
+    function pathsXml(node) {
+      var out = '';
+      (node.vectorPaths || []).forEach(function (vp) {
+        if (vp.windingRule === 'EVENODD') node.__evenOdd = true;
+        parsePath(vp.data).forEach(function (c) {
+          if (c.pts.length < 2) return;
+          var area = 0;
+          c.pts.forEach(function (p, k) { var q = c.pts[(k + 1) % c.pts.length]; area += p.x * q.y - q.x * p.y; });
+          out += '<PointsPath isClosed="' + (c.closed ? 'true' : 'false') + '" isClockwise="' + (area >= 0 ? 'true' : 'false') + '" name="Path">' +
+            c.pts.map(function (p) { return vertexXml(p, node.width / 2, node.height / 2); }).join('') + '</PointsPath>';
+        });
+      });
+      return out;
+    }
+
+    function geometryXml(node) {
+      switch (node.type) {
+        case 'RECTANGLE':
+          return '<Rectangle width="' + num(node.width) + '" height="' + num(node.height) + '"' + radiusAttrs(radii(node)) + ' name="Path"/>';
+        case 'ELLIPSE':
+          return '<Ellipse width="' + num(node.width) + '" height="' + num(node.height) + '" name="Path"/>';
+        case 'LINE':
+          return '<PointsPath name="Path"><StraightVertex x="' + num(-node.width / 2) + '" y="0"/><StraightVertex x="' + num(node.width / 2) + '" y="0"/></PointsPath>';
+        case 'VECTOR': case 'STAR': case 'POLYGON': case 'BOOLEAN_OPERATION': {
+          var xml = pathsXml(node);
+          return xml || null;
+        }
+      }
+      return null;
+    }
+
+    // INSIDE / OUTSIDE strokes on a plain rectangle or ellipse: draw the shape smaller (inside) or larger (outside) by the
+    // stroke width and stroke it centred. The stroke then covers exactly the same pixels as in Figma, with no clipping,
+    // a true centre line for dashes, and no conflict with shadows. Falls back to the clipped 2x stroke when a translucent
+    // stroke would sit on a fill (the fill would show a gap), or when shadows/blur are involved.
+    function tightStroke(node) {
+      if (options.exactStrokes === false) return null;
+      if (node.type !== 'RECTANGLE' && node.type !== 'ELLIPSE') return null;
+      var strokes = visiblePaints(node.strokes), sw = node.strokeWeight;
+      if (!strokes.length || !(sw > 0)) return null;
+      var al = node.strokeAlign;
+      if (al !== 'INSIDE' && al !== 'OUTSIDE') return null;
+      if ((node.effects || []).some(function (e) { return e.visible !== false && (e.type === 'DROP_SHADOW' || e.type === 'INNER_SHADOW' || e.type === 'LAYER_BLUR'); })) return null;
+      var allFills = visiblePaints(node.fills);
+      if (allFills.some(function (p) { return p.type === 'IMAGE'; })) return null;
+      function solid(p) {
+        if (p.opacity !== undefined && p.opacity < 0.99) return false;
+        if (p.type === 'SOLID') return p.color.a === undefined || p.color.a >= 0.99;
+        return (p.gradientStops || []).every(function (st) { return st.color.a === undefined || st.color.a >= 0.99; });
+      }
+      if (allFills.length && !strokes.every(solid)) return null;
+      var d = al === 'INSIDE' ? -sw : sw;
+      if (node.width + d <= 0 || node.height + d <= 0) return null;
+      return { d: d };
+    }
+    function adjustedGeometry(node, d) {
+      var g = Object.assign({}, node, { width: node.width + d, height: node.height + d });
+      var r = radii(node).map(function (v) { return v > 0 ? Math.max(0, v + d / 2) : 0; });
+      g.topLeftRadius = r[0]; g.topRightRadius = r[1]; g.bottomLeftRadius = r[2]; g.bottomRightRadius = r[3];
+      return g;
+    }
+
+    function shapeXml(node, ctx) {
+      var tight = tightStroke(node);
+      if (tight && ctx.inLayout) {
+        // In a layout flow the shape must still occupy its Figma size, so it sits in a fixed slot of that size.
+        var plS = place(node), sidS = id(), sz0 = ctx.sizing;
+        var inner = shapeXml(Object.assign({}, node, { relativeTransform: null, rotation: 0, x: 0, y: 0 }), { inLayout: false });
+        inner = inner.replace(/ x="[^"]*" y="[^"]*"/, ' x="' + num(node.width / 2) + '" y="' + num(node.height / 2) + '"');
+        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(plS) + ' styleId="' + sidS + '" clip="false" name="' + esc(node.name) + ' Slot" id="' + id() + '">' +
+          '<LayoutComponentStyle layoutWidthScaleType="' + sz0.h + '" layoutHeightScaleType="' + sz0.v + '" name="' + esc(node.name) + ' Slot Style" id="' + sidS + '"/>' +
+          (plS.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') + '<Node name="Art">' + inner + '</Node></LayoutComponent>';
+      }
+      var geo = geometryXml(tight ? adjustedGeometry(node, tight.d) : node);
+      if (!geo) { warn(node, 'unsupported node type skipped'); return ''; }
+      if (findImage(node)) warn(node, 'image fills on vector shapes are not converted');
+      var sid = id();
+      var pl = place(node);
+      var paints = paintsXml(node, node.width, node.height, { lineOnly: node.type === 'LINE', centered: true, forceCenter: !!tight });
+      if (!paints.xml) { warn(node, 'has no visible fill or stroke; skipped'); return ''; }
+      var a = '';
+      if (!ctx.inLayout) a += ' x="' + num(pl.cx) + '" y="' + num(pl.cy) + '"';
+      a += rotAttr(pl) + blendAttr(node);
+      if (node.opacity !== undefined && node.opacity < 1) a += ' opacity="' + num(node.opacity) + '"';
+      var part = '';
+      if (ctx.inLayout) {
+        var sz = ctx.sizing;
+        part = '<LayoutParticipant layoutWidthScaleType="' + sz.h + '" layoutHeightScaleType="' + sz.v + '"' +
+          (sz.h === 'fixed' ? ' width="' + num(node.width) + '"' : '') + (sz.v === 'fixed' ? ' height="' + num(node.height) + '"' : '') +
+          ' name="' + esc(node.name) + ' Layout"/>';
+      }
+      // An inside stroke is a 2x stroke clipped to the shape's own outline.
+      var clip = paints.clip ? '<ClippingShape sourceId="' + sid + '" name="Inside Stroke Clip"/>' : '';
+      return '<Shape' + a + ' name="' + esc(node.name) + '" id="' + sid + '">' + part + geo + paints.xml + clip + '</Shape>';
+    }
+
+    // ---- containers ---------------------------------------------------
+    var CONTAINERS = { FRAME: 1, GROUP: 1, COMPONENT: 1, INSTANCE: 1, COMPONENT_SET: 1 };
+
+    function childrenXml(node, parentIsAL) {
+      var list = (node.children || []).filter(function (c) { return c.visible !== false; });
+      // Figma lists bottom-to-top and Rive's first sibling draws on top, so
+      // free-placed children are reversed. Inside auto layout the declaration
+      // order is also the flow order, so it is kept as designed.
+      if (!parentIsAL) list = list.slice().reverse();
+      return list.map(function (c) { return nodeXml(c, node, parentIsAL); }).join('');
+    }
+
+    function nodeXml(node, parent, parentIsAL) {
+      var inFlow = parentIsAL && node.layoutPositioning !== 'ABSOLUTE';
+      var sz = sizing(node, parent && parent.layoutMode);
+      if (CONTAINERS[node.type]) return containerXml(node, parent, parentIsAL, inFlow, sz);
+      if (node.type === 'TEXT') return textXml(node, { inLayout: inFlow, sizing: sz });
+      if (node.type === 'SLICE' || node.type === 'STICKY' || node.type === 'SECTION') { warn(node, 'unsupported node type skipped'); return ''; }
+      // Rectangles and ellipses with an image fill become a clipping box holding the image.
+      if ((node.type === 'RECTANGLE' || node.type === 'ELLIPSE') && findImage(node)) {
+        var syn = Object.assign({}, node, { type: 'FRAME', layoutMode: 'NONE', clipsContent: true, children: [] });
+        if (node.type === 'ELLIPSE') {
+          var r = Math.min(node.width, node.height) / 2;
+          syn.cornerRadius = r; delete syn.topLeftRadius; delete syn.topRightRadius; delete syn.bottomLeftRadius; delete syn.bottomRightRadius;
+          if (Math.abs(node.width - node.height) > 0.5) warn(node, 'image in a non-circular ellipse is clipped to a rounded box');
+        }
+        return containerXml(syn, parent, parentIsAL, inFlow, sz);
+      }
+      if (parentIsAL && !inFlow) {
+        // An absolutely positioned leaf inside auto layout needs its own pinned box.
+        var pl = place(node), styleId = id();
+        var plain = Object.assign({}, node, { relativeTransform: null, rotation: 0, x: 0, y: 0 });
+        var inner = shapeXml(plain, { inLayout: false });
+        inner = inner.replace(/ x="[^"]*" y="[^"]*"/, ' x="' + num(node.width / 2) + '" y="' + num(node.height / 2) + '"');
+        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(pl) + ' styleId="' + styleId + '" name="' + esc(node.name) + ' Pin" id="' + id() + '">' +
+          styleXml({}, { styleId: styleId, name: node.name + ' Pin', sizing: { h: 'fixed', v: 'fixed' }, pinned: { x: pl.x, y: pl.y } }) +
+          (pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
+          '<Node name="Art">' + inner + '</Node></LayoutComponent>';
+      }
+      return shapeXml(node, { inLayout: inFlow, sizing: sz });
+    }
+
+    function containerXml(node, parent, parentIsAL, inFlow, sz) {
+      if (node.type === 'INSTANCE') detached++;
+      var al = hasAutoLayout(node);
+      var w = node.width, h = node.height;
+      var pl = place(node);
+      var img = findImage(node);
+      var hasDrop = (node.effects || []).some(function (e) { return e.visible !== false && e.type === 'DROP_SHADOW'; });
+      var insideStroke = visiblePaints(node.strokes).length && node.strokeWeight > 0 && node.strokeAlign === 'INSIDE';
+      // A clipping box also clips its own shadow. So when a frame clips AND casts a shadow, the shadow is drawn by a
+      // wrapper that does not clip, and the frame itself (clip on) sits inside it.
+      var wrapShadow = hasDrop && (node.clipsContent || insideStroke) && !!(visiblePaints(node.fills).length || visiblePaints(node.strokes).length || img);
+      var paints = paintsXml(node, w, h, { hasImage: !!img, hasChildren: (node.children || []).length > 0, splitShadow: wrapShadow, splitInner: options.innerShadowOverChildren !== false && (node.children || []).some(function (c) { return c.visible !== false; }) });
+      var o = { styleId: id(), name: node.name, sizing: parentIsAL && inFlow ? sz : { h: 'fixed', v: 'fixed' } };
+      // A frame without auto layout has free-placed children that Rive cannot
+      // measure, so "hug" would collapse it to nothing. Keep the drawn size.
+      if (!al && o.sizing.h === 'hug') o.sizing = { h: 'fixed', v: o.sizing.v };
+      if (!al && o.sizing.v === 'hug') o.sizing = { h: o.sizing.h, v: 'fixed' };
+      // A layout box joins its parent's flow, so anything free-placed (absolute in
+      // auto layout, or inside a plain frame) is pinned to its position.
+      var pinned = (parent && ((parentIsAL && !inFlow) || !parentIsAL)) ? { x: pl.x, y: pl.y } : null;
+      var clip = wrapShadow ? true : ((node.clipsContent && !paints.shadowed) || paints.clip);
+      if (!wrapShadow && node.clipsContent && paints.shadowed) warn(node, 'clip content is turned off so its shadow can show');
+      if (wrapShadow && !node.clipsContent) warn(node, 'clip content is on for this frame so its inside stroke can be drawn (its shadow still shows)');
+      var inner = al ? childrenXml(node, true) : '<Node name="Content">' + childrenXml(node, false) + '</Node>';
+      var imgXml = img ? imageWrapper(node, img, w, h) : '';
+      // In Figma an inner shadow also shades the layers inside the frame, so it is drawn on an overlay ABOVE the contents
+      // (first sibling = on top), clipped to the frame's rounded shape.
+      var overlay = '';
+      if (paints.innerXml) {
+        var osid = id();
+        overlay = '<LayoutComponent width="' + num(w) + '" height="' + num(h) + '" styleId="' + osid + '" clip="true" name="Inner Shadow" id="' + id() + '">' +
+          '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="0" positionLeftUnitsValue="points" positionTop="0" positionTopUnitsValue="points"' +
+          radiusAttrs(radii(node)) + ' name="Inner Shadow Style" id="' + osid + '"/>' + paints.innerXml + '</LayoutComponent>';
+      }
+      var origin = pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '';
+      var opac = (node.opacity !== undefined && node.opacity < 1) ? ' opacity="' + num(node.opacity) + '"' : '';
+
+      if (!wrapShadow) {
+        o.pinned = pinned;
+        var attrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + blendAttr(node) + ' styleId="' + o.styleId + '" clip="' + (clip ? 'true' : 'false') + '"' + opac;
+        return '<LayoutComponent' + attrs + ' name="' + esc(node.name) + '" id="' + id() + '">' +
+          styleXml(node, o) + origin + paints.xml + overlay + inner + imgXml + '</LayoutComponent>';
+      }
+
+      // wrapper (shadow, position, rotation, opacity, outer sizing) + inner frame (clip, fills, strokes, children, layout)
+      var wrapStyleId = id(), innerStyleId = o.styleId;
+      var radiusNode = {}; ['cornerRadius', 'topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius'].forEach(function (k) { if (node[k] !== undefined) radiusNode[k] = node[k]; });
+      var outer = { styleId: wrapStyleId, name: node.name + ' Shadow', sizing: o.sizing, pinned: pinned };
+      var innerSizing = { h: o.sizing.h === 'hug' ? 'hug' : 'fill', v: o.sizing.v === 'hug' ? 'hug' : 'fill' };
+      var innerO = { styleId: innerStyleId, name: node.name, sizing: innerSizing };
+      var wrapAttrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + blendAttr(node) + ' styleId="' + wrapStyleId + '" clip="false"' + opac;
+      var innerAttrs = ' width="' + num(w) + '" height="' + num(h) + '" styleId="' + innerStyleId + '" clip="true"';
+      return '<LayoutComponent' + wrapAttrs + ' name="' + esc(node.name) + ' Shadow" id="' + id() + '">' +
+        styleXml(radiusNode, outer) + origin + paints.shadowXml +
+        '<LayoutComponent' + innerAttrs + ' name="' + esc(node.name) + '" id="' + id() + '">' +
+        styleXml(node, innerO) + paints.xml + overlay + inner + imgXml + '</LayoutComponent></LayoutComponent>';
+    }
+
+    var componentAssets = [];
+    function artboardXml(node, isComponent) {
+      var styleId = id();
+      var smId = id(), layerId = id();
+      var style, bg, inner;
+      if (frameAsLayout) {
+        // The frame stays a layout box inside a plain artboard of the same size.
+        style = styleXml({}, { styleId: styleId, name: 'Artboard', sizing: null, isArtboard: true });
+        bg = '';
+        var top = Object.assign({}, node, { relativeTransform: null, rotation: 0 });
+        inner = containerXml(top, null, false, false, null);
+      } else {
+        // The frame's own properties become the artboard's.
+        var al = hasAutoLayout(node), img = findImage(node);
+        style = styleXml(node, { styleId: styleId, name: 'Artboard', sizing: null, isArtboard: true });
+        bg = plainFills(node, node.width, node.height);
+        inner = (al ? childrenXml(node, true) : childrenXml(node, false)) + (img ? imageWrapper(node, img, node.width, node.height) : '');
+      }
+      var sm = '<StateMachine name="State Machine 1" id="' + smId + '"><StateMachineLayer name="Layer 1" id="' + layerId + '">' +
+        '<AnyState x="200" y="-120"/><ExitState x="400" y="-120"/><EntryState/></StateMachineLayer></StateMachine>';
+      var abId = id();
+      if (isComponent) componentAssets.push({ artboardId: abId, name: String(node.name).trim() });
+      return '<Artboard' + (isComponent ? ' isComponent="true"' : '') + ' defaultStateMachineId="' + smId + '" width="' + num(node.width) + '" height="' + num(node.height) +
+        '" styleId="' + styleId + '" clip="' + (node.clipsContent === false ? 'false' : 'true') + '" name="' + esc(String(node.name).trim()) + '" id="' + abId + '">' +
+        style + bg + inner + sm + '</Artboard>';
+    }
+
+    // ---- assemble -----------------------------------------------------
+    var frames = (snapshot.nodes || []).filter(function (n) { return CONTAINERS[n.type]; });
+    if (!frames.length) warnings.push('Select at least one frame, component or group.');
+    var compNodes = componentArtboards ? (snapshot.components || []).filter(function (c) {
+      return !frames.some(function (f) { return f.id === c.id; });
+    }) : [];
+    // Side by side on the editor's stage, so they do not overlap when opened.
+    var stageX = 0;
+    function onStage(node, isComponent) {
+      var xml = artboardXml(node, isComponent).replace('<Artboard', '<Artboard x="' + stageX + '" y="0"');
+      stageX += node.width + 120;
+      return xml;
+    }
+    var artboards = frames.map(function (f) { return onStage(f, f.type === 'COMPONENT' && componentArtboards); })
+      .concat(compNodes.map(function (c) { return onStage(c, true); })).join('\n    ');
+    if (detached) notes.push(detached + ' component instance(s) were detached and imported as plain layout.');
+    if (compNodes.length) notes.push(compNodes.length + ' main component(s) added as Rive component artboards: ' + compNodes.map(function (c) { return c.name; }).join(', '));
+    var fontList = Object.keys(fonts).map(function (k) { return fonts[k]; });
+    var fontXml = fontList.map(function (f) {
+      return '<FontAsset file="' + esc(f.file) + '" name="' + esc(f.family + ' ' + f.style) + '" id="' + f.assetId + '"/>';
+    }).join('\n    ');
+    var imageList = Object.keys(imageAssets).map(function (k) { return imageAssets[k]; });
+    var imageXml = imageList.map(function (im) {
+      return '<ImageAsset file="' + esc(im.file) + '" name="' + esc('image ' + im.hash.slice(0, 8)) + '" id="' + im.id + '"/>';
+    }).join('\n    ');
+    var compXml = componentAssets.map(function (c) {
+      return '<ComponentAsset artboardId="' + c.artboardId + '" name="' + esc(c.name) + '"/>';
+    }).join('\n    ');
+
+    var rml = '<Rive version="1" kind="fragment">\n    ' + artboards + '\n    ' + fontXml + '\n    ' + imageXml + '\n    ' + compXml + '\n</Rive>\n';
+    var yaml = 'name: ' + (options.name || 'figma-import').replace(/[^A-Za-z0-9 _-]/g, '') + '\n';
+    return { rml: rml, yaml: yaml, fonts: fontList, images: imageList, warnings: warnings, notes: notes };
+  }
+
+  return { convert: convert };
+});
+</script>
+<script>/* Design analysis: look at a Figma snapshot BEFORE importing and say what will break,
+ * what will look different in Rive, and how to fix it in Figma.
+ *
+ * Pure function over the same plain-JSON snapshot convert.js uses, so it runs in the
+ * plugin UI and in Node. It mirrors what convert.js can and cannot do: when you add a
+ * feature to the converter, retire the matching rule here.
+ *
+ *   analyze(snapshot, { frameMode, componentArtboards }) ->
+ *     { verdict, score, counts:{error,warning,info}, issues:[...], fonts:[...], stats:{...} }
+ *
+ * issue = { id, severity: 'error'|'warning'|'info', title, why, fix, count, nodes:[{id,name}] }
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.FigmaAnalyze = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var CONTAINERS = { FRAME: 1, GROUP: 1, COMPONENT: 1, INSTANCE: 1, COMPONENT_SET: 1 };
+  var LEAVES = { RECTANGLE: 1, ELLIPSE: 1, LINE: 1, VECTOR: 1, STAR: 1, POLYGON: 1, BOOLEAN_OPERATION: 1, TEXT: 1 };
+  var DEFAULT_NAME = /^(Frame|Group|Rectangle|Ellipse|Vector|Line|Text|Component|Instance|Polygon|Star|Image|Boolean|Union|Subtract|Intersect|Exclude|Section)( ?\d+)?$/;
+  var BLEND_OK = { LINEAR_DODGE: 1, SCREEN: 1, MULTIPLY: 1, OVERLAY: 1, DARKEN: 1, LIGHTEN: 1, COLOR_DODGE: 1, COLOR_BURN: 1, HARD_LIGHT: 1, SOFT_LIGHT: 1, DIFFERENCE: 1, EXCLUSION: 1, HUE: 1, SATURATION: 1, COLOR: 1, LUMINOSITY: 1 };
+  var MAX_NODES_PER_ARTBOARD = 1500;
+  var MAX_DEPTH = 12;
+  var BIG_IMAGE_BYTES = 1500000;
+  var BIG_ARTBOARD = 4096;
+
+  function analyze(snapshot, options) {
+    options = options || {};
+    var issues = {};
+    var order = [];
+    var stats = { nodes: 0, frames: 0, texts: 0, images: 0, autoLayoutFrames: 0, hidden: 0, instances: 0 };
+    var fontSet = {};
+
+    var QUIET_FOR_ILLUSTRATIONS = { 'default-names': 1, group: 1, fractional: 1, deep: 1, 'no-autolayout': 1, empty: 1, 'clip-shadow': 1 };
+    function add(id, severity, title, why, fix, node) {
+      if (typeof illustration !== 'undefined' && illustration && QUIET_FOR_ILLUSTRATIONS[id]) return;
+      var it = issues[id];
+      if (!it) { it = issues[id] = { id: id, severity: severity, title: title, why: why, fix: fix, count: 0, nodes: [] }; order.push(id); }
+      it.count++;
+      if (node && it.nodes.length < 300) it.nodes.push({ id: node.id, name: node.name });
+    }
+    function visible(list) { return (list || []).filter(function (p) { return p.visible !== false && p.opacity !== 0; }); }
+    function hasAL(n) { return n.layoutMode === 'HORIZONTAL' || n.layoutMode === 'VERTICAL'; }
+    function isFlipped(n) {
+      var m = n.relativeTransform; if (!m) return false;
+      return (m[0][0] * m[1][1] - m[0][1] * m[1][0]) < 0;
+    }
+    function hasCurves(n) {
+      return (n.vectorPaths || []).some(function (vp) { return /[CcQqSsTtAa]/.test(vp.data || ''); });
+    }
+    function surfaceless(n) {
+      return !visible(n.fills).length && !(visible(n.strokes).length && n.strokeWeight);
+    }
+
+    function visit(node, parent, depth, board) {
+      if (node.visible === false) { stats.hidden++; add('hidden', 'info', 'Hidden layers are skipped', 'Layers that are switched off in Figma are not imported.', 'Nothing to do. Delete them if they are leftovers so the file stays clean.', node); return; }
+      stats.nodes++; board.count++;
+      if (depth > board.depth) board.depth = depth;
+      var t = node.type;
+
+      // ---- things the converter does not handle at all ---------------
+      if (!CONTAINERS[t] && !LEAVES[t]) {
+        add('unsupported-type', 'error', 'Unsupported layer type (' + t + ')', t + ' layers are skipped, so they will be missing in Rive.', 'Replace them with a frame, shape or text layer, or recreate them in Rive.', node);
+        return;
+      }
+      if (node.isMask) {
+        add('mask', 'error', 'Mask layers', 'Figma masks are not converted. The masked content will show unmasked.', 'Use a frame with "Clip content" and a corner radius instead of a mask, or put the image in a rounded rectangle as an image fill.', node);
+      }
+      if (node.blendMode && node.blendMode !== 'NORMAL' && node.blendMode !== 'PASS_THROUGH' && !BLEND_OK[node.blendMode]) {
+        add('blend', 'warning', 'Blend modes with no Rive equivalent', 'The ' + node.blendMode + ' blend mode does not exist in Rive, so the layer blends normally.', 'Flatten the effect into the colours, or pick the closest mode (for example Multiply or Screen) in Figma.', node);
+      }
+      if (isFlipped(node)) {
+        add('flipped', 'warning', 'Flipped (mirrored) layers', 'Mirrored layers import un-mirrored.', 'In Figma, flatten the flip (Object → Flatten / Outline stroke) or redraw it mirrored; for icons, export a mirrored copy.', node);
+      }
+      var name = node.name || '';
+      if (DEFAULT_NAME.test(name)) add('default-names', 'info', 'Layers with default names', 'Layer names become names in the Rive hierarchy and are how scripts and state machines find things.', 'Rename the layers you plan to animate or script (for example "Avatar", "Submit button").', node);
+
+      // ---- layout ----------------------------------------------------
+      if (CONTAINERS[t]) {
+        stats.frames++;
+        if (t === 'INSTANCE') stats.instances++;
+        if (hasAL(node)) stats.autoLayoutFrames++;
+        var kids = (node.children || []).filter(function (c) { return c.visible !== false; });
+        if (t === 'COMPONENT_SET') {
+          add('component-set', 'warning', 'Component sets (variants)', 'A component set imports as one artboard with every variant stacked, which is rarely what you want.', 'Select one variant at a time, or detach the variants you need. State changes are better built as a Rive state machine.', node);
+        }
+        if (t !== 'GROUP' && !hasAL(node) && kids.length >= 2 && depth > 0) {
+          add('no-autolayout', 'warning', 'Frames without auto layout', 'Their children are placed by position, so they import as fixed boxes and will not reflow when the content or size changes.', 'Select the frame and press Shift+A to add auto layout, then set direction, gap and padding. Ignore this for illustrations that should stay fixed.', node);
+        }
+        if (t === 'GROUP') {
+          add('group', 'info', 'Groups', 'Groups cannot hold layout, so they import as fixed containers.', 'Where the content should flow or resize, convert the group to a frame (Cmd+Opt+G) and add auto layout.', node);
+        }
+        if (kids.length === 0 && surfaceless(node) && t !== 'INSTANCE') {
+          add('empty', 'info', 'Empty frames', 'They draw nothing but still become layout boxes.', 'Delete them, unless they are spacers you need.', node);
+        }
+        if (t === 'INSTANCE') {
+          add('instance', 'info', 'Component instances are detached', 'Instances import as ordinary layout; they stay linked to nothing, so editing the component later will not update them in Rive.', options.componentArtboards === false ? 'Turn on "Components" to also create Rive component artboards.' : 'The main component is also added as a Rive component artboard you can reuse.', node);
+        }
+        if (hasAL(node)) {
+          (node.children || []).forEach(function (c) {
+            if (c.visible !== false && c.relativeTransform && !isFlipped(c) && Math.abs(Math.atan2(c.relativeTransform[1][0], c.relativeTransform[0][0])) > 0.01 && c.layoutPositioning !== 'ABSOLUTE') {
+              add('rotated-in-al', 'warning', 'Rotated layers inside auto layout', 'Figma lays rotated layers out by their rotated bounding box; Rive lays them out unrotated and then rotates, so neighbours can shift.', 'Wrap the rotated layer in its own fixed-size frame, or set it to "Ignore auto layout" (absolute position).', c);
+            }
+          });
+        }
+      }
+
+      // ---- text ------------------------------------------------------
+      if (t === 'TEXT') {
+        stats.texts++;
+        if (node.hasMissingFont) add('missing-font', 'error', 'Missing fonts', 'Figma is using a fallback font here, so the real font name is unknown.', 'Install the font or choose another one in Figma, then analyse again.', node);
+        (node.segments && node.segments.length ? node.segments : [{ fontName: node.fontName }]).forEach(function (s) {
+          if (s.fontName) fontSet[s.fontName.family + '|' + s.fontName.style] = s.fontName;
+        });
+        if (node.textAlignHorizontal === 'JUSTIFIED') add('justified', 'info', 'Justified text', 'Justified text is imported left-aligned.', 'Use left, centre or right alignment, or accept the difference.', node);
+        if ((node.effects || []).some(function (e) { return e.visible !== false && (e.type === 'DROP_SHADOW' || e.type === 'INNER_SHADOW' || e.type === 'LAYER_BLUR'); })) {
+          add('text-effect', 'warning', 'Shadows or blur on text', 'Effects on text are not converted; the text imports without them.', 'Put a blurred copy of the text underneath, or add the effect in Rive.', node);
+        }
+        if (node.textAutoResize === 'NONE' && node.height < (node.fontSize || 14) * 1.2) {
+          add('tight-text', 'info', 'Text boxes that may clip', 'A fixed-size text box shorter than one line of text can cut the text off when a different font is used.', 'Set the text to "Auto height" or "Auto width".', node);
+        }
+      }
+
+      // ---- paint ------------------------------------------------------
+      visible((node.fills || []).concat(node.strokes || [])).forEach(function (p) {
+        if (p.blendMode && p.blendMode !== 'NORMAL' && p.blendMode !== 'PASS_THROUGH' && !BLEND_OK[p.blendMode]) {
+          add('paint-blend', 'warning', 'Fill or stroke blend modes with no Rive equivalent', 'The ' + p.blendMode + ' blend mode on a fill or stroke does not exist in Rive, so it is drawn normally.', 'Pick the closest mode (for example Multiply or Screen), or bake the effect into the colour.', node);
+        }
+      });
+      var fills = visible(node.fills);
+      fills.forEach(function (p) {
+        if (/^GRADIENT_(ANGULAR|DIAMOND)$/.test(p.type)) {
+          add('gradient', 'warning', 'Angular and diamond gradients', 'Only linear and radial gradients are converted. These import as a solid colour (the first stop).', 'Use a linear or radial gradient, or recreate the gradient in Rive after import.', node);
+        }
+        if (p.type === 'IMAGE') {
+          stats.images++;
+          if (p.scaleMode === 'CROP' || p.scaleMode === 'TILE') add('image-mode', 'warning', 'Image crop and tile modes', 'These modes are shown as "fill", so the crop or tiling is lost.', 'Set the image to Fill or Fit, or crop the image file itself first.', node);
+          if (!(node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || CONTAINERS[node.type])) {
+            add('image-on-vector', 'warning', 'Image fills on vector shapes', 'Images only import on rectangles, ellipses and frames.', 'Put the image in a rectangle or frame and use the vector as a mask (clip) there, or round the rectangle.', node);
+          }
+          var info = snapshot.images && snapshot.images[p.imageHash];
+          if (info && info.size > BIG_IMAGE_BYTES) {
+            add('big-image', 'warning', 'Large images', 'Images are embedded at full size (' + (Math.round(info.size / 1000) / 1000).toFixed(1) + ' MB here), which makes the Rive file heavy and slow to load.', 'Export the image at about 2× its display size and compress it (PNG/JPG/WebP), then replace it in Figma.', node);
+          }
+          if (node.type === 'ELLIPSE' && Math.abs(node.width - node.height) > 0.5) {
+            add('image-ellipse', 'info', 'Images in non-circular ellipses', 'They are clipped to a rounded box, not a true ellipse.', 'Use a circle (equal width and height) or a rectangle with corner radius.', node);
+          }
+        }
+      });
+      if (visible(node.fills).filter(function (p) { return p.type === 'IMAGE'; }).length && visible(node.strokes).length && (node.strokeAlign === 'INSIDE')) {
+        add('image-inside-stroke', 'info', 'Inside strokes over images', 'The image covers the inside half of the stroke.', 'Use a centre stroke, or put the stroke on a separate frame above the image.', node);
+      }
+      if (node.strokeMixed) {
+        add('mixed-stroke', 'warning', 'Different stroke widths per side', 'Per-side stroke widths are not converted.', 'Use one stroke width, or draw the thick sides as separate rectangles or lines.', node);
+      }
+      // ---- effects ----------------------------------------------------
+      (node.effects || []).forEach(function (e) {
+        if (e.visible === false) return;
+        if (e.type === 'BACKGROUND_BLUR') add('bg-blur', 'warning', 'Background blur (frosted glass)', 'Background blur is not supported in Rive.', 'Fake it with a semi-transparent fill, or add a blurred copy of the background image.', node);
+        if ((e.type === 'DROP_SHADOW' || e.type === 'INNER_SHADOW') && e.spread) add('spread', 'info', 'Shadows with spread', 'Shadow spread is ignored; the shadow imports at the layer\'s own size.', 'Set spread to 0 and adjust blur and offset, or use a larger shape under the layer.', node);
+        if (e.type === 'LAYER_BLUR' && CONTAINERS[node.type] && (node.children || []).length) {
+          add('blur-container', 'warning', 'Layer blur on frames with content', 'Only the frame\'s own fill is blurred, not what is inside it.', 'Apply the blur to the individual layers, or flatten the group first.', node);
+        }
+      });
+      var hasShadow = (node.effects || []).some(function (e) { return e.visible !== false && e.type === 'DROP_SHADOW'; });
+      if (hasShadow && !CONTAINERS[node.type] && (node.strokeAlign === 'INSIDE' || node.strokeAlign === 'OUTSIDE') && visible(node.strokes).length) {
+        add('stroke-shadow', 'info', 'Inside/outside strokes with a shadow', 'These cannot be combined (the clip would cut the shadow), so the stroke is drawn centred.', 'Use a centre stroke, or put the shadow on a separate rectangle underneath.', node);
+      }
+
+      // ---- shapes -----------------------------------------------------
+      var w = node.width, h = node.height;
+      if (CONTAINERS[node.type] || LEAVES[node.type]) {
+        var frac = function (v) { return Math.abs(v - Math.round(v * 2) / 2) > 0.01; };
+        if (frac(w) || frac(h)) add('fractional', 'info', 'Fractional sizes', 'Sizes like ' + (Math.round(w * 1000) / 1000) + ' come from scaled or fill-resized layers and can cause blurry edges.', 'Round sizes to whole pixels (Figma: select layers → Shift+Alt+drag, or type clean numbers).', node);
+      }
+
+      (node.children || []).forEach(function (c) { visit(c, node, depth + 1, board); });
+    }
+
+    // An illustration (mostly shapes, little text, no real layout) is judged differently from an app screen.
+    var counts0 = { all: 0, text: 0, shape: 0, frames: 0, al: 0 };
+    (function pre(list) { (list || []).forEach(function (n) {
+      if (n.visible === false) return; counts0.all++;
+      if (n.type === 'TEXT') counts0.text++;
+      else if (/^(RECTANGLE|ELLIPSE|VECTOR|STAR|POLYGON|LINE|BOOLEAN_OPERATION)$/.test(n.type)) counts0.shape++;
+      if (CONTAINERS[n.type]) { counts0.frames++; if (hasAL(n)) counts0.al++; }
+      pre(n.children);
+    }); })(snapshot.nodes);
+    var illustration = counts0.all > 8 && counts0.text / counts0.all < 0.15 && counts0.shape / counts0.all > 0.3;
+    var top = (snapshot.nodes || []);
+    var frames = top.filter(function (n) { return CONTAINERS[n.type]; });
+    if (!top.length) add('nothing', 'error', 'Nothing selected', 'Select one or more frames to analyse.', 'Click a frame in Figma, then run the analysis again.', null);
+    else if (!frames.length) add('no-frame', 'error', 'No frame selected', 'Only frames, components and groups can become artboards.', 'Wrap your layers in a frame (Cmd+Opt+G), then select the frame.', top[0]);
+
+    var names = {};
+    frames.forEach(function (f) {
+      var board = { count: 0, depth: 0 };
+      visit(f, null, 0, board);
+      if (board.count > MAX_NODES_PER_ARTBOARD) add('too-many', 'warning', 'Very large frames', f.name + ' has ' + board.count + ' layers; the Rive file will be slow to build and open.', 'Split it into several frames, or flatten decorative layers into images.', f);
+      if (board.depth > MAX_DEPTH) add('deep', 'info', 'Deeply nested layers', f.name + ' nests ' + board.depth + ' levels deep, which makes the layout hard to maintain.', 'Remove wrapper frames that only hold one child.', f);
+      if (f.width > BIG_ARTBOARD || f.height > BIG_ARTBOARD) add('big-artboard', 'warning', 'Very large artboards', f.name + ' is ' + Math.round(f.width) + '×' + Math.round(f.height) + ' px.', 'Design at the size you will actually show it; Rive scales vectors for you.', f);
+      if (names[f.name]) add('dup-name', 'warning', 'Frames with the same name', 'Rive artboard names should be unique so they can be loaded by name.', 'Rename the frames.', f);
+      names[f.name] = true;
+    });
+
+    // ---- fonts to supply --------------------------------------------
+    var fonts = Object.keys(fontSet).map(function (k) {
+      var f = fontSet[k], safe = function (s) { return String(s).replace(/[^A-Za-z0-9]+/g, ''); };
+      return { family: f.family, style: f.style, file: safe(f.family) + '-' + safe(f.style) + '.ttf' };
+    });
+    if (fonts.length) {
+      add('fonts', 'info', fonts.length + ' font file' + (fonts.length > 1 ? 's' : '') + ' to supply',
+        'Rive does not read fonts from Figma, so each font and weight needs a .ttf file: ' + fonts.map(function (f) { return f.file; }).join(', ') + '.',
+        'Put the files in the helper\'s Fonts Library folder (or the project\'s fonts folder) using exactly these names. Without them a stand-in font is used.', null);
+    }
+
+    if (illustration) add('illustration', 'info', 'Treated as an illustration', 'This design is mostly shapes with little text and no real layout, so layout and naming tips are left out of the score.', 'Nothing to do. Keep layers grouped by part (for example one group per icon) if you plan to animate them.', null);
+    var list = order.map(function (id) { return issues[id]; });
+    var rank = { error: 0, warning: 1, info: 2 };
+    list.sort(function (a, b) { return rank[a.severity] - rank[b.severity] || b.count - a.count; });
+    var counts = { error: 0, warning: 0, info: 0 };
+    list.forEach(function (i) { counts[i.severity]++; });
+    var score = Math.max(0, 100 - counts.error * 25 - counts.warning * 8 - (illustration ? 0 : counts.info));
+    var verdict = counts.error ? 'Fix these before importing' : counts.warning ? 'Will import, with differences' : 'Ready to import';
+    stats.kind = illustration ? 'illustration' : 'ui';
+    return { verdict: verdict, score: score, counts: counts, issues: list, fonts: fonts, stats: stats };
+  }
+
+  return { analyze: analyze };
+});
+</script>
+<script>// Minimal store-only (no compression) ZIP writer, so the plugin needs no libraries.
+function makeZip(files) {
+  var table = (function () { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function crc32(b) { var c = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) c = table[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  var enc = new TextEncoder(), parts = [], central = [], offset = 0;
+  function u16(v) { return [v & 255, (v >>> 8) & 255]; }
+  function u32(v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255]; }
+  files.forEach(function (f) {
+    var name = enc.encode(f.path), crc = crc32(f.data), size = f.data.length;
+    var local = [].concat(u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21), u32(crc), u32(size), u32(size), u16(name.length), u16(0));
+    parts.push(new Uint8Array(local), name, f.data);
+    central.push({ name: name, crc: crc, size: size, offset: offset });
+    offset += local.length + name.length + size;
+  });
+  var cdStart = offset, cdSize = 0;
+  central.forEach(function (c) {
+    var h = [].concat(u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21), u32(c.crc), u32(c.size), u32(c.size), u16(c.name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(c.offset));
+    parts.push(new Uint8Array(h), c.name); cdSize += h.length + c.name.length;
+  });
+  parts.push(new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0), u16(central.length), u16(central.length), u32(cdSize), u32(cdStart), u16(0))));
+  var total = parts.reduce(function (n, p) { return n + p.length; }, 0), out = new Uint8Array(total), pos = 0;
+  parts.forEach(function (p) { out.set(p, pos); pos += p.length; });
+  return out;
+}
+if (typeof module === 'object' && module.exports) module.exports = { makeZip: makeZip };
+</script>
+<script>
+var HELPER = 'http://localhost:4747';
+var projEl = document.getElementById('projname'), detectedEl = document.getElementById('detected'), nameEdited = false;
+var out = document.getElementById('out'), tokenEl = document.getElementById('token'), linkEl = document.getElementById('filelink'), optArt = document.getElementById('optArtboard'), optComp = document.getElementById('optComp'), optInner = document.getElementById('optInner'), mode = 'send', last = null;
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*');
+function ask(m) { mode = m; parent.postMessage({ pluginMessage: { type: 'convert', components: optComp.checked } }, '*'); }
+// The project / folder / Rive file is named after the first selected frame, so the names always match.
+function cleanName(s) { return String(s || '').replace(/[^A-Za-z0-9 _-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60); }
+function projectName(m, fallback) {
+  var typed = cleanName(projEl.value);
+  if (nameEdited && typed) return typed;
+  var first = m.nodes && m.nodes[0] && m.nodes[0].name;
+  return cleanName(first || m.fileName) || fallback;
+}
+// What is selected right now: shown on open and updated whenever the selection changes.
+var FRAMEISH = { FRAME: 1, COMPONENT: 1, COMPONENT_SET: 1, INSTANCE: 1, GROUP: 1 };
+var frameTimer = null;
+function keepFrameName(sel) {
+  clearTimeout(frameTimer);
+  if (!sel || !sel.count || !tokenEl.value.trim()) return;
+  frameTimer = setTimeout(function () {
+    call('/frame', { name: cleanName(sel.names[0]), names: sel.names, types: sel.types, ids: sel.ids, sizes: sel.sizes, page: sel.page, file: sel.file })
+      .then(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Name saved for Claude.'; })
+      .catch(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Helper is off, so the name was not saved (start node serve.js).'; });
+  }, 500);
+}
+function showSelection(sel) {
+  if (!sel || !sel.count) { detectedEl.innerHTML = 'Select a frame in Figma to begin.'; if (!nameEdited) projEl.value = ''; return; }
+  var first = sel.names[0], isFrame = FRAMEISH[sel.types[0]];
+  detectedEl.className = 'box ' + (isFrame ? 'ok' : 'warn');
+  detectedEl.innerHTML = '<b>Detected frame:</b> ' + esc(first) + (sel.count > 1 ? ' <span class="muted">+' + (sel.count - 1) + ' more</span>' : '') +
+    '<br><span class="muted" id="keptNote"></span><br><span class="muted">' + (isFrame ? 'Its name is saved for Claude and is used as the artboard and Rive file name.' : 'This is not a frame. Select a frame, component or group.') + '</span>';
+  if (!nameEdited) projEl.value = cleanName(first);
+  if (isFrame) keepFrameName(sel);
+}
+function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
+function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked }; }
+document.getElementById('send').onclick = function () { ask('send'); };
+projEl.oninput = function () { nameEdited = !!projEl.value.trim(); };
+document.getElementById('zip').onclick = function () { ask('zip'); };
+function call(path, body) {
+  return fetch(HELPER + path, { method: body ? 'POST' : 'GET', headers: { 'content-type': 'application/json', 'x-token': tokenEl.value.trim() }, body: body ? JSON.stringify(body) : undefined })
+    .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); });
+}
+function notesHtml(res) {
+  return (res.notes && res.notes.length) ? '<div class="box info"><ul>' + res.notes.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+}
+function warningsHtml(res) {
+  return res.warnings.length ? '<div class="box warn"><b>Not converted</b><ul>' + res.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+}
+function zipHtml(res, name) {
+  var enc = new TextEncoder();
+  var imgFiles = res.images.map(function (im) { return { path: name + '/' + im.file, data: last.bytes[im.hash] }; });
+  var zip = makeZip(imgFiles.concat([
+    { path: name + '/scene.rml', data: enc.encode(res.rml) }, { path: name + '/rive.yaml', data: enc.encode(res.yaml) },
+    { path: name + '/fonts/README.txt', data: enc.encode('Put these font files here:\n' + res.fonts.map(function (f) { return f.file.replace('fonts/', ''); }).join('\n') + '\n') }]));
+  var url = URL.createObjectURL(new Blob([zip], { type: 'application/zip' }));
+  return '<p style="margin-top:12px"><a download="' + name + '.zip" href="' + url + '"><button class="alt">Download ' + name + '.zip</button></a></p>';
+}
+// ---- tabs + design analysis ----------------------------------------
+var paneImport = document.getElementById('paneImport'), paneAnalysis = document.getElementById('paneAnalysis');
+var tabImport = document.getElementById('tabImport'), tabAnalysis = document.getElementById('tabAnalysis');
+var analysisOut = document.getElementById('analysisOut'), selInfo = document.getElementById('selInfo'), analysisTimer = null;
+function showTab(which) {
+  var a = which === 'analysis';
+  paneAnalysis.hidden = !a; paneImport.hidden = a;
+  tabAnalysis.classList.toggle('on', a); tabImport.classList.toggle('on', !a);
+  if (a) runAnalysis();
+}
+tabImport.onclick = function () { showTab('import'); };
+tabAnalysis.onclick = function () { showTab('analysis'); };
+document.getElementById('runAnalysis').onclick = function () { runAnalysis(); };
+document.getElementById('sendClaude').onclick = function () {
+  analysisOut.insertAdjacentHTML('afterbegin', '<div class="box" id="sendNote">Reading the design and previews…</div>');
+  parent.postMessage({ pluginMessage: { type: 'sendToClaude' } }, '*');
+};
+function sendToInbox(m) {
+  var name = projectName(m, 'figma-design');
+  var report = FigmaAnalyze.analyze(m, { componentArtboards: optComp.checked, frameMode: optArt.checked ? 'artboard' : 'layout' });
+  var snapshot = { nodes: m.nodes, components: m.components, images: m.images };
+  var previews = (m.previews || []).map(function (p) { return { name: p.name, base64: toB64(p.bytes) }; });
+  var note = document.getElementById('sendNote');
+  function show(cls, html) { if (note) { note.className = 'box ' + cls; note.innerHTML = html; } else analysisOut.insertAdjacentHTML('afterbegin', '<div class="box ' + cls + '">' + html + '</div>'); }
+  call('/inbox', { name: name, report: report, snapshot: snapshot, previews: previews }).then(function (r) {
+    show('ok', '<b>Sent to Claude.</b><br>Saved ' + r.previews + ' preview image(s), the report and the design data in <code>Exports/claude-inbox</code>.<br>Now tell Claude in the chat: <b>“check the inbox”</b>.');
+  }).catch(function (er) {
+    show('bad', '<b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder, and paste its token on the Import tab.');
+  });
+}
+function runAnalysis() { analysisOut.innerHTML = '<p class="muted">Analysing…</p>'; parent.postMessage({ pluginMessage: { type: 'analyze' } }, '*'); }
+var expanded = {}, expandedText = {};
+function renderAnalysis(snap) {
+  window.lastSnap = snap;
+  var r = FigmaAnalyze.analyze(snap, { componentArtboards: optComp.checked, frameMode: optArt.checked ? 'artboard' : 'layout' });
+  window.lastAnalysis = r;
+  var col = r.counts.error ? '#f87171' : r.counts.warning ? '#fbbf24' : '#4ade80';
+  var h = '<div class="score"><b class="n">' + r.score + '</b><div><b>' + esc(r.verdict) + '</b><br>' +
+    '<span class="pill error">' + r.counts.error + ' to fix</span><span class="pill warning">' + r.counts.warning + ' differences</span><span class="pill info">' + r.counts.info + ' tips</span><br>' +
+    '<span class="muted">' + r.stats.nodes + ' layers · ' + r.stats.frames + ' frames · ' + r.stats.autoLayoutFrames + ' with auto layout · ' + r.stats.texts + ' text · ' + r.stats.images + ' images</span></div></div>';
+  if (!r.issues.length) h += '<p class="ok">Nothing to fix. This design should import cleanly.</p>';
+  var label = { error: 'Fix before importing', warning: 'Will look different', info: 'Good to know' };
+  ['error', 'warning', 'info'].forEach(function (sev) {
+    var group = r.issues.filter(function (i) { return i.severity === sev; });
+    if (!group.length) return;
+    h += '<p style="margin:14px 0 0"><b>' + label[sev] + '</b></p>';
+    group.forEach(function (i) {
+      var ids = i.nodes.map(function (n) { return n.id; });
+      var SHOW = 3, open = !!expanded[i.id];
+      function chip(n) { return '<button class="chip" title="Select this layer in Figma" data-one="' + esc(n.id) + '">' + esc(n.name || n.id) + '</button>'; }
+      var layers = '';
+      if (i.nodes.length) {
+        layers = '<div class="layers"><div class="row">' + i.nodes.slice(0, SHOW).map(chip).join('') + '</div>';
+        if (i.nodes.length > SHOW) {
+          layers += '<div class="row more"' + (open ? '' : ' hidden') + '>' + i.nodes.slice(SHOW).map(chip).join('') + '</div>' +
+            '<button class="linkbtn" data-toggle="' + esc(i.id) + '">' + (open ? 'See less' : 'See ' + (i.count - SHOW) + ' more') + '</button>';
+        }
+        layers += (ids.length > 1 ? '<button class="sm alt" data-ids="' + esc(ids.join(',')) + '">Select all ' + (i.count > ids.length ? 'first ' + ids.length : ids.length) + '</button>' : '') + '</div>';
+      }
+      var long = (i.why + ' ' + i.fix).length > 170, openText = !!expandedText[i.id];
+      h += '<div class="issue ' + sev + '"><h3>' + esc(i.title) + (i.count > 1 ? ' <span class="muted">×' + i.count + '</span>' : '') + '</h3>' +
+        '<div class="why">' + esc(i.why) + '</div>' +
+        '<div class="fix" ' + (long && !openText ? 'style="max-height:2.9em;overflow:hidden"' : '') + '><b>How to fix:</b> ' + esc(i.fix) + '</div>' +
+        (long ? '<button class="linkbtn" data-text="' + esc(i.id) + '">' + (openText ? 'See less' : 'See more') + '</button>' : '') +
+        layers + '</div>';
+    });
+  });
+  h += '<p style="margin-top:14px"><button id="goImport">' + (r.counts.error ? 'Import anyway' : 'Go to import') + '</button></p>';
+  analysisOut.innerHTML = h;
+  function selectIds(ids, btn) {
+    Array.prototype.forEach.call(analysisOut.querySelectorAll('.chip.on'), function (c) { c.classList.remove('on'); });
+    if (btn && btn.classList) btn.classList.add('on');
+    parent.postMessage({ pluginMessage: { type: 'select', ids: ids } }, '*');
+  }
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-ids]'), function (b) {
+    b.onclick = function () { selectIds(b.getAttribute('data-ids').split(','), null); };
+  });
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-one]'), function (b) {
+    b.onclick = function () { selectIds([b.getAttribute('data-one')], b); };
+  });
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-toggle]'), function (b) {
+    b.onclick = function () {
+      var id = b.getAttribute('data-toggle'), more = b.parentNode.querySelector('.more');
+      expanded[id] = !expanded[id]; more.hidden = !expanded[id];
+      b.textContent = expanded[id] ? 'See less' : 'See ' + (more.querySelectorAll('.chip').length) + ' more';
+    };
+  });
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-text]'), function (b) {
+    b.onclick = function () { expandedText[b.getAttribute('data-text')] = !expandedText[b.getAttribute('data-text')]; renderAnalysis(window.lastSnap); };
+  });
+  document.getElementById('goImport').onclick = function () { showTab('import'); };
+}
+onmessage = function (e) {
+  var m = e.data.pluginMessage; if (!m) return;
+  if (m.type === 'analysisSnapshot') { renderAnalysis(m); return; }
+  if (m.type === 'claudePayload') { sendToInbox(m); return; }
+  if (m.type === 'selection') {
+    showSelection(m);
+    selInfo.textContent = m.count ? m.count + ' selected' : 'nothing selected';
+    if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
+    return;
+  }
+  if (m.type === 'settings') { tokenEl.value = m.token; linkEl.value = m.fileLink; if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; } showSelection(m.selection); return; }
+  if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
+  if (m.type !== 'snapshot') return;
+  var name = projectName(m, 'figma-import');
+  var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, innerShadowOverChildren: optInner.checked });
+  last = { name: name, bytes: m.imageBytes || {} };
+  if (mode === 'zip') { out.innerHTML = '<div class="box ok">Converted ' + m.nodes.length + ' frame(s).</div>' + notesHtml(res) + warningsHtml(res) + zipHtml(res, name); return; }
+  parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts() } }, '*');
+  var fileId = ((linkEl.value.match(/file\/[^\/]+\/(\d+)/) || linkEl.value.match(/^\s*(\d+)\s*$/) || [])[1]) || '';
+  if (linkEl.value.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
+  out.innerHTML = '<div class="box">Sending to the helper…</div>';
+  call('/export', { name: name, rml: res.rml, yaml: res.yaml, fonts: res.fonts, fileId: fileId, images: res.images.map(function (im) { return { file: im.file, base64: toB64(last.bytes[im.hash]) }; }) }).then(function (r) {
+    var ok = r.verify.ok, f = r.fonts, html = '<div class="box ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Built and verified with rive' : 'rive found errors') + '</b>' +
+      '<br>' + (r.mode === 'existing' ? 'Added to your open file (nothing in it removed): <b>' + (r.added || []).map(esc).join(', ') + '</b>. A copy of the file as it is now is saved in <code>Exports/backups/</code>.' : 'Saved in <code>Exports/' + esc(r.name) + '</code>') + (ok ? '' : '<pre>' + esc(r.verify.output) + '</pre>') + '</div>';
+    if (f.standIn.length) html += '<div class="box warn"><b>Stand-in fonts used</b> (add real files to <code>Fonts Library/</code> and send again):<ul>' + f.standIn.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+    if (f.missing.length) html += '<div class="box bad"><b>Missing fonts</b>: ' + f.missing.map(esc).join(', ') + '</div>';
+    html += notesHtml(res) + warningsHtml(res);
+    if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
+    out.innerHTML = html + zipHtml(res, name);
+    var pb = document.getElementById('push');
+    if (pb) pb.onclick = function () {
+      pb.disabled = true; pb.textContent = 'Pushing…';
+      call('/push', { name: r.name, label: 'Figma import' }).then(function (p) {
+        var h = '<div class="box ' + (p.ok ? 'ok' : 'bad') + '"><b>' + (p.ok ? 'Pushed to Rive' : 'Push failed') + '</b>' +
+          (p.url ? '<br><a href="' + p.url + '" target="_blank">' + p.url + '</a>' : '') + (p.ok ? '' : '<pre>' + esc(p.output) + '</pre>') + '</div>';
+        out.insertAdjacentHTML('afterbegin', h); pb.textContent = 'Pushed';
+      }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
+    };
+  }).catch(function (er) {
+    out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder and paste its token. You can still use “Zip only”.</div>' + warningsHtml(res) + zipHtml(res, name);
+  });
+};
+</script>
+

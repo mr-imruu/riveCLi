@@ -1,0 +1,279 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: dark; --bg:#1e1e1e; --panel:#2a2a2a; --panel2:#262626; --line:#3d3d3d; --text:#e8e8e8; --muted:#9b9b9b; --accent:#0d99ff;
+    --code:#383838; --err:#f87171; --warn:#fbbf24; --ok:#4ade80; --info:#60a5fa; --fixbg:#12372a; --fixfg:#86efac; --chip:#27304d; --chipline:#3b4a7a; --chiptext:#c7d2fe; }
+  html, body { background: var(--bg); }
+  body { font: 12px/1.45 Inter, system-ui, sans-serif; margin: 0; padding: 16px; color: var(--text); }
+  h1 { font-size: 14px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: var(--muted); }
+  p b, p code { color: var(--text); }
+  a { color: var(--accent); }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 0; background: var(--accent); color: #fff; cursor: pointer; margin-right: 6px; }
+  button:hover { filter: brightness(1.1); }
+  button.alt { background: #3a3a3a; color: var(--text); }
+  button[disabled] { opacity: .4; cursor: default; }
+  input { font: inherit; width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel2); color: var(--text); outline: none; }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: #6f6f6f; }
+  .box { margin-top: 12px; padding: 10px; border-radius: 6px; background: var(--panel); color: var(--text); }
+  /* colour only as a thin marker, never as text */
+  .box.ok { border-left: 3px solid var(--ok); } .box.warn { border-left: 3px solid var(--warn); } .box.bad { border-left: 3px solid var(--err); } .box.info { border-left: 3px solid var(--info); }
+  .box.warn li, .box.info li { color: #cfcfcf; }
+  code { background: var(--code); color: var(--text); padding: 1px 4px; border-radius: 3px; }
+  ul { margin: 4px 0 0 16px; padding: 0; } pre { white-space: pre-wrap; margin: 6px 0 0; font-size: 11px; max-height: 120px; overflow: auto; color: var(--text); }
+  label { display: block; margin: 8px 0 4px; color: var(--muted); }
+  label.chk { display: flex; gap: 8px; align-items: flex-start; color: var(--text); margin: 6px 0; }
+  label.chk input { width: auto; margin-top: 2px; accent-color: var(--accent); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px 0 12px; }
+  .tab { background: none; color: var(--muted); border-radius: 6px 6px 0 0; padding: 8px 12px; margin: 0; }
+  .tab:hover { color: var(--text); filter: none; }
+  .tab.on { color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); font-weight: 600; }
+  .score { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; background: var(--panel); }
+  .score b.n { font-size: 26px; line-height: 1; color: var(--text); }
+  .pill { display: inline-block; padding: 1px 8px 1px 6px; border-radius: 10px; font-size: 11px; margin-right: 4px; color: #cfcfcf; background: #363636; }
+  .pill::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+  .pill.error::before { background: #ef4444; } .pill.warning::before { background: #f59e0b; } .pill.info::before { background: #3b82f6; }
+  .issue { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 10px; margin-top: 8px; }
+  .issue.error { border-left: 4px solid #ef4444; } .issue.warning { border-left: 4px solid #f59e0b; } .issue.info { border-left: 4px solid #3b82f6; }
+  .issue h3 { font-size: 12px; margin: 0 0 4px; color: var(--text); }
+  .issue .fix { margin-top: 6px; padding: 6px 8px; background: #323232; border-radius: 6px; color: var(--text); }
+  .issue .why { color: #b5b5b5; }
+  button.sm { padding: 3px 8px; font-size: 11px; margin: 6px 6px 0 0; }
+  .muted { color: var(--muted); }
+  .layers { margin-top: 8px; }
+  .layers .row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .chip { background: #333; color: #ddd; border: 1px solid #4a4a4a; border-radius: 12px; padding: 2px 9px; font-size: 11px; margin: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip:hover { background: #3f3f3f; } .chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .linkbtn { background: none; color: var(--accent); padding: 2px 4px; margin: 4px 0 0; font-size: 11px; }
+  .more[hidden] { display: none; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; border: 2px solid var(--bg); } ::-webkit-scrollbar-track { background: var(--bg); }
+</style>
+<div class="tabs">
+  <button class="tab on" id="tabImport">Import</button>
+  <button class="tab" id="tabAnalysis">Design analysis</button>
+</div>
+<div id="paneAnalysis" hidden>
+  <p>Check the selected frames <b>before</b> importing. See what will break or look different in Rive, and how to fix it in Figma.</p>
+  <button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, frame previews and design data in the helper's claude-inbox folder">Send to Claude</button>
+  <span class="muted" id="selInfo"></span>
+  <div id="analysisOut"></div>
+</div>
+<div id="paneImport">
+<h1>Figma To Rive</h1>
+<div class="box" id="detected" style="margin-top:0">Select a frame in Figma to begin.</div>
+<label>File name in Rive <span class="muted">(the artboard keeps the frame name)</span></label>
+<input id="projname" placeholder="detected from the selected frame">
+<p>Auto layout becomes Rive layout. Text stays live text.</p>
+<label>Helper token (printed by <code>node serve.js</code>, saved after first use)</label>
+<input id="token" placeholder="paste token">
+<label>Your open Rive file: paste its link or id (leave empty to create a new file)</label>
+<input id="filelink" placeholder="https://editor.rive.app/file/.../1234567">
+<label class="chk"><input type="checkbox" id="optArtboard" checked><span><b>Frame properties become the artboard's</b> (size, fill, layout). Uncheck to import the frame as a layout box inside a plain artboard.</span></label>
+<label class="chk"><input type="checkbox" id="optComp" checked><span><b>Components:</b> instances are detached into layout, and each main component is also added as a Rive component artboard.</span></label>
+<label class="chk"><input type="checkbox" id="optInner" checked><span><b>Inner shadows also cover the layers inside</b> (like Figma). Uncheck to keep them under the contents.</span></label>
+<p style="margin-top:12px">
+  <button id="send">Send to Rive</button><button id="zip" class="alt">Zip only</button>
+</p>
+
+<div id="out"></div>
+</div>
+<script>/*__CONVERT__*/</script>
+<script>/*__ANALYZE__*/</script>
+<script>/*__ZIP__*/</script>
+<script>
+var HELPER = 'http://localhost:4747';
+var projEl = document.getElementById('projname'), detectedEl = document.getElementById('detected'), nameEdited = false;
+var out = document.getElementById('out'), tokenEl = document.getElementById('token'), linkEl = document.getElementById('filelink'), optArt = document.getElementById('optArtboard'), optComp = document.getElementById('optComp'), optInner = document.getElementById('optInner'), mode = 'send', last = null;
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*');
+function ask(m) { mode = m; parent.postMessage({ pluginMessage: { type: 'convert', components: optComp.checked } }, '*'); }
+// The project / folder / Rive file is named after the first selected frame, so the names always match.
+function cleanName(s) { return String(s || '').replace(/[^A-Za-z0-9 _-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60); }
+function projectName(m, fallback) {
+  var typed = cleanName(projEl.value);
+  if (nameEdited && typed) return typed;
+  var first = m.nodes && m.nodes[0] && m.nodes[0].name;
+  return cleanName(first || m.fileName) || fallback;
+}
+// What is selected right now: shown on open and updated whenever the selection changes.
+var FRAMEISH = { FRAME: 1, COMPONENT: 1, COMPONENT_SET: 1, INSTANCE: 1, GROUP: 1 };
+var frameTimer = null;
+function keepFrameName(sel) {
+  clearTimeout(frameTimer);
+  if (!sel || !sel.count || !tokenEl.value.trim()) return;
+  frameTimer = setTimeout(function () {
+    call('/frame', { name: cleanName(sel.names[0]), names: sel.names, types: sel.types, ids: sel.ids, sizes: sel.sizes, page: sel.page, file: sel.file })
+      .then(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Name saved for Claude.'; })
+      .catch(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Helper is off, so the name was not saved (start node serve.js).'; });
+  }, 500);
+}
+function showSelection(sel) {
+  if (!sel || !sel.count) { detectedEl.innerHTML = 'Select a frame in Figma to begin.'; if (!nameEdited) projEl.value = ''; return; }
+  var first = sel.names[0], isFrame = FRAMEISH[sel.types[0]];
+  detectedEl.className = 'box ' + (isFrame ? 'ok' : 'warn');
+  detectedEl.innerHTML = '<b>Detected frame:</b> ' + esc(first) + (sel.count > 1 ? ' <span class="muted">+' + (sel.count - 1) + ' more</span>' : '') +
+    '<br><span class="muted" id="keptNote"></span><br><span class="muted">' + (isFrame ? 'Its name is saved for Claude and is used as the artboard and Rive file name.' : 'This is not a frame. Select a frame, component or group.') + '</span>';
+  if (!nameEdited) projEl.value = cleanName(first);
+  if (isFrame) keepFrameName(sel);
+}
+function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
+function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked }; }
+document.getElementById('send').onclick = function () { ask('send'); };
+projEl.oninput = function () { nameEdited = !!projEl.value.trim(); };
+document.getElementById('zip').onclick = function () { ask('zip'); };
+function call(path, body) {
+  return fetch(HELPER + path, { method: body ? 'POST' : 'GET', headers: { 'content-type': 'application/json', 'x-token': tokenEl.value.trim() }, body: body ? JSON.stringify(body) : undefined })
+    .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); });
+}
+function notesHtml(res) {
+  return (res.notes && res.notes.length) ? '<div class="box info"><ul>' + res.notes.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+}
+function warningsHtml(res) {
+  return res.warnings.length ? '<div class="box warn"><b>Not converted</b><ul>' + res.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+}
+function zipHtml(res, name) {
+  var enc = new TextEncoder();
+  var imgFiles = res.images.map(function (im) { return { path: name + '/' + im.file, data: last.bytes[im.hash] }; });
+  var zip = makeZip(imgFiles.concat([
+    { path: name + '/scene.rml', data: enc.encode(res.rml) }, { path: name + '/rive.yaml', data: enc.encode(res.yaml) },
+    { path: name + '/fonts/README.txt', data: enc.encode('Put these font files here:\n' + res.fonts.map(function (f) { return f.file.replace('fonts/', ''); }).join('\n') + '\n') }]));
+  var url = URL.createObjectURL(new Blob([zip], { type: 'application/zip' }));
+  return '<p style="margin-top:12px"><a download="' + name + '.zip" href="' + url + '"><button class="alt">Download ' + name + '.zip</button></a></p>';
+}
+// ---- tabs + design analysis ----------------------------------------
+var paneImport = document.getElementById('paneImport'), paneAnalysis = document.getElementById('paneAnalysis');
+var tabImport = document.getElementById('tabImport'), tabAnalysis = document.getElementById('tabAnalysis');
+var analysisOut = document.getElementById('analysisOut'), selInfo = document.getElementById('selInfo'), analysisTimer = null;
+function showTab(which) {
+  var a = which === 'analysis';
+  paneAnalysis.hidden = !a; paneImport.hidden = a;
+  tabAnalysis.classList.toggle('on', a); tabImport.classList.toggle('on', !a);
+  if (a) runAnalysis();
+}
+tabImport.onclick = function () { showTab('import'); };
+tabAnalysis.onclick = function () { showTab('analysis'); };
+document.getElementById('runAnalysis').onclick = function () { runAnalysis(); };
+document.getElementById('sendClaude').onclick = function () {
+  analysisOut.insertAdjacentHTML('afterbegin', '<div class="box" id="sendNote">Reading the design and previews…</div>');
+  parent.postMessage({ pluginMessage: { type: 'sendToClaude' } }, '*');
+};
+function sendToInbox(m) {
+  var name = projectName(m, 'figma-design');
+  var report = FigmaAnalyze.analyze(m, { componentArtboards: optComp.checked, frameMode: optArt.checked ? 'artboard' : 'layout' });
+  var snapshot = { nodes: m.nodes, components: m.components, images: m.images };
+  var previews = (m.previews || []).map(function (p) { return { name: p.name, base64: toB64(p.bytes) }; });
+  var note = document.getElementById('sendNote');
+  function show(cls, html) { if (note) { note.className = 'box ' + cls; note.innerHTML = html; } else analysisOut.insertAdjacentHTML('afterbegin', '<div class="box ' + cls + '">' + html + '</div>'); }
+  call('/inbox', { name: name, report: report, snapshot: snapshot, previews: previews }).then(function (r) {
+    show('ok', '<b>Sent to Claude.</b><br>Saved ' + r.previews + ' preview image(s), the report and the design data in <code>Exports/claude-inbox</code>.<br>Now tell Claude in the chat: <b>“check the inbox”</b>.');
+  }).catch(function (er) {
+    show('bad', '<b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder, and paste its token on the Import tab.');
+  });
+}
+function runAnalysis() { analysisOut.innerHTML = '<p class="muted">Analysing…</p>'; parent.postMessage({ pluginMessage: { type: 'analyze' } }, '*'); }
+var expanded = {}, expandedText = {};
+function renderAnalysis(snap) {
+  window.lastSnap = snap;
+  var r = FigmaAnalyze.analyze(snap, { componentArtboards: optComp.checked, frameMode: optArt.checked ? 'artboard' : 'layout' });
+  window.lastAnalysis = r;
+  var col = r.counts.error ? '#f87171' : r.counts.warning ? '#fbbf24' : '#4ade80';
+  var h = '<div class="score"><b class="n">' + r.score + '</b><div><b>' + esc(r.verdict) + '</b><br>' +
+    '<span class="pill error">' + r.counts.error + ' to fix</span><span class="pill warning">' + r.counts.warning + ' differences</span><span class="pill info">' + r.counts.info + ' tips</span><br>' +
+    '<span class="muted">' + r.stats.nodes + ' layers · ' + r.stats.frames + ' frames · ' + r.stats.autoLayoutFrames + ' with auto layout · ' + r.stats.texts + ' text · ' + r.stats.images + ' images</span></div></div>';
+  if (!r.issues.length) h += '<p class="ok">Nothing to fix. This design should import cleanly.</p>';
+  var label = { error: 'Fix before importing', warning: 'Will look different', info: 'Good to know' };
+  ['error', 'warning', 'info'].forEach(function (sev) {
+    var group = r.issues.filter(function (i) { return i.severity === sev; });
+    if (!group.length) return;
+    h += '<p style="margin:14px 0 0"><b>' + label[sev] + '</b></p>';
+    group.forEach(function (i) {
+      var ids = i.nodes.map(function (n) { return n.id; });
+      var SHOW = 3, open = !!expanded[i.id];
+      function chip(n) { return '<button class="chip" title="Select this layer in Figma" data-one="' + esc(n.id) + '">' + esc(n.name || n.id) + '</button>'; }
+      var layers = '';
+      if (i.nodes.length) {
+        layers = '<div class="layers"><div class="row">' + i.nodes.slice(0, SHOW).map(chip).join('') + '</div>';
+        if (i.nodes.length > SHOW) {
+          layers += '<div class="row more"' + (open ? '' : ' hidden') + '>' + i.nodes.slice(SHOW).map(chip).join('') + '</div>' +
+            '<button class="linkbtn" data-toggle="' + esc(i.id) + '">' + (open ? 'See less' : 'See ' + (i.count - SHOW) + ' more') + '</button>';
+        }
+        layers += (ids.length > 1 ? '<button class="sm alt" data-ids="' + esc(ids.join(',')) + '">Select all ' + (i.count > ids.length ? 'first ' + ids.length : ids.length) + '</button>' : '') + '</div>';
+      }
+      var long = (i.why + ' ' + i.fix).length > 170, openText = !!expandedText[i.id];
+      h += '<div class="issue ' + sev + '"><h3>' + esc(i.title) + (i.count > 1 ? ' <span class="muted">×' + i.count + '</span>' : '') + '</h3>' +
+        '<div class="why">' + esc(i.why) + '</div>' +
+        '<div class="fix" ' + (long && !openText ? 'style="max-height:2.9em;overflow:hidden"' : '') + '><b>How to fix:</b> ' + esc(i.fix) + '</div>' +
+        (long ? '<button class="linkbtn" data-text="' + esc(i.id) + '">' + (openText ? 'See less' : 'See more') + '</button>' : '') +
+        layers + '</div>';
+    });
+  });
+  h += '<p style="margin-top:14px"><button id="goImport">' + (r.counts.error ? 'Import anyway' : 'Go to import') + '</button></p>';
+  analysisOut.innerHTML = h;
+  function selectIds(ids, btn) {
+    Array.prototype.forEach.call(analysisOut.querySelectorAll('.chip.on'), function (c) { c.classList.remove('on'); });
+    if (btn && btn.classList) btn.classList.add('on');
+    parent.postMessage({ pluginMessage: { type: 'select', ids: ids } }, '*');
+  }
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-ids]'), function (b) {
+    b.onclick = function () { selectIds(b.getAttribute('data-ids').split(','), null); };
+  });
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-one]'), function (b) {
+    b.onclick = function () { selectIds([b.getAttribute('data-one')], b); };
+  });
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-toggle]'), function (b) {
+    b.onclick = function () {
+      var id = b.getAttribute('data-toggle'), more = b.parentNode.querySelector('.more');
+      expanded[id] = !expanded[id]; more.hidden = !expanded[id];
+      b.textContent = expanded[id] ? 'See less' : 'See ' + (more.querySelectorAll('.chip').length) + ' more';
+    };
+  });
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-text]'), function (b) {
+    b.onclick = function () { expandedText[b.getAttribute('data-text')] = !expandedText[b.getAttribute('data-text')]; renderAnalysis(window.lastSnap); };
+  });
+  document.getElementById('goImport').onclick = function () { showTab('import'); };
+}
+onmessage = function (e) {
+  var m = e.data.pluginMessage; if (!m) return;
+  if (m.type === 'analysisSnapshot') { renderAnalysis(m); return; }
+  if (m.type === 'claudePayload') { sendToInbox(m); return; }
+  if (m.type === 'selection') {
+    showSelection(m);
+    selInfo.textContent = m.count ? m.count + ' selected' : 'nothing selected';
+    if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
+    return;
+  }
+  if (m.type === 'settings') { tokenEl.value = m.token; linkEl.value = m.fileLink; if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; } showSelection(m.selection); return; }
+  if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
+  if (m.type !== 'snapshot') return;
+  var name = projectName(m, 'figma-import');
+  var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, innerShadowOverChildren: optInner.checked });
+  last = { name: name, bytes: m.imageBytes || {} };
+  if (mode === 'zip') { out.innerHTML = '<div class="box ok">Converted ' + m.nodes.length + ' frame(s).</div>' + notesHtml(res) + warningsHtml(res) + zipHtml(res, name); return; }
+  parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts() } }, '*');
+  var fileId = ((linkEl.value.match(/file\/[^\/]+\/(\d+)/) || linkEl.value.match(/^\s*(\d+)\s*$/) || [])[1]) || '';
+  if (linkEl.value.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
+  out.innerHTML = '<div class="box">Sending to the helper…</div>';
+  call('/export', { name: name, rml: res.rml, yaml: res.yaml, fonts: res.fonts, fileId: fileId, images: res.images.map(function (im) { return { file: im.file, base64: toB64(last.bytes[im.hash]) }; }) }).then(function (r) {
+    var ok = r.verify.ok, f = r.fonts, html = '<div class="box ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Built and verified with rive' : 'rive found errors') + '</b>' +
+      '<br>' + (r.mode === 'existing' ? 'Added to your open file (nothing in it removed): <b>' + (r.added || []).map(esc).join(', ') + '</b>. A copy of the file as it is now is saved in <code>Exports/backups/</code>.' : 'Saved in <code>Exports/' + esc(r.name) + '</code>') + (ok ? '' : '<pre>' + esc(r.verify.output) + '</pre>') + '</div>';
+    if (f.standIn.length) html += '<div class="box warn"><b>Stand-in fonts used</b> (add real files to <code>Fonts Library/</code> and send again):<ul>' + f.standIn.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+    if (f.missing.length) html += '<div class="box bad"><b>Missing fonts</b>: ' + f.missing.map(esc).join(', ') + '</div>';
+    html += notesHtml(res) + warningsHtml(res);
+    if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
+    out.innerHTML = html + zipHtml(res, name);
+    var pb = document.getElementById('push');
+    if (pb) pb.onclick = function () {
+      pb.disabled = true; pb.textContent = 'Pushing…';
+      call('/push', { name: r.name, label: 'Figma import' }).then(function (p) {
+        var h = '<div class="box ' + (p.ok ? 'ok' : 'bad') + '"><b>' + (p.ok ? 'Pushed to Rive' : 'Push failed') + '</b>' +
+          (p.url ? '<br><a href="' + p.url + '" target="_blank">' + p.url + '</a>' : '') + (p.ok ? '' : '<pre>' + esc(p.output) + '</pre>') + '</div>';
+        out.insertAdjacentHTML('afterbegin', h); pb.textContent = 'Pushed';
+      }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
+    };
+  }).catch(function (er) {
+    out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder and paste its token. You can still use “Zip only”.</div>' + warningsHtml(res) + zipHtml(res, name);
+  });
+};
+</script>
+
