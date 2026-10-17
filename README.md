@@ -11,6 +11,8 @@ Exports/        made by the helper: claude-inbox/ (design reports for Claude) an
 ```
 
 ## Easy setup (new computer)
+Full step-by-step guide: [SETUP-NEW-COMPUTER.md](SETUP-NEW-COMPUTER.md). Short version:
+
 1. Get the files: `git clone https://github.com/mr-imruu/riveCLi.git` (GitHub must be signed in: GitHub Desktop or `gh auth login`).
 2. In that folder run `./setup.sh`. It checks Node.js, the Rive CLI, your Rive login, the fonts and both projects, and tells you
    what to fix. If the Rive CLI is missing it asks before installing it. If you are not signed in, run `rive login`.
