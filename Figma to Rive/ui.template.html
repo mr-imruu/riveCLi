@@ -196,42 +196,59 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
-var recentTab = 'projects';
+var recentTab = 'projects', delAsk = null, delMsg = {};
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
+var TRASH_TIP = 'Click: remove from this list. Cmd+Click: also delete from Rive.';
+function trashBtn(attr, val) { return '<button class="trash" ' + attr + '="' + val + '" title="' + TRASH_TIP + '" aria-label="' + TRASH_TIP + '">' + TRASH + '</button>'; }
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
   var head = '<div class="sec">Recent exports</div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
-  var body = '';
+  var body = '', items = [];
   if (recentTab === 'projects') {
     body = recents.map(function (x, i) {
+      var ask = delAsk === 'p' + i ? '<div class="box warn" style="margin:8px 0 0"><b>Rive’s command-line tool cannot delete a whole file.</b> Open it in Rive to delete it there, or just remove it from this list.<p style="margin:8px 0 0">' + (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm">Open in Rive</button></a>' : '') + '<button class="sm alt" data-del="' + i + '">Remove from list</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
       return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
         (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
         (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') +
-        '</div><button class="trash" data-del="' + i + '" title="Remove from this list" aria-label="Remove from this list">' + TRASH + '</button></div>';
+        '</div>' + ask + (delAsk === 'p' + i ? '' : trashBtn('data-ptrash', i)) + '</div>';
     }).join('');
   } else {
-    var items = [];
-    recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { items.push({ frame: f, id: (x.ids || [])[k], project: x.name, time: x.time, url: x.url }); }); });
+    recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { var key = (x.ids || [])[k] || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: (x.ids || [])[k], project: x.name, time: x.time, url: x.url }); }); });
     body = items.length ? items.map(function (it, j) {
-      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div><div class="rbtns">' +
+      var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from the Rive file?</b><br>It is removed from the file in your account. A backup is saved, and the old version stays in Rive’s revision history.<p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
+      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
-        (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') + '</div></div>';
+        (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
     }).join('') : '<p class="muted">No artboards recorded yet. They appear after your next send.</p>';
-    el.pickItems = items;
   }
   el.innerHTML = head + body;
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-rt]'), function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); renderRecents(); }; });
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-del]'), function (b) {
-    b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); saveSettings(); renderRecents(); };
+  function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
+  function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
+  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; renderRecents(); }; });
+  on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
+  on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
+  on('button[data-del]', function (b) { b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); delAsk = null; saveSettings(); renderRecents(); }; });
+  on('button[data-atrash]', function (b) { b.onclick = function (e) { var j = +b.getAttribute('data-atrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'a' + j; renderRecents(); } else { hide(items[j]); renderRecents(); } }; });
+  on('button[data-adelok]', function (b) {
+    b.onclick = function () {
+      var it = items[+b.getAttribute('data-adelok')]; b.disabled = true; b.textContent = 'Deleting…';
+      call('/delete-artboard', { name: it.project, artboard: it.frame }).then(function (r) {
+        delAsk = null;
+        if (r.ok || r.gone) { hide(it); if (!r.ok) delMsg[it.key + '|' + it.project] = ''; }
+        else delMsg[it.key + '|' + it.project] = r.output;
+        renderRecents();
+        if (!r.ok && !r.gone) out.innerHTML = '<div class="box bad"><b>Could not delete the artboard.</b><pre>' + esc(r.output) + '</pre></div>';
+        else if (r.gone) out.innerHTML = '<div class="box info">' + esc(r.output) + ' I removed it from your list.</div>';
+        else out.innerHTML = '<div class="box ok"><b>Deleted “' + esc(it.frame) + '” from the Rive file.</b></div>';
+      }).catch(function (er) { delAsk = null; renderRecents(); out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '</div>'; });
+    };
   });
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-pick]'), function (b) {
-    b.onclick = function () { var it = el.pickItems[+b.getAttribute('data-pick')]; parent.postMessage({ pluginMessage: { type: 'select', ids: [it.id] } }, '*'); };
-  });
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-copy]'), function (b) {
+  on('button[data-pick]', function (b) { b.onclick = function () { parent.postMessage({ pluginMessage: { type: 'select', ids: [items[+b.getAttribute('data-pick')].id] } }, '*'); }; });
+  on('button[data-copy]', function (b) {
     b.onclick = function () { var ok = copyText(recents[+b.getAttribute('data-copy')].url); b.textContent = ok ? 'Copied' : 'Select and copy from Open'; setTimeout(function () { b.textContent = 'Copy link'; }, 1500); };
   });
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-resend]'), function (b) {
+  on('button[data-resend]', function (b) {
     b.onclick = function () {
       var x = recents[+b.getAttribute('data-resend')];
       viaUpdate = true; projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = (x.mode ? x.mode === 'existing' : /^\d+$/.test(x.link || '')) ? x.link : ''; // old entries: only a plain file id means an open-file send
