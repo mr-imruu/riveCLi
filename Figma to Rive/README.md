@@ -8,11 +8,16 @@ A Figma plugin that exports the selected frames as a Rive CLI project.
   Nothing is outlined. The fonts it needs are listed; you supply the `.ttf` files.
 
 ## One-click: Send to Rive
-1. `node serve.js` (leave it running). It prints a token; paste it into the plugin once.
+1. Double-click `Start Helper.command` in the repo root (or run `node pick-project.js && node serve.js`) and leave it running. It signs you in to
+   Rive if needed, picks the project pushes go to (saved in `config.json`), and prints a token. In the plugin, click the **gear**, paste the token, press **Enter**.
 2. Put real font files in `Fonts Library/` named like the plugin says (`Inter-Regular.ttf`). Missing ones fall back to a stand-in and are flagged.
 3. Select frames -> **Send to Rive**. The helper writes `Exports/<name>/`, runs `rive --verify`, and shows the result.
 4. Click **Push to my Rive account**. Nothing is pushed until you click. First push creates a file in the project in
-   `config.json` (`projectId`; list yours with `rive ls --plain`); later sends update that same file.
+   `config.json` (`projectId`, chosen for you at start); later sends update that same file.
+
+Plugin conveniences: the dot by the gear shows helper status; each Figma file remembers its own Rive link; a font check warns
+before sending if a font is missing from `Fonts Library/`; **Recent exports** lists your last 5 with Open / Copy link / Update;
+**Import options -> Push automatically** skips the extra click (off by default); Enter in the name or link field sends.
 The helper listens on loopback only, needs the token, and only ever runs `rive <dir> --verify` and `rive push`.
 
 ## The plugin keeps the frame name
