@@ -1177,9 +1177,9 @@ function renderRecents() {
     body = items.length ? items.map(function (it, j) {
       var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from the Rive file?</b><br>It is removed from the file in your account. A backup is saved, and the old version stays in Rive’s revision history.<p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
       return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
+        (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
-        (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) +
-        (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
+        (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
     }).join('') : '<p class="muted">No artboards recorded yet. They appear after your next send.</p>';
   }
   el.innerHTML = head + body;
