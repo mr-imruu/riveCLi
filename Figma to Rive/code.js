@@ -112,7 +112,76 @@ function selectionInfo() {
 }
 function sendSelection() { var i = selectionInfo(); i.type = 'selection'; figma.ui.postMessage(i); }
 
+// ---- clean-up tools: tidy layer names and snap fractional positions/sizes to whole pixels ----------------
+function walkNodes(list, deep, fn) { list.forEach(function (n) { fn(n); if (deep && 'children' in n) walkNodes(n.children, true, fn); }); }
+var GENERIC = /^(Frame|Group|Rectangle|Ellipse|Vector|Line|Polygon|Star|Slice|Section|Component|Instance|Boolean|Union|Subtract|Intersect|Exclude)\s+\d+$/i;
+function cleanedName(name, o) {
+  var n = String(name);
+  if (o.symbols) n = n.replace(/[\u0000-\u001F\u200B-\u200F\u2028-\u202F\uFE0F]|[\uD83C-\uD83E][\uDC00-\uDFFF]|[\u2600-\u27BF]/g, '');
+  if (o.spaces) n = n.replace(/\s+/g, ' ').trim();
+  if (o.generic && GENERIC.test(n)) n = n.replace(/\s+\d+$/, '');
+  return n || String(name);
+}
+function nameChanges(nodes, o) {
+  var out = [];
+  walkNodes(nodes, o.deep, function (n) {
+    if (n.type === 'TEXT' || n.type === 'PAGE' || n.type === 'DOCUMENT') return; // text layers are named after their content
+    var c = cleanedName(n.name, o);
+    if (c !== n.name) out.push({ node: n, from: n.name, to: c });
+  });
+  return out;
+}
+function pixelChanges(nodes, o) {
+  var out = [];
+  walkNodes(nodes, o.deep, function (n) {
+    if (!('x' in n) || n.type === 'GROUP' || n.type === 'PAGE' || n.type === 'SECTION' || n.removed) return;
+    var t = n.relativeTransform, rotated = t && (Math.abs(t[0][1]) > 1e-3 || Math.abs(t[1][0]) > 1e-3), flipped = t && (t[0][0] * t[1][1] - t[0][1] * t[1][0] < 0);
+    if (rotated) return;
+    var p = n.parent, inAuto = p && 'layoutMode' in p && p.layoutMode !== 'NONE' && n.layoutPositioning !== 'ABSOLUTE';
+    var ch = { node: n, name: n.name }, any = false;
+    if (o.pos && !inAuto && !flipped) {
+      var nx = Math.round(n.x), ny = Math.round(n.y);
+      if (Math.abs(nx - n.x) > 0.001 || Math.abs(ny - n.y) > 0.001) { ch.x = nx; ch.y = ny; ch.fromPos = Math.round(n.x * 100) / 100 + ',' + Math.round(n.y * 100) / 100; any = true; }
+    }
+    if (o.size && 'resize' in n && n.type !== 'TEXT' && n.type !== 'LINE') {
+      var hugW = n.layoutSizingHorizontal === 'HUG' || n.layoutSizingHorizontal === 'FILL', hugH = n.layoutSizingVertical === 'HUG' || n.layoutSizingVertical === 'FILL';
+      var nw = hugW ? n.width : Math.max(1, Math.round(n.width)), nh = hugH ? n.height : Math.max(1, Math.round(n.height));
+      if (Math.abs(nw - n.width) > 0.001 || Math.abs(nh - n.height) > 0.001) { ch.w = nw; ch.h = nh; ch.fromSize = Math.round(n.width * 100) / 100 + '\u00D7' + Math.round(n.height * 100) / 100; any = true; }
+    }
+    if (any) out.push(ch);
+  });
+  return out;
+}
+function cleanOpts(m) { var o = m.o || {}; return { deep: o.deep !== false, symbols: !!o.symbols, spaces: !!o.spaces, generic: !!o.generic, pos: !!o.pos, size: !!o.size }; }
+
 figma.ui.onmessage = function (msg) {
+  if (msg.type === 'cleanScan' || msg.type === 'cleanApply') {
+    var sel = figma.currentPage.selection, o = cleanOpts(msg);
+    if (!sel.length) { figma.ui.postMessage({ type: 'cleanScanResult', empty: true }); return; }
+    var nameList = nameChanges(sel, o), pixList = pixelChanges(sel, o);
+    if (msg.type === 'cleanApply') {
+      var done = 0, examples = [];
+      if (msg.which === 'names') {
+        nameList.forEach(function (c) { try { c.node.name = c.to; done++; if (examples.length < 6) examples.push(c.from + ' \u2192 ' + c.to); } catch (e) {} });
+      } else {
+        pixList.forEach(function (c) {
+          try {
+            var n = c.node;
+            if (c.w !== undefined) { if ('resizeWithoutConstraints' in n) n.resizeWithoutConstraints(c.w, c.h); else n.resize(c.w, c.h); }
+            if (c.x !== undefined) { n.x = c.x; n.y = c.y; }
+            done++; if (examples.length < 6) examples.push(c.name + (c.fromPos ? ': ' + c.fromPos + ' \u2192 ' + c.x + ',' + c.y : '') + (c.fromSize ? ' (' + c.fromSize + ' \u2192 ' + c.w + '\u00D7' + c.h + ')' : ''));
+          } catch (e) {}
+        });
+      }
+      figma.commitUndo();
+      figma.ui.postMessage({ type: 'cleanDone', which: msg.which, done: done, examples: examples });
+      nameList = nameChanges(sel, o); pixList = pixelChanges(sel, o);
+    }
+    figma.ui.postMessage({ type: 'cleanScanResult', names: { count: nameList.length, examples: nameList.slice(0, 5).map(function (c) { return c.from + ' \u2192 ' + c.to; }) },
+      pixels: { count: pixList.length, examples: pixList.slice(0, 5).map(function (c) { return c.name + (c.fromPos ? ': ' + c.fromPos : '') + (c.fromSize ? ' (' + c.fromSize + ')' : ''); }) } });
+    return;
+  }
+
   if (msg.type === 'loadSettings') {
     Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts'), figma.clientStorage.getAsync('links'), figma.clientStorage.getAsync('recents'), figma.clientStorage.getAsync('snaps'), figma.clientStorage.getAsync('dests')]).then(function (v) {
       figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, links: v[3] || {}, recents: v[4] || [], snaps: v[5] || {}, dests: v[6] || {}, selection: selectionInfo() });

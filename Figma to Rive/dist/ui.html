@@ -89,6 +89,7 @@
   .ihead:hover { background: #2f2f2f; filter: none; }
   .ihead .ititle { flex: 1; min-width: 0; }
   .ihead .chev { width: 7px; height: 7px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .12s; flex: none; margin-right: 2px; }
+  .cardbody { padding: 10px; }
   .issue.open .chev { transform: rotate(45deg); }
   .ibody { padding: 0 10px 10px; } .ibody[hidden] { display: none; }
   .issue .why { margin-top: 2px; }
@@ -100,6 +101,7 @@
 <div class="tabs">
   <button class="tab on" id="tabImport">Import</button>
   <button class="tab" id="tabAnalysis">Design analysis</button>
+  <button class="tab" id="tabClean">Clean</button>
   <span class="dot off" id="dot" title="Helper: checking"></span>
   <button class="gear" id="gear" title="Settings" aria-label="Settings">&#9881;</button>
 </div>
@@ -108,6 +110,26 @@
   <input id="token" placeholder="Paste, then press Enter" autocomplete="off" spellcheck="false">
   <div class="muted" id="tokenNote"></div>
   <div class="muted" id="helperState" style="margin-top:6px"></div>
+</div>
+<div id="paneClean" hidden>
+  <div class="muted" id="cleanSel" style="margin-bottom:8px">Select layers or frames to clean.</div>
+  <div class="issue info"><div class="cardbody">
+    <div class="sec" style="margin-top:0">Names</div>
+    <label class="chk"><input type="checkbox" id="cnSpaces" checked><span>Trim and collapse extra spaces</span></label>
+    <label class="chk"><input type="checkbox" id="cnSymbols" checked><span>Remove emoji and hidden characters</span></label>
+    <label class="chk" title='Turns names like "Frame 2147230678" or "Vector 9323" into "Frame" or "Vector".'><input type="checkbox" id="cnGeneric" checked><span>Simplify default names (Frame 123 &rarr; Frame)</span></label>
+    <div class="muted" id="cnInfo" style="margin:6px 0 8px"></div>
+    <button id="cnApply">Clean names</button>
+  </div></div>
+  <div class="issue info" style="margin-top:12px"><div class="cardbody">
+    <div class="sec" style="margin-top:0">Pixels</div>
+    <label class="chk" title="Rounds x and y to whole numbers. Skips rotated and flipped layers and layers placed by auto layout."><input type="checkbox" id="cpPos" checked><span>Snap positions to whole pixels</span></label>
+    <label class="chk" title="Rounds width and height. Skips text, lines, and sizes set to hug or fill."><input type="checkbox" id="cpSize" checked><span>Snap sizes to whole pixels</span></label>
+    <div class="muted" id="cpInfo" style="margin:6px 0 8px"></div>
+    <button id="cpApply">Snap to pixels</button>
+  </div></div>
+  <label class="chk" style="margin-top:12px"><input type="checkbox" id="cDeep" checked><span>Include everything inside the selection</span></label>
+  <div id="cleanOut"></div>
 </div>
 <div id="paneAnalysis" hidden>
   <div class="head-actions"><button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, previews and design data in the helper's claude-inbox folder">Send to Claude</button>
@@ -1528,6 +1550,14 @@ function mergeFrames(name, ids, names) {
     });
   });
 }
+// ---- Clean tab: tidy names and snap pixels on the selected Figma layers ----------------------------
+function cleanOptsUi() { return { deep: document.getElementById('cDeep').checked, spaces: document.getElementById('cnSpaces').checked, symbols: document.getElementById('cnSymbols').checked, generic: document.getElementById('cnGeneric').checked, pos: document.getElementById('cpPos').checked, size: document.getElementById('cpSize').checked }; }
+var cleanTimer = null;
+function scanClean() { clearTimeout(cleanTimer); cleanTimer = setTimeout(function () { parent.postMessage({ pluginMessage: { type: 'cleanScan', o: cleanOptsUi() } }, '*'); }, 150); }
+function cleanApply(which) { parent.postMessage({ pluginMessage: { type: 'cleanApply', which: which, o: cleanOptsUi() } }, '*'); }
+Array.prototype.forEach.call(document.querySelectorAll('#paneClean input'), function (i) { i.onchange = scanClean; });
+document.getElementById('cnApply').onclick = function () { cleanApply('names'); };
+document.getElementById('cpApply').onclick = function () { cleanApply('pixels'); };
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
 document.getElementById('send').onclick = function () { prepAddTo(); ask('send'); };
 var settingsEl = document.getElementById('settings'), gearEl = document.getElementById('gear'), tokenNote = document.getElementById('tokenNote');
@@ -1576,12 +1606,14 @@ var paneImport = document.getElementById('paneImport'), paneAnalysis = document.
 var tabImport = document.getElementById('tabImport'), tabAnalysis = document.getElementById('tabAnalysis');
 var analysisOut = document.getElementById('analysisOut'), selInfo = document.getElementById('selInfo'), analysisTimer = null;
 function showTab(which) {
-  var a = which === 'analysis';
-  paneAnalysis.hidden = !a; paneImport.hidden = a;
-  tabAnalysis.classList.toggle('on', a); tabImport.classList.toggle('on', !a);
+  var a = which === 'analysis', cl = which === 'clean';
+  paneAnalysis.hidden = !a; paneImport.hidden = a || cl; document.getElementById('paneClean').hidden = !cl;
+  tabAnalysis.classList.toggle('on', a); tabImport.classList.toggle('on', which === 'import'); document.getElementById('tabClean').classList.toggle('on', cl);
   if (a) runAnalysis();
+  if (cl) scanClean();
 }
 tabImport.onclick = function () { showTab('import'); };
+document.getElementById('tabClean').onclick = function () { showTab('clean'); };
 tabAnalysis.onclick = function () { showTab('analysis'); };
 document.getElementById('runAnalysis').onclick = function () { runAnalysis(); };
 document.getElementById('sendClaude').onclick = function () {
@@ -1669,7 +1701,20 @@ onmessage = function (e) {
   var m = e.data.pluginMessage; if (!m) return;
   if (m.type === 'analysisSnapshot') { renderAnalysis(m); return; }
   if (m.type === 'claudePayload') { sendToInbox(m); return; }
+  if (m.type === 'cleanScanResult') {
+    var any = !m.empty, ex = function (l) { return l && l.length ? '<br>' + l.map(esc).join('<br>') : ''; };
+    document.getElementById('cleanSel').textContent = m.empty ? 'Select layers or frames to clean.' : 'Cleaning the current selection.';
+    document.getElementById('cnInfo').innerHTML = m.empty ? '' : (m.names.count ? '<b>' + m.names.count + '</b> layer name' + (m.names.count === 1 ? '' : 's') + ' to tidy' + ex(m.names.examples) : 'Names are already clean.');
+    document.getElementById('cpInfo').innerHTML = m.empty ? '' : (m.pixels.count ? '<b>' + m.pixels.count + '</b> layer' + (m.pixels.count === 1 ? ' is' : 's are') + ' off the pixel grid' + ex(m.pixels.examples) : 'Everything is on the pixel grid.');
+    document.getElementById('cnApply').disabled = m.empty || !m.names.count; document.getElementById('cpApply').disabled = m.empty || !m.pixels.count;
+    return;
+  }
+  if (m.type === 'cleanDone') {
+    document.getElementById('cleanOut').innerHTML = '<div class="box ok"><b>' + (m.which === 'names' ? 'Renamed ' : 'Snapped ') + m.done + ' layer' + (m.done === 1 ? '' : 's') + '.</b><br><span class="muted">Press Cmd+Z in Figma to undo.</span></div>';
+    return;
+  }
   if (m.type === 'selection') {
+    if (!document.getElementById('paneClean').hidden) scanClean();
     showSelection(m);
     selInfo.textContent = m.count ? m.count + ' selected' : 'nothing selected';
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
