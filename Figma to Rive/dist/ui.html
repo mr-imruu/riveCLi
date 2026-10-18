@@ -870,6 +870,7 @@
     function variantRename(c) {
       if (!VARIANT.test(String(c.name))) return c;
       var vals = String(c.name).split(',').map(function (p) { return p.slice(p.indexOf('=') + 1).trim(); });
+      if (vals[0]) vals[0] = vals[0].charAt(0).toUpperCase() + vals[0].slice(1); // the first value always starts with a capital
       var nm = [c.setName || instName[c.id] || ''].concat(vals).filter(Boolean).join('-');
       return Object.assign({}, c, { name: nm });
     }
