@@ -166,7 +166,31 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
+  // Figma keeps the layers inside a group positioned relative to the group's PARENT frame, not to the group.
+  // Rive groups are their own space, so move each group's children into group-local coordinates first.
+  function mulT(A, B) {
+    return [[A[0][0] * B[0][0] + A[0][1] * B[1][0], A[0][0] * B[0][1] + A[0][1] * B[1][1], A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][2]],
+      [A[1][0] * B[0][0] + A[1][1] * B[1][0], A[1][0] * B[0][1] + A[1][1] * B[1][1], A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2]]];
+  }
+  function invT(T) {
+    var a = T[0][0], c = T[0][1], tx = T[0][2], b = T[1][0], d = T[1][1], ty = T[1][2], det = a * d - c * b;
+    if (Math.abs(det) < 1e-9) return null;
+    return [[d / det, -c / det, (c * ty - d * tx) / det], [-b / det, a / det, (b * tx - a * ty) / det]];
+  }
+  function rebaseGroups(node) {
+    var T = node.relativeTransform, out = Object.assign({}, node);
+    if (node.children) {
+      out.children = node.children.map(function (c) {
+        var cT = c.relativeTransform, kid = rebaseGroups(c), inv = (node.type === 'GROUP' && T && cT) ? invT(T) : null;
+        if (inv) { var m = mulT(inv, cT); kid.relativeTransform = m; kid.x = m[0][2]; kid.y = m[1][2]; }
+        return kid;
+      });
+    }
+    return out;
+  }
+
   function convert(snapshot, options) {
+    snapshot = Object.assign({}, snapshot, { nodes: (snapshot.nodes || []).map(rebaseGroups), components: (snapshot.components || []).map(rebaseGroups) });
     options = options || {};
     var warnings = [];
     var fonts = {}; // key -> {family, style, file, assetId}
@@ -739,14 +763,16 @@
     function containerXml(node, parent, parentIsAL, inFlow, sz) {
       if (node.type === 'INSTANCE' && linkComponents && node.mainComponentId && compIds[node.mainComponentId]) {
         // A live link: the instance becomes a sized slot holding a nested artboard of its component.
+        // Only when it looks the same as its component; an instance with its own colours, text or size stays plain layout.
         var cmp = compById[node.mainComponentId];
-        linkedInst++;
-        var sig = function (n) { return [n.type, n.name, Math.round(n.width), Math.round(n.height), n.characters || '', JSON.stringify(n.fills || []), JSON.stringify(n.strokes || []), JSON.stringify(n.effects || []), n.visible !== false, n.opacity, (n.children || []).map(sig).join('|')].join('~'); };
+        var look = function (v) { return JSON.stringify(v, function (k, x) { return k === 'boundVariables' ? undefined : (typeof x === 'number' ? Math.round(x * 1000) / 1000 : x); }); };
+        var sig = function (n) { return [n.type, Math.round(n.width), Math.round(n.height), n.characters || '', look(n.fills || []), look(n.strokes || []), look(n.effects || []), n.visible !== false, n.opacity, (n.children || []).map(sig).join('|')].join('~'); };
         var kids = function (n) { return (n.children || []).map(sig).join('|'); };
-        if (kids(node) !== kids(cmp) || Math.abs(node.width - cmp.width) > 0.5 || Math.abs(node.height - cmp.height) > 0.5) {
-          warn(node, 'this instance differs from its component (text, colour or size changes). Rive shows the component as designed, scaled to fit');
-        }
-        node = Object.assign({}, node, { type: 'FRAME', fills: [], strokes: [], effects: [], children: [], layoutMode: 'NONE', clipsContent: false, cornerRadius: 0, topLeftRadius: undefined, topRightRadius: undefined, bottomLeftRadius: undefined, bottomRightRadius: undefined, __nested: compIds[node.mainComponentId], __nestedName: cmp.name });
+        var same = kids(node) === kids(cmp) && Math.abs(node.width - cmp.width) <= 0.5 && Math.abs(node.height - cmp.height) <= 0.5;
+        if (same) {
+          linkedInst++;
+          node = Object.assign({}, node, { type: 'FRAME', fills: [], strokes: [], effects: [], children: [], layoutMode: 'NONE', clipsContent: false, cornerRadius: 0, topLeftRadius: undefined, topRightRadius: undefined, bottomLeftRadius: undefined, bottomRightRadius: undefined, __nested: compIds[node.mainComponentId], __nestedName: cmp.name });
+        } else changedInst++;
       }
       if (node.type === 'INSTANCE') detached++;
       var al = hasAutoLayout(node);
@@ -806,7 +832,7 @@
     }
 
     var componentAssets = [];
-    var compIds = {}, compById = {}, linkedInst = 0;
+    var compIds = {}, compById = {}, linkedInst = 0, changedInst = 0;
     var linkComponents = options.linkComponents !== false && componentArtboards;
     function artboardXml(node, isComponent) {
       var styleId = id();
