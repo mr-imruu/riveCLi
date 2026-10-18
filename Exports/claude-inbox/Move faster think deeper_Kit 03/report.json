@@ -1,0 +1,237 @@
+{
+ "verdict": "Will import, with differences",
+ "score": 84,
+ "counts": {
+  "error": 0,
+  "warning": 2,
+  "info": 5
+ },
+ "issues": [
+  {
+   "id": "bg-blur",
+   "severity": "warning",
+   "title": "Background blur (frosted glass)",
+   "why": "Background blur is not supported in Rive.",
+   "fix": "Fake it with a semi-transparent fill, or add a blurred copy of the background image.",
+   "count": 7,
+   "nodes": [
+    {
+     "id": "3405:196",
+     "name": "Window"
+    },
+    {
+     "id": "3405:201",
+     "name": "Body"
+    },
+    {
+     "id": "3405:233",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:237",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:244",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:249",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:253",
+     "name": "Badge"
+    }
+   ]
+  },
+  {
+   "id": "flipped",
+   "severity": "warning",
+   "title": "Flipped (mirrored) layers",
+   "why": "Mirrored layers import un-mirrored.",
+   "fix": "In Figma, flatten the flip (Object → Flatten / Outline stroke) or redraw it mirrored; for icons, export a mirrored copy.",
+   "count": 2,
+   "nodes": [
+    {
+     "id": "3405:259",
+     "name": "Vector 9320"
+    },
+    {
+     "id": "3405:261",
+     "name": "Vector 9319"
+    }
+   ]
+  },
+  {
+   "id": "spread",
+   "severity": "info",
+   "title": "Shadows with spread",
+   "why": "Shadow spread is ignored; the shadow imports at the layer's own size.",
+   "fix": "Set spread to 0 and adjust blur and offset, or use a larger shape under the layer.",
+   "count": 22,
+   "nodes": [
+    {
+     "id": "3405:149",
+     "name": "Tag"
+    },
+    {
+     "id": "3405:154",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:163",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:168",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:177",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:182",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:191",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:195",
+     "name": "Dot"
+    },
+    {
+     "id": "3405:196",
+     "name": "Window"
+    },
+    {
+     "id": "3405:207",
+     "name": "Icon dot"
+    },
+    {
+     "id": "3405:225",
+     "name": "Tag"
+    },
+    {
+     "id": "3405:233",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:233",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:237",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:237",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:244",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:244",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:249",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:249",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:252",
+     "name": "Dot"
+    },
+    {
+     "id": "3405:253",
+     "name": "Badge"
+    },
+    {
+     "id": "3405:253",
+     "name": "Badge"
+    }
+   ]
+  },
+  {
+   "id": "stroke-shadow",
+   "severity": "info",
+   "title": "Inside/outside strokes with a shadow",
+   "why": "These cannot be combined (the clip would cut the shadow), so the stroke is drawn centred.",
+   "fix": "Use a centre stroke, or put the shadow on a separate rectangle underneath.",
+   "count": 2,
+   "nodes": [
+    {
+     "id": "3405:195",
+     "name": "Dot"
+    },
+    {
+     "id": "3405:252",
+     "name": "Dot"
+    }
+   ]
+  },
+  {
+   "id": "instance",
+   "severity": "info",
+   "title": "Component instances are detached",
+   "why": "Instances import as ordinary layout; they stay linked to nothing, so editing the component later will not update them in Rive.",
+   "fix": "The main component is also added as a Rive component artboard you can reuse.",
+   "count": 1,
+   "nodes": [
+    {
+     "id": "3405:344",
+     "name": "AI"
+    }
+   ]
+  },
+  {
+   "id": "fonts",
+   "severity": "info",
+   "title": "2 font files to supply",
+   "why": "Rive does not read fonts from Figma, so each font and weight needs a .ttf file: Geist-SemiBold.ttf, Geist-Medium.ttf.",
+   "fix": "Put the files in the helper's Fonts Library folder (or the project's fonts folder) using exactly these names. Without them a stand-in font is used.",
+   "count": 1,
+   "nodes": []
+  },
+  {
+   "id": "illustration",
+   "severity": "info",
+   "title": "Treated as an illustration",
+   "why": "This design is mostly shapes with little text and no real layout, so layout and naming tips are left out of the score.",
+   "fix": "Nothing to do. Keep layers grouped by part (for example one group per icon) if you plan to animate them.",
+   "count": 1,
+   "nodes": []
+  }
+ ],
+ "fonts": [
+  {
+   "family": "Geist",
+   "style": "SemiBold",
+   "file": "Geist-SemiBold.ttf"
+  },
+  {
+   "family": "Geist",
+   "style": "Medium",
+   "file": "Geist-Medium.ttf"
+  }
+ ],
+ "stats": {
+  "nodes": 119,
+  "frames": 46,
+  "texts": 3,
+  "images": 0,
+  "autoLayoutFrames": 28,
+  "hidden": 0,
+  "instances": 1,
+  "kind": "illustration"
+ }
+}

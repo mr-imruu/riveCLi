@@ -1,0 +1,19 @@
+<Rive version="1" kind="fragment">
+    <Artboard defaultStateMachineId="0:7" width="500" height="500" styleId="0:5" name="Artboard" id="0:2">
+        <LayoutComponentStyle name="Artboard Style" id="0:5"/>
+        <Fill name="Background" id="0:13">
+            <SolidColor colorValue="FF282828" name="Color" id="0:14"/>
+        </Fill>
+        <StateMachine name="State Machine 1" id="0:7">
+            <StateMachineLayer name="Layer 1" id="0:8">
+                <AnimationState animationId="0:6" x="200" id="0:12"/>
+                <AnyState x="200" y="-120" id="0:15"/>
+                <ExitState x="400" y="-120" id="0:16"/>
+                <EntryState id="0:17">
+                    <StateTransition stateToId="0:12" id="0:18"/>
+                </EntryState>
+            </StateMachineLayer>
+        </StateMachine>
+        <LinearAnimation name="Animation 1" id="0:6"/>
+    </Artboard>
+</Rive>

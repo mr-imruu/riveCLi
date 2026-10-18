@@ -1,0 +1,39 @@
+<Rive version="1" kind="fragment">
+    <Artboard defaultStateMachineId="0:7" width="500" height="500" styleId="0:5" x="-83" name="Artboard" id="0:2">
+        <LayoutComponentStyle name="Artboard Style" id="0:5"/>
+        <Fill name="Background" id="0:13">
+            <SolidColor colorValue="FF282828" name="Color" id="0:14"/>
+        </Fill>
+        <StateMachine name="State Machine 1" id="0:7">
+            <StateMachineLayer name="Layer 1" id="0:8">
+                <AnimationState animationId="0:6" x="200" id="0:12"/>
+                <AnyState x="200" y="-120" id="0:15"/>
+                <ExitState x="400" y="-120" id="0:16"/>
+                <EntryState id="0:17">
+                    <StateTransition stateToId="0:12" id="0:18"/>
+                </EntryState>
+            </StateMachineLayer>
+        </StateMachine>
+        <LinearAnimation name="Animation 1" id="0:6"/>
+    </Artboard>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="1:159"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="1:224"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="2:228"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="3:175"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="3:330"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="4:108"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="4:263"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="5:207"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="6:207"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="7:233"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="8:205"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="9:208"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="10:208"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="11:208"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="12:210"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="13:159"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="13:226"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="14:161"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="14:232"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="15:218"/>
+</Rive>

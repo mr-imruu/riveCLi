@@ -2,7 +2,7 @@ name: file-2661764
 logs:
   file: build/rive.log
   problems: build/problems.log
-main: "Start with strategic clarity_Kit_01"
 push:
   projectId: 2023216
   fileId: 2661764
+main: "Artboard"
