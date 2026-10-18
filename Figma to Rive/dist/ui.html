@@ -1118,7 +1118,7 @@ function showSelection(sel) {
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
 function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked }; }
-var resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
+var snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
 function linkChanged() { if (!curFile) return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
 function copyText(t) {
@@ -1150,11 +1150,47 @@ function renderRecents() {
     };
   });
 }
+// ---- what changed since the last export of this file ----------------------
+function hash(str) { var h = 5381, i; for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+function flatten(nodes) {
+  var map = {}, count = 0;
+  (function walk(list, path) {
+    (list || []).forEach(function (n) {
+      if (count++ > 3000) return;
+      var sig = hash(JSON.stringify([n.fills, n.strokes, n.effects, n.opacity, n.cornerRadius, n.visible, n.layoutMode, n.fontSize, n.fontName, n.itemSpacing, n.paddingLeft, n.paddingTop]));
+      var chars = n.characters == null ? null : String(n.characters);
+      map[n.id] = [n.name, n.type, Math.round(n.width), Math.round(n.height), Math.round(n.x), Math.round(n.y), chars == null ? null : chars.slice(0, 60), chars == null ? null : hash(chars), sig, path];
+      walk(n.children, (path ? path + ' / ' : '') + n.name);
+    });
+  })(nodes, '');
+  return map;
+}
+function diffSnaps(prev, cur) {
+  var d = { added: [], removed: [], renamed: [], text: [], moved: [], style: [] }, id;
+  for (id in cur) {
+    var c = cur[id], p = prev[id];
+    if (!p) { d.added.push(c[0]); continue; }
+    if (p[0] !== c[0]) d.renamed.push(p[0] + ' \u2192 ' + c[0]);
+    if (c[7] !== p[7]) d.text.push(c[0] + ': \u201C' + (p[6] || '') + '\u201D \u2192 \u201C' + (c[6] || '') + '\u201D');
+    if (c[2] !== p[2] || c[3] !== p[3] || c[4] !== p[4] || c[5] !== p[5]) d.moved.push(c[0] + (c[2] !== p[2] || c[3] !== p[3] ? ' (' + p[2] + '\u00D7' + p[3] + ' \u2192 ' + c[2] + '\u00D7' + c[3] + ')' : ' (moved)'));
+    if (c[8] !== p[8]) d.style.push(c[0]);
+  }
+  for (id in prev) if (!cur[id]) d.removed.push(prev[id][0]);
+  return d;
+}
+function changesHtml(d, when) {
+  var rows = [['added', 'New layers'], ['removed', 'Removed layers'], ['renamed', 'Renamed'], ['text', 'Text changed'], ['moved', 'Resized or moved'], ['style', 'Look changed (fill, stroke, shadow, layout...)']], total = 0, h = '';
+  rows.forEach(function (r) {
+    var list = d[r[0]]; if (!list.length) return; total += list.length;
+    h += '<div style="margin-top:8px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
+  });
+  return '<div class="box info"><b>What changed since the last export' + (when ? ' (' + ago(when) + ')' : '') + '</b>' + (total ? h : '<br><span class="muted">No changes. This is identical to the last export.</span>') + '</div>';
+}
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
 document.getElementById('send').onclick = function () { ask('send'); };
 var settingsEl = document.getElementById('settings'), gearEl = document.getElementById('gear'), tokenNote = document.getElementById('tokenNote');
 function toggleSettings(open) { settingsEl.hidden = !open; gearEl.classList.toggle('on', open); if (open) tokenEl.focus(); }
-function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents } }, '*'); }
+function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents, snaps: snaps } }, '*'); }
 var dotEl = document.getElementById('dot'), stateEl = document.getElementById('helperState');
 function setHelper(cls, text) { dotEl.className = 'dot ' + cls; dotEl.title = 'Helper: ' + text; stateEl.textContent = 'Helper: ' + text; }
 function checkHelper() {
@@ -1295,7 +1331,7 @@ onmessage = function (e) {
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
     return;
   }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; } showSelection(m.selection); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; } showSelection(m.selection); return; }
   if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');
@@ -1307,6 +1343,7 @@ onmessage = function (e) {
   var linkUsed = linkEl.value; // what this send really uses (Update may differ from the field)
   if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; } else linkChanged(); // Update must not change the remembered link
   if (linkUsed.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
+  var curSnap = flatten(m.nodes);
   var selIds = (m.nodes || []).map(function (n) { return n.id; }), frameNames = (m.nodes || []).map(function (n) { return n.name; });
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
@@ -1317,7 +1354,9 @@ onmessage = function (e) {
     if (f.missing.length) html += '<div class="box bad"><b>Missing fonts</b>: ' + f.missing.map(esc).join(', ') + '</div>';
     html += notesHtml(res) + warningsHtml(res);
     if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
-    out.innerHTML = html + zipHtml(res, name);
+    var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : '';
+    if (ok) { snaps[r.name] = { time: Date.now(), map: curSnap }; var keep = Object.keys(snaps).sort(function (a, b) { return snaps[b].time - snaps[a].time; }); keep.slice(5).forEach(function (k) { delete snaps[k]; }); }
+    out.innerHTML = changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
     addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
