@@ -177,7 +177,7 @@ function showSelection(sel) {
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
 function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked }; }
-var snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
+var viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
 function linkChanged() { if (!curFile) return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
 function copyText(t) {
@@ -203,7 +203,7 @@ function renderRecents() {
   Array.prototype.forEach.call(el.querySelectorAll('button[data-resend]'), function (b) {
     b.onclick = function () {
       var x = recents[+b.getAttribute('data-resend')];
-      projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = (x.mode ? x.mode === 'existing' : /^\d+$/.test(x.link || '')) ? x.link : ''; // old entries: only a plain file id means an open-file send
+      viaUpdate = true; projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = (x.mode ? x.mode === 'existing' : /^\d+$/.test(x.link || '')) ? x.link : ''; // old entries: only a plain file id means an open-file send
       parent.postMessage({ pluginMessage: { type: 'select', ids: x.ids } }, '*');
       setTimeout(function () { ask('send'); }, 450);
     };
@@ -402,7 +402,7 @@ onmessage = function (e) {
   var linkUsed = linkEl.value; // what this send really uses (Update may differ from the field)
   if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; } else linkChanged(); // Update must not change the remembered link
   if (linkUsed.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
-  var curSnap = flatten(m.nodes);
+  var curSnap = flatten(m.nodes), wasUpdate = viaUpdate; viaUpdate = false;
   var selIds = (m.nodes || []).map(function (n) { return n.id; }), frameNames = (m.nodes || []).map(function (n) { return n.name; });
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
@@ -413,7 +413,7 @@ onmessage = function (e) {
     if (f.missing.length) html += '<div class="box bad"><b>Missing fonts</b>: ' + f.missing.map(esc).join(', ') + '</div>';
     html += notesHtml(res) + warningsHtml(res);
     if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
-    var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : '';
+    var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : (ok && wasUpdate ? '<div class="box info"><b>No change report this time.</b><br><span class="muted">There is no earlier record of this file to compare with. From the next Update on, you will see what changed here before you push.</span></div>' : '');
     if (ok) { snaps[r.name] = { time: Date.now(), map: curSnap }; var keep = Object.keys(snaps).sort(function (a, b) { return snaps[b].time - snaps[a].time; }); keep.slice(5).forEach(function (k) { delete snaps[k]; }); }
     out.innerHTML = changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
@@ -429,7 +429,7 @@ onmessage = function (e) {
         if (p.ok) patchRecent(r.name, { pushed: true, time: Date.now(), url: p.url || fileUrl, link: r.mode === 'existing' ? String(r.fileId || '') : '' });
       }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
     };
-    if (pb && optAuto.checked) pb.click();
+    if (pb && optAuto.checked && !prevSnap && !wasUpdate) pb.click(); // an update always waits, so you can read the change report first
   }).catch(function (er) {
     out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder and paste its token. You can still use “Zip only”.</div>' + warningsHtml(res) + zipHtml(res, name);
   });
