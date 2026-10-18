@@ -394,13 +394,13 @@
         }).join('');
       }
 
-      var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', innerOut = '';
+      var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', shadowBoxes = '', innerOut = '';
       if (surface) drops.forEach(function (e) {
         var f = featherFill(e, false);
         if (o.splitShadow && e.spread && Math.abs(e.spread) > 0.01) {
           // Spread grows or shrinks the shadow's shape. The wrapper does not clip, so cast the shadow from a box of that size.
           var sp = e.spread, ssid = id(), bw = Math.max(1, w + 2 * sp), bh = Math.max(1, h + 2 * sp);
-          shadowOut += '<LayoutComponent width="' + num(bw) + '" height="' + num(bh) + '" styleId="' + ssid + '" clip="false" name="Shadow" id="' + id() + '">' +
+          shadowBoxes += '<LayoutComponent width="' + num(bw) + '" height="' + num(bh) + '" styleId="' + ssid + '" clip="false" name="Shadow" id="' + id() + '">' +
             '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sp) + '" positionLeftUnitsValue="points" positionTop="' + num(-sp) + '" positionTopUnitsValue="points"' +
             radiusAttrs(radii(node).map(function (v) { return Math.max(0, v + sp); })) + ' name="Shadow Style" id="' + ssid + '"/>' + f + '</LayoutComponent>';
         } else if (o.splitShadow) shadowOut += f; else out += f;
@@ -421,7 +421,7 @@
           // The wrapper does not clip, so an outline box slightly larger than the frame, stroked on its centre line, gives a true outside stroke
           // whatever the fill is (a double-width stroke would show through a see-through fill).
           var osid = id();
-          shadowOut += '<LayoutComponent width="' + num(w + sw) + '" height="' + num(h + sw) + '" styleId="' + osid + '" clip="false" name="Outside Stroke" id="' + id() + '">' +
+          shadowBoxes += '<LayoutComponent width="' + num(w + sw) + '" height="' + num(h + sw) + '" styleId="' + osid + '" clip="false" name="Outside Stroke" id="' + id() + '">' +
             '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sw / 2) + '" positionLeftUnitsValue="points" positionTop="' + num(-sw / 2) + '" positionTopUnitsValue="points"' +
             radiusAttrs(radii(node).map(function (v) { return v > 0 ? v + sw / 2 : 0; })) + ' name="Outside Stroke Style" id="' + osid + '"/>' + strokesAt(sw) + '</LayoutComponent>';
         }
@@ -436,7 +436,7 @@
         if (body) out += '<Fill' + (blur ? ' fillRule="clockwise"' : node.__evenOdd ? ' fillRule="evenOdd"' : '') + paintBlend(p, node) + ' name="Fill">' + body + blurFx + '</Fill>';
       });
       if (surface) inners.forEach(function (e) { var f = featherFill(e, true); if (o.splitInner) innerOut += f; else out += f; });
-      return { xml: out + tail, shadowXml: shadowOut, innerXml: innerOut, clip: clip, shadowed: shadowed };
+      return { xml: out + tail, shadowXml: shadowOut, shadowBoxXml: shadowBoxes, innerXml: innerOut, clip: clip, shadowed: shadowed };
     }
 
     // ---- blend modes --------------------------------------------------
@@ -986,7 +986,9 @@
       return '<LayoutComponent' + wrapAttrs + ' name="' + esc(node.name) + ' Shadow" id="' + id() + '">' +
         styleXml(radiusNode, outer) + origin + paints.shadowXml +
         '<LayoutComponent' + innerAttrs + ' name="' + esc(node.name) + '" id="' + id() + '">' +
-        styleXml(node, innerO) + paints.xml + overlay + inner + imgXml + '</LayoutComponent></LayoutComponent>';
+        styleXml(node, innerO) + paints.xml + overlay + inner + imgXml + '</LayoutComponent>' +
+        // Rive draws the first child on top, so the shadow and outside-stroke boxes go AFTER the frame to sit behind it.
+        paints.shadowBoxXml + '</LayoutComponent>';
     }
 
     var componentAssets = [];
