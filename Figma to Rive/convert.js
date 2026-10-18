@@ -202,7 +202,7 @@
       }
       function strokesAt(thickness) {
         return strokes.map(function (p) {
-          if (p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
+          if (options.angularRings === true && p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
           var body = paintBody(p, node, w, h, undefined, o.centered);
           return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + '</Stroke>' : '';
         }).join('');
