@@ -286,6 +286,12 @@ function handler(req, res) {
         const v = await run(['--version'], ROOT);
         return send(200, { ok: v.ok, rive: v.output, projectId: cfg.projectId || null, realFonts: fs.readdirSync(FONTS).filter(f => /\.(ttf|otf)$/i.test(f)) });
       }
+      if (req.method === 'GET' && req.url.startsWith('/artboards')) {
+        // Artboard names in an export's scene, so older Recent entries can fill their Artboards tab.
+        const nm = safeName(decodeURIComponent((req.url.split('name=')[1] || '').split('&')[0])), f = path.join(EXPORTS, nm, 'scene.rml');
+        const names = fs.existsSync(f) ? [...fs.readFileSync(f, 'utf8').matchAll(/<Artboard\s[^>]*?name="([^"]*)"/g)].map(m => m[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')) : [];
+        return send(200, { names });
+      }
       if (req.method === 'POST' && req.url === '/frame') return send(200, doFrame(body));
       if (req.method === 'POST' && req.url === '/inbox') return send(200, doInbox(body));
       if (req.method === 'POST' && req.url === '/export') return send(200, await doExport(body));
