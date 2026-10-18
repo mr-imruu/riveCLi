@@ -217,8 +217,9 @@ async function doPush(body) {
   if (!fs.existsSync(path.join(dir, 'scene.rml'))) return { ok: false, output: 'Nothing exported yet for "' + name + '".' };
   const args = ['push', dir, '--yes', '--name=' + (body.label || 'Figma import')];
   if (!/^push:/m.test(fs.readFileSync(path.join(dir, 'rive.yaml'), 'utf8'))) {
-    if (!cfg.projectId) return { ok: false, output: 'Set "projectId" in config.json (see `rive ls --plain`) for first push.' };
-    args.push('--project=' + cfg.projectId);
+    const pid = (fs.existsSync(CONFIG) ? JSON.parse(fs.readFileSync(CONFIG, 'utf8')) : {}).projectId; // re-read, so a changed project needs no restart
+    if (!pid) return { ok: false, output: 'No Rive project chosen. Close and double-click Start Helper.command again to pick one.' };
+    args.push('--project=' + pid);
   }
   const r = await run(args, dir);
   const m = r.output.match(/file (\d+) updated/) || r.output.match(/created file (\d+)/);

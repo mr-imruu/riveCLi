@@ -107,13 +107,15 @@ function sendSelection() { var i = selectionInfo(); i.type = 'selection'; figma.
 
 figma.ui.onmessage = function (msg) {
   if (msg.type === 'loadSettings') {
-    Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts')]).then(function (v) {
-      figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, selection: selectionInfo() });
+    Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts'), figma.clientStorage.getAsync('links'), figma.clientStorage.getAsync('recents')]).then(function (v) {
+      figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, links: v[3] || {}, recents: v[4] || [], selection: selectionInfo() });
     });
     return;
   }
   if (msg.type === 'saveSettings') {
     figma.clientStorage.setAsync('token', msg.token); figma.clientStorage.setAsync('fileLink', msg.fileLink); figma.clientStorage.setAsync('opts', msg.opts);
+    if (msg.links) figma.clientStorage.setAsync('links', msg.links);
+    if (msg.recents) figma.clientStorage.setAsync('recents', msg.recents);
     return;
   }
   if (msg.type === 'convert') {
