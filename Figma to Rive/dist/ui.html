@@ -351,9 +351,9 @@
       }
       function strokesAt(thickness) {
         return strokes.map(function (p) {
-          if (options.angularRings === true && p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
+          if (options.angularRings === 'strokes' && p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
           var body = paintBody(p, node, w, h, undefined, o.centered);
-          return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + '</Stroke>' : '';
+          return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + (node.__arc ? '<TrimPath start="0" end="' + num(node.__arc.len) + '" offset="' + num(node.__arc.offset) + '" modeValue="1" name="Arc"/>' : '') + '</Stroke>' : '';
         }).join('');
       }
 
@@ -769,7 +769,38 @@
           (pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
           '<Node name="Art">' + inner + '</Node></LayoutComponent>';
       }
+      var ringArcs = angularRingShapes(node, inFlow, sz);
+      if (ringArcs) return ringArcs;
       return endCapsXml(node, inFlow) + shapeXml(node, { inLayout: inFlow, sizing: sz });
+    }
+
+    // A ring with an angular (sweep) gradient stroke: Rive has no such gradient, so draw it as many short arcs, one shape each.
+    function angularRingShapes(node, inFlow, sz) {
+      if ((options.angularRings === undefined ? 'shapes' : options.angularRings) !== 'shapes' || node.type !== 'ELLIPSE' || inFlow) return null; // on by default: tested to survive a push and pull-back
+      var p = visiblePaints(node.strokes).filter(function (q) { return q.type === 'GRADIENT_ANGULAR' && q.gradientTransform && q.gradientStops && q.gradientStops.length; })[0];
+      if (!p || visiblePaints(node.strokes).length !== 1) return null;
+      var w = node.width, h = node.height, inv = invert(p.gradientTransform), c0 = apply(inv, 0.5, 0.5), cx = apply(inv, 1, 0.5), cy = apply(inv, 0.5, 1);
+      var xd = [(cx[0] - c0[0]) * w, (cx[1] - c0[1]) * h], yd = [(cy[0] - c0[0]) * w, (cy[1] - c0[1]) * h];
+      var a0 = Math.atan2(xd[1], xd[0]), dir = (xd[0] * yd[1] - xd[1] * yd[0]) >= 0 ? 1 : -1;
+      var stops = p.gradientStops.slice().sort(function (a, b) { return a.position - b.position; });
+      function at(t) {
+        if (t <= stops[0].position) return stops[0].color;
+        if (t >= stops[stops.length - 1].position) return stops[stops.length - 1].color;
+        for (var i = 0; i < stops.length - 1; i++) if (t >= stops[i].position && t <= stops[i + 1].position) {
+          var span = stops[i + 1].position - stops[i].position, f = span > 1e-9 ? (t - stops[i].position) / span : 0, lo = stops[i].color, hi = stops[i + 1].color;
+          var m = function (k) { return (lo[k] === undefined ? 1 : lo[k]) * (1 - f) + (hi[k] === undefined ? 1 : hi[k]) * f; };
+          return { r: m('r'), g: m('g'), b: m('b'), a: m('a') };
+        }
+        return stops[0].color;
+      }
+      var N = 36, out = '', op = p.opacity === undefined ? 1 : p.opacity;
+      for (var i = 0; i < N; i++) {
+        var t0 = i / N, t1 = (i + 1) / N, col = at((t0 + t1) / 2);
+        if ((col.a === undefined ? 1 : col.a) * op < 0.01) continue;
+        var u = (((a0 + dir * 2 * Math.PI * (dir > 0 ? t0 : t1) + Math.PI / 2) / (2 * Math.PI)) % 1 + 1) % 1;
+        out += shapeXml(Object.assign({}, node, { name: node.name + ' arc ' + (i + 1), strokes: [{ type: 'SOLID', visible: true, opacity: op, color: col }], fills: i === 0 ? node.fills : [], effects: i === 0 ? node.effects : [], __arc: { offset: u, len: 1 / N + 0.0008 } }), { inLayout: false, sizing: sz });
+      }
+      return out;
     }
 
     // Figma's "dot" stroke end (CIRCLE_FILLED) has no Rive equivalent: draw a small filled circle at that end, above the line.
