@@ -1255,14 +1255,21 @@ function diffSnaps(prev, cur) {
   for (id in prev) if (!cur[id]) d.removed.push(prev[id][0]);
   return d;
 }
-function changesHtml(d, when, all, plain) {
+function cardHtml(title, badge, body, sev) {
+  return '<div class="issue ' + sev + '"><button class="ihead" data-tog="1" aria-expanded="false"><span class="ititle">' + title + '</span>' + (badge !== '' && badge != null ? '<span class="muted">' + badge + '</span>' : '') + '<span class="chev" aria-hidden="true"></span></button><div class="ibody" hidden>' + body + '</div></div>';
+}
+out.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.ihead[data-tog]'); if (!b) return;
+  var card = b.parentNode, body = card.querySelector('.ibody');
+  body.hidden = !body.hidden; card.classList.toggle('open', !body.hidden); b.setAttribute('aria-expanded', String(!body.hidden));
+});
+function changesHtml(d, when, all) {
   var rows = [['added', 'New layers'], ['removed', 'Removed layers'], ['renamed', 'Renamed'], ['text', 'Text changed'], ['moved', 'Resized or moved'], ['style', 'Look changed']], total = 0, h = '';
   rows.forEach(function (r) {
     var list = d[r[0]]; if (!list.length) return; total += list.length;
-    h += '<div style="margin-top:8px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, all ? list.length : 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (!all && list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
+    h += '<div style="margin-top:6px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, all ? list.length : 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (!all && list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
   });
-  var inner = '<b>Changes' + (when ? ' since ' + ago(when) : '') + '</b>' + (total ? h : '<br><span class="muted">No changes.</span>');
-  return plain ? inner : '<div class="box info">' + inner + '</div>';
+  return cardHtml('Changes' + (when ? ' since ' + ago(when) : ''), total || 'none', total ? h : '<span class="muted">No changes.</span>', 'info');
 }
 var DEST_HINT = { account: 'Creates a file in your account and keeps updating it.', open: 'Adds to a file you already have open in Rive.' };
 function applyDest(mode) {
@@ -1304,10 +1311,10 @@ function call(path, body) {
     .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); });
 }
 function notesHtml(res) {
-  return (res.notes && res.notes.length) ? '<div class="box info"><ul>' + res.notes.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+  return (res.notes && res.notes.length) ? cardHtml('Notes', res.notes.length, '<ul>' + res.notes.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul>', 'info') : '';
 }
 function warningsHtml(res) {
-  return res.warnings.length ? '<div class="box warn"><b>Not converted</b><ul>' + res.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+  return res.warnings.length ? cardHtml('Not converted', res.warnings.length, '<ul>' + res.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul>', 'warning') : '';
 }
 function zipHtml(res, name) {
   var enc = new TextEncoder();
@@ -1479,14 +1486,14 @@ onmessage = function (e) {
   var again = !fileId && recents.filter(function (x) { return x.name === name && x.pushed; })[0];
   call('/status').then(function (st) { return st.realFonts || []; }, function () { return null; }).then(function (real) {
     var miss = real ? wanted.filter(function (f) { return real.indexOf(f) < 0; }) : [], msgs = [];
-    if (miss.length) msgs.push('<b>Fonts missing from Fonts Library</b> (a stand-in is used): <ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>');
-    var gateKey = fileId ? 'file-' + fileId : name, before = snaps[gateKey];
-    if (before) msgs.unshift(changesHtml(diffSnaps(before.map, curSnap), before.time, true, true));
+    if (miss.length) msgs.push(cardHtml('Fonts missing', miss.length, '<ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul><span class="muted">A stand-in font is used.</span>', 'warning'));
     var renamedAb = replacePairs.filter(function (x) { return x.old !== x.new; });
-    if (renamedAb.length) msgs.push('<b>Artboard renamed in Rive</b><ul>' + renamedAb.map(function (x) { return '<li>' + esc(x.old) + ' \u2192 <b>' + esc(x.new) + '</b></li>'; }).join('') + '</ul><span class="muted">Replaces the old artboard. Edits you made to it in Rive are lost (backup saved).</span>');
-    if (again) msgs.push('<b>Already pushed.</b> This updates the same Rive file.');
+    if (renamedAb.length) msgs.push(cardHtml('Artboard renamed in Rive', renamedAb.length, '<ul>' + renamedAb.map(function (x) { return '<li>' + esc(x.old) + ' \u2192 <b>' + esc(x.new) + '</b></li>'; }).join('') + '</ul><span class="muted">Replaces the old artboard. Edits you made to it in Rive are lost (backup saved).</span>', 'warning'));
+    if (again) msgs.push(cardHtml('Already pushed', '', 'This updates the same Rive file.', 'info'));
+    var gateKey = fileId ? 'file-' + fileId : name, before = snaps[gateKey];
+    if (before) msgs.unshift(changesHtml(diffSnaps(before.map, curSnap), before.time, true));
     if (!msgs.length) { runExport(); return; }
-    out.innerHTML = '<div class="box warn">' + msgs.join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">') + '<p style="margin:10px 0 0"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></p></div>';
+    out.innerHTML = msgs.join('') + '<div class="actions"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></div>';
     document.getElementById('goOn').onclick = runExport;
     document.getElementById('goStop').onclick = function () { out.innerHTML = ''; };
   });
