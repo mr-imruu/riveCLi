@@ -27,17 +27,19 @@ It opens your browser: sign in with the Rive account you want to use on this com
 should show a check mark.
 
 ## 4. Start the helper
-Double-click **`Start Helper.command`** and leave its window open. It prints a token.
+Double-click **`Start Helper.command`** and leave its window open. It signs you in to Rive if needed, picks your Rive project
+(asks only if you have several), and prints a token.
 To stop it, press Ctrl-C in that window.
 
 ## 5. Add the plugin to Figma (once per computer)
 In the Figma desktop app: Plugins -> Development -> Import plugin from manifest -> pick `Figma to Rive/manifest.json`.
-Open the plugin and paste the token from step 4 (first time only).
+Open the plugin, click the **gear icon**, paste the token from step 4 and press **Enter** (first time only). The dot next to the
+gear turns green when the helper is connected.
 
 ## Using a different Rive account?
 - In each `Projects/*/rive.yaml`, delete the `push:` lines. They hold the ids of the Rive file it was uploaded to.
-- Put your own project id in `Figma to Rive/config.json`. `rive push --list` shows the ids.
-- The next `rive push` then creates a new file in your account.
+- You do not need to edit `Figma to Rive/config.json`: `Start Helper.command` picks a project from your account and saves it there.
+- The next push then creates a new file in your account.
 
 ## Good to know
 - **Supported computers for the Rive CLI:** Macs with Apple Silicon (M1 or newer) and Linux x86_64. Windows uses

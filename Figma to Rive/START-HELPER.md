@@ -6,10 +6,11 @@ The helper is a small program that runs on your Mac. The Figma To Rive plugin ne
 ## Start it
 
 1. Open **Terminal**.
-2. Paste this and press Enter:
+2. Easiest: double-click **`Start Helper.command`** in the repo root. It also signs you in to Rive and picks your push project.
+   Or paste this and press Enter (use your own folder path):
 
 ```bash
-cd "/Users/mr.imruu/Documents/Work Projects/Rive Folder/Figma to Rive" && node serve.js
+cd "/path/to/riveCLi/Figma to Rive" && node pick-project.js && node serve.js
 ```
 
 You should see three lines:
@@ -25,7 +26,7 @@ Real fonts go in: .../Fonts Library
 ## Token
 
 Your token is saved in the file `.token` in this folder (a hidden file), and the plugin remembers it after the first time.
-If the plugin's token box is empty, paste the token the helper printed.
+If the plugin has no token, it opens the settings panel for you: click the gear icon, paste the token the helper printed, press Enter.
 
 ## Stop it
 
@@ -37,7 +38,7 @@ Press **Ctrl-C** in the Terminal tab where it is running.
 |---|---|
 | `address already in use` | An old helper is still running. Run `lsof -ti tcp:4747 \| xargs kill`, then start it again. |
 | Plugin says "Could not reach the helper" | The helper is not running. Start it (above). |
-| Plugin says "bad token" | Paste the token printed by the helper into the plugin's token box. |
+| Plugin says "bad token" | Click the gear icon in the plugin and paste the token printed by the helper, then press Enter. |
 | Fonts look the same in every weight | Put real font files in `Fonts Library/` named like `Inter-Regular.ttf`, then send again. |
 
 ## What it does (and does not do)
