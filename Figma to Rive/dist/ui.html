@@ -1178,13 +1178,14 @@ function diffSnaps(prev, cur) {
   for (id in prev) if (!cur[id]) d.removed.push(prev[id][0]);
   return d;
 }
-function changesHtml(d, when) {
+function changesHtml(d, when, all, plain) {
   var rows = [['added', 'New layers'], ['removed', 'Removed layers'], ['renamed', 'Renamed'], ['text', 'Text changed'], ['moved', 'Resized or moved'], ['style', 'Look changed (fill, stroke, shadow, layout...)']], total = 0, h = '';
   rows.forEach(function (r) {
     var list = d[r[0]]; if (!list.length) return; total += list.length;
-    h += '<div style="margin-top:8px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
+    h += '<div style="margin-top:8px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, all ? list.length : 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (!all && list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
   });
-  return '<div class="box info"><b>What changed since the last export' + (when ? ' (' + ago(when) + ')' : '') + '</b>' + (total ? h : '<br><span class="muted">No changes. This is identical to the last export.</span>') + '</div>';
+  var inner = '<b>What changed since the last export' + (when ? ' (' + ago(when) + ')' : '') + '</b>' + (total ? h : '<br><span class="muted">No changes. This is identical to the last export.</span>');
+  return plain ? inner : '<div class="box info">' + inner + '</div>';
 }
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
 document.getElementById('send').onclick = function () { ask('send'); };
@@ -1381,9 +1382,11 @@ onmessage = function (e) {
   call('/status').then(function (st) { return st.realFonts || []; }, function () { return null; }).then(function (real) {
     var miss = real ? wanted.filter(function (f) { return real.indexOf(f) < 0; }) : [], msgs = [];
     if (miss.length) msgs.push('<b>These fonts are not in your Fonts Library</b>, so a stand-in font will be used: <ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>');
+    var gateKey = fileId ? 'file-' + fileId : name, before = snaps[gateKey];
+    if (before) msgs.unshift(changesHtml(diffSnaps(before.map, curSnap), before.time, true, true));
     if (again) msgs.push('<b>“' + esc(name) + '” was already pushed.</b> Sending again updates that same Rive file (the old version stays in its revision history).');
     if (!msgs.length) { runExport(); return; }
-    out.innerHTML = '<div class="box warn">' + msgs.join('<br>') + '<p style="margin:10px 0 0"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></p></div>';
+    out.innerHTML = '<div class="box warn">' + msgs.join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">') + '<p style="margin:10px 0 0"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></p></div>';
     document.getElementById('goOn').onclick = runExport;
     document.getElementById('goStop').onclick = function () { out.innerHTML = ''; };
   });
