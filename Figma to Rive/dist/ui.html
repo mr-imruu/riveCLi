@@ -78,7 +78,13 @@
   .dot.ok { background: var(--ok); } .dot.bad { background: var(--err); } .dot.off { background: #6b6b6b; }
   .score b.n { min-width: 44px; text-align: center; }
   .score .sub { margin-top: 4px; }
-  .issue h3 { display: flex; align-items: baseline; gap: 6px; }
+  .issue { padding: 0; }
+  .ihead { display: flex; align-items: center; gap: 8px; width: 100%; margin: 0; padding: 10px; background: none; color: var(--text); text-align: left; border-radius: 8px; font-weight: 600; }
+  .ihead:hover { background: #2f2f2f; filter: none; }
+  .ihead .ititle { flex: 1; min-width: 0; }
+  .ihead .chev { width: 7px; height: 7px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .12s; flex: none; margin-right: 2px; }
+  .issue.open .chev { transform: rotate(45deg); }
+  .ibody { padding: 0 10px 10px; } .ibody[hidden] { display: none; }
   .issue .why { margin-top: 2px; }
   .head-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; } .head-actions button { margin: 0; }
   .group-title { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 18px 0 0; }
@@ -1371,12 +1377,11 @@ function renderAnalysis(snap) {
         }
         layers += (ids.length > 1 ? '<button class="sm alt" data-ids="' + esc(ids.join(',')) + '">Select all ' + (i.count > ids.length ? 'first ' + ids.length : ids.length) + '</button>' : '') + '</div>';
       }
-      var long = (i.why + ' ' + i.fix).length > 170, openText = !!expandedText[i.id];
-      h += '<div class="issue ' + sev + '"><h3>' + esc(i.title) + (i.count > 1 ? ' <span class="muted">×' + i.count + '</span>' : '') + '</h3>' +
-        '<div class="why">' + esc(i.why) + '</div>' +
-        '<div class="fix" ' + (long && !openText ? 'style="max-height:2.9em;overflow:hidden"' : '') + '><b>How to fix:</b> ' + esc(i.fix) + '</div>' +
-        (long ? '<button class="linkbtn" data-text="' + esc(i.id) + '">' + (openText ? 'See less' : 'See more') + '</button>' : '') +
-        layers + '</div>';
+      var openCard = !!expandedText[i.id];
+      h += '<div class="issue ' + sev + (openCard ? ' open' : '') + '"><button class="ihead" data-card="' + esc(i.id) + '" aria-expanded="' + openCard + '"><span class="ititle">' + esc(i.title) + '</span>' + (i.count > 1 ? '<span class="muted">\u00D7' + i.count + '</span>' : '') + '<span class="chev" aria-hidden="true"></span></button>' +
+        '<div class="ibody"' + (openCard ? '' : ' hidden') + '><div class="why">' + esc(i.why) + '</div>' +
+        '<div class="fix"><b>How to fix:</b> ' + esc(i.fix) + '</div>' +
+        layers + '</div></div>';
     });
   });
   h += '<p style="margin-top:16px"><button id="goImport">' + (r.counts.error ? 'Import anyway' : 'Go to import') + '</button></p>';
@@ -1399,8 +1404,11 @@ function renderAnalysis(snap) {
       b.textContent = expanded[id] ? 'See less' : 'See ' + (more.querySelectorAll('.chip').length) + ' more';
     };
   });
-  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-text]'), function (b) {
-    b.onclick = function () { expandedText[b.getAttribute('data-text')] = !expandedText[b.getAttribute('data-text')]; renderAnalysis(window.lastSnap); };
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-card]'), function (b) {
+    b.onclick = function () {
+      var id = b.getAttribute('data-card'), card = b.parentNode, body = card.querySelector('.ibody');
+      expandedText[id] = !expandedText[id]; body.hidden = !expandedText[id]; card.classList.toggle('open', !!expandedText[id]); b.setAttribute('aria-expanded', !!expandedText[id]);
+    };
   });
   document.getElementById('goImport').onclick = function () { showTab('import'); };
 }
