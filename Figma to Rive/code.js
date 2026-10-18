@@ -152,16 +152,44 @@ function pixelChanges(nodes, o) {
   });
   return out;
 }
-function cleanOpts(m) { var o = m.o || {}; return { deep: o.deep !== false, symbols: !!o.symbols, spaces: !!o.spaces, generic: !!o.generic, pos: !!o.pos, size: !!o.size }; }
+// Hidden layers (eye switched off) and hidden fills / strokes / shadows. Topmost hidden layers only, and never inside an instance (those cannot be deleted).
+function insideInstance(n) { var p = n.parent; while (p && p.type !== 'PAGE' && p.type !== 'DOCUMENT') { if (p.type === 'INSTANCE') return true; p = p.parent; } return false; }
+function hiddenLayers(nodes, o) {
+  var out = [];
+  if (!o.hl) return out;
+  (function go(list) { list.forEach(function (n) { if (n.visible === false) { if (!insideInstance(n) && n.type !== 'PAGE') out.push(n); return; } if (o.deep && 'children' in n) go(n.children); }); })(nodes);
+  return out;
+}
+function liveList(arr, isPaint) { return arr.filter(function (x) { return x.visible !== false && !(isPaint && x.opacity === 0); }); }
+function hiddenPaints(nodes, o) {
+  var out = [];
+  if (!o.hp) return out;
+  walkNodes(nodes, o.deep, function (n) {
+    if (n.visible === false) return;
+    var k = 0, keep = {};
+    ['fills', 'strokes', 'effects'].forEach(function (prop) {
+      if (!(prop in n)) return; var v = n[prop];
+      if (!Array.isArray(v) || !v.length) return;
+      var l = liveList(v, prop !== 'effects');
+      if (l.length !== v.length) { k += v.length - l.length; keep[prop] = l; }
+    });
+    if (k) out.push({ node: n, name: n.name, count: k, keep: keep });
+  });
+  return out;
+}
+function cleanOpts(m) { var o = m.o || {}; return { deep: o.deep !== false, symbols: !!o.symbols, spaces: !!o.spaces, generic: !!o.generic, pos: !!o.pos, size: !!o.size, hl: !!o.hl, hp: !!o.hp }; }
 
 figma.ui.onmessage = function (msg) {
   if (msg.type === 'cleanScan' || msg.type === 'cleanApply') {
     var sel = figma.currentPage.selection, o = cleanOpts(msg);
     if (!sel.length) { figma.ui.postMessage({ type: 'cleanScanResult', empty: true }); return; }
-    var nameList = nameChanges(sel, o), pixList = pixelChanges(sel, o);
+    var nameList = nameChanges(sel, o), pixList = pixelChanges(sel, o), hidL = hiddenLayers(sel, o), hidP = hiddenPaints(sel, o);
     if (msg.type === 'cleanApply') {
       var done = 0, examples = [];
-      if (msg.which === 'names') {
+      if (msg.which === 'hidden') {
+        hidP.forEach(function (c) { try { for (var k in c.keep) c.node[k] = c.keep[k]; done += c.count; if (examples.length < 6) examples.push(c.name + ': ' + c.count + ' hidden fill/stroke/effect'); } catch (e) {} });
+        hidL.forEach(function (n) { try { var nm = n.name; n.remove(); done++; if (examples.length < 6) examples.push(nm + ' (hidden layer)'); } catch (e) {} });
+      } else if (msg.which === 'names') {
         nameList.forEach(function (c) { try { c.node.name = c.to; done++; if (examples.length < 6) examples.push(c.from + ' \u2192 ' + c.to); } catch (e) {} });
       } else {
         pixList.forEach(function (c) {
@@ -175,10 +203,12 @@ figma.ui.onmessage = function (msg) {
       }
       figma.commitUndo();
       figma.ui.postMessage({ type: 'cleanDone', which: msg.which, done: done, examples: examples });
-      nameList = nameChanges(sel, o); pixList = pixelChanges(sel, o);
+      if (!sel[0] || sel.some(function (n) { return n.removed; })) { sel = figma.currentPage.selection; }
+      nameList = nameChanges(sel, o); pixList = pixelChanges(sel, o); hidL = hiddenLayers(sel, o); hidP = hiddenPaints(sel, o);
     }
     figma.ui.postMessage({ type: 'cleanScanResult', names: { count: nameList.length, examples: nameList.slice(0, 5).map(function (c) { return c.from + ' \u2192 ' + c.to; }) },
-      pixels: { count: pixList.length, examples: pixList.slice(0, 5).map(function (c) { return c.name + (c.fromPos ? ': ' + c.fromPos : '') + (c.fromSize ? ' (' + c.fromSize + ')' : ''); }) } });
+      pixels: { count: pixList.length, examples: pixList.slice(0, 5).map(function (c) { return c.name + (c.fromPos ? ': ' + c.fromPos : '') + (c.fromSize ? ' (' + c.fromSize + ')' : ''); }) },
+      hidden: { layers: hidL.length, paints: hidP.reduce(function (a, c) { return a + c.count; }, 0), examples: hidL.slice(0, 4).map(function (n) { return n.name + ' (layer)'; }).concat(hidP.slice(0, 3).map(function (c) { return c.name + ' (' + c.count + ' hidden fill/stroke/effect)'; })) } });
     return;
   }
 
