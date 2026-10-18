@@ -394,6 +394,9 @@
       function line(px, py) { cur.pts.push({ x: px, y: py, inx: 0, iny: 0, outx: 0, outy: 0 }); }
       function cubic(c1x, c1y, c2x, c2y, px, py) {
         var p0 = cur.pts[cur.pts.length - 1];
+        // A curve whose handles lie on the straight line between its ends is just a line (lets corner radius apply).
+        var ex = px - p0.x, ey = py - p0.y, el = Math.hypot(ex, ey) || 1;
+        if (Math.abs((c1x - p0.x) * ey - (c1y - p0.y) * ex) / el < 1e-3 && Math.abs((c2x - p0.x) * ey - (c2y - p0.y) * ex) / el < 1e-3) { line(px, py); return; }
         p0.outx = c1x - p0.x; p0.outy = c1y - p0.y;
         cur.pts.push({ x: px, y: py, inx: c2x - px, iny: c2y - py, outx: 0, outy: 0 });
       }
@@ -417,10 +420,10 @@
       }
       return contours;
     }
-    function vertexXml(p, cx, cy) {
+    function vertexXml(p, cx, cy, radius) {
       var X = num(p.x - cx), Y = num(p.y - cy);
       var inD = Math.hypot(p.inx, p.iny), outD = Math.hypot(p.outx, p.outy);
-      if (inD < 1e-3 && outD < 1e-3) return '<StraightVertex x="' + X + '" y="' + Y + '"/>';
+      if (inD < 1e-3 && outD < 1e-3) return '<StraightVertex x="' + X + '" y="' + Y + '"' + (radius > 0 ? ' radius="' + num(radius) + '"' : '') + '/>';
       return '<CubicDetachedVertex x="' + X + '" y="' + Y + '" inRotation="' + num(Math.atan2(p.iny, p.inx)) + '" inDistance="' + num(inD) +
         '" outRotation="' + num(Math.atan2(p.outy, p.outx)) + '" outDistance="' + num(outD) + '"/>';
     }
@@ -430,10 +433,17 @@
         if (vp.windingRule === 'EVENODD') node.__evenOdd = true;
         parsePath(vp.data).forEach(function (c) {
           if (c.pts.length < 2) return;
+          // A mirrored layer (negative determinant) is its own shape mirrored top-to-bottom, about its centre, once the rotation is taken out.
+          var m = node.relativeTransform;
+          if (m && m[0][0] * m[1][1] - m[0][1] * m[1][0] < 0) {
+            c.pts.forEach(function (p) { p.y = node.height - p.y; p.iny = -p.iny; p.outy = -p.outy; });
+          }
+          // Figma's corner radius on a vector rounds its corner points (not the two ends of an open path).
+          var cr = (typeof node.cornerRadius === 'number' && node.cornerRadius > 0) ? node.cornerRadius : 0;
           var area = 0;
           c.pts.forEach(function (p, k) { var q = c.pts[(k + 1) % c.pts.length]; area += p.x * q.y - q.x * p.y; });
           out += '<PointsPath isClosed="' + (c.closed ? 'true' : 'false') + '" isClockwise="' + (area >= 0 ? 'true' : 'false') + '" name="Path">' +
-            c.pts.map(function (p) { return vertexXml(p, node.width / 2, node.height / 2); }).join('') + '</PointsPath>';
+            c.pts.map(function (p, k) { return vertexXml(p, node.width / 2, node.height / 2, cr && (c.closed || (k > 0 && k < c.pts.length - 1)) ? cr : 0); }).join('') + '</PointsPath>';
         });
       });
       return out;
