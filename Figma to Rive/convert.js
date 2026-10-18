@@ -585,7 +585,7 @@
       var clip = wrapShadow ? true : ((node.clipsContent && !paints.shadowed) || paints.clip);
       if (!wrapShadow && node.clipsContent && paints.shadowed) warn(node, 'clip content is turned off so its shadow can show');
       if (wrapShadow && !node.clipsContent) warn(node, 'clip content is on for this frame so its inside stroke can be drawn (its shadow still shows)');
-      var inner = al ? childrenXml(node, true) : '<Node name="Content">' + childrenXml(node, false) + '</Node>';
+      var inner = al ? childrenXml(node, true) : '<Node name="' + esc(String(node.name).trim()) + ' (content)">' + childrenXml(node, false) + '</Node>';
       var imgXml = img ? imageWrapper(node, img, w, h) : '';
       // In Figma an inner shadow also shades the layers inside the frame, so it is drawn on an overlay ABOVE the contents
       // (first sibling = on top), clipped to the frame's rounded shape.
