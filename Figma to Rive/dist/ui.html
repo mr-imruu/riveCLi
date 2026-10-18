@@ -1226,7 +1226,7 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
-var liveCache = {}, liveTried = {}, addTo = '', artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
+var liveErr = {}, liveCache = {}, liveTried = {}, addTo = '', artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
 var REFRESH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg>';
 var refreshing = false;
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
@@ -1253,21 +1253,21 @@ function renderRecents() {
     recents.forEach(function (x) {
       if ((x.frames && x.frames.length) || tried[x.name]) return;
       tried[x.name] = true;
-      call('/artboards?name=' + encodeURIComponent(x.name)).then(function (r) { if (r.names && r.names.length) { delete artErr[x.name]; x.frames = r.names; x.fb = true; saveSettings(); } else artErr[x.name] = 'no artboards found in its export'; if (recentTab === 'artboards') renderRecents(); }).catch(function (er) { delete tried[x.name]; artErr[x.name] = String(er.message || er); if (recentTab === 'artboards') renderRecents(); });
+      call('/artboards?name=' + encodeURIComponent(x.name)).then(function (r) { if (r.names && r.names.length) { delete artErr[x.name]; x.frames = r.names; x.fb = true; saveSettings(); } else artErr[x.name] = 'no artboards found in its export'; if (recentTab === 'artboards') renderRecents(); }).catch(function (er) { artErr[x.name] = String(er.message || er); if (recentTab === 'artboards') renderRecents(); });
     });
     var hiddenCount = 0; recents.forEach(function (x) { hiddenCount += Object.keys(x.hidden || {}).length; });
     recents.forEach(function (x) {
       var fid = projFileId(x); if (!fid || liveTried[fid]) return; liveTried[fid] = true;
-      call('/artboards?fileId=' + fid).then(function (r) { if (r.ok) { liveCache[fid] = r.artboards; renderRecents(); } else delete liveTried[fid]; }).catch(function () { delete liveTried[fid]; });
+      call('/artboards?fileId=' + fid).then(function (r) { if (r.ok) { delete liveErr[fid]; liveCache[fid] = r.artboards; } else { liveErr[fid] = r.error === 'not found' ? 'restart the helper to read Rive' : (r.error || 'could not read the file'); } renderRecents(); }).catch(function (er) { liveErr[fid] = 'helper not reachable'; renderRecents(); });
     });
     recents.forEach(function (x, i) {
       x.__live = false;
       var fid = projFileId(x), live = fid && liveCache[fid];
+      if (fid && !live) { x.__live = true; return; } // has a Rive file: show only what is really in it (or why we can't read it)
       if (!live) return;
       var byName = {}; (x.frames || []).forEach(function (f, k) { byName[String(f).trim()] = x.fb ? undefined : (x.ids || [])[k]; });
       var seen = {};
       live.forEach(function (a) { seen[a.name.trim()] = true; var id = byName[a.name.trim()], key = id || a.name; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: a.name, id: id, comp: a.component, project: x.name, time: x.time, url: x.url, live: true }); });
-      (x.frames || []).forEach(function (f, k) { var nm = String(f).trim(); if (seen[nm]) return; var id = x.fb ? undefined : (x.ids || [])[k], key = id || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: nm, id: id, project: x.name, time: x.time, url: x.url, live: true, missing: true }); });
       x.__live = true;
     });
     recents.forEach(function (x, i) { if (x.__live) return; (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, time: x.time, url: x.url }); }); });
@@ -1277,7 +1277,7 @@ function renderRecents() {
         (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
         (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
-    }).join('') : '<p class="muted">No artboards yet.</p>' + Object.keys(artErr).map(function (k) { return '<p class="muted">' + esc(k) + ': ' + esc(artErr[k]) + '</p>'; }).join('') + (hiddenCount ? '<p><button class="sm alt" id="showHidden">Show ' + hiddenCount + ' hidden</button></p>' : '');
+    }).join('') : '<p class="muted">No artboards yet.</p>' + Object.keys(liveErr).map(function (k) { return '<p class="muted">Rive file ' + esc(k) + ': ' + esc(liveErr[k]) + '</p>'; }).join('') + Object.keys(artErr).map(function (k) { return '<p class="muted">' + esc(k) + ': ' + esc(artErr[k]) + '</p>'; }).join('') + (hiddenCount ? '<p><button class="sm alt" id="showHidden">Show ' + hiddenCount + ' hidden</button></p>' : '');
   }
   el.innerHTML = head + body;
   refreshAddTo();
@@ -1285,7 +1285,7 @@ function renderRecents() {
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
   on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; liveTried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
   on('#showHidden', function (b) { b.onclick = function () { recents.forEach(function (x) { x.hidden = {}; }); saveSettings(); renderRecents(); }; });
-  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; if (recentTab === 'artboards') resolveNames(); renderRecents(); }; });
+  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; if (recentTab === 'artboards') { liveTried = {}; tried = {}; resolveNames(); } renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
   on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
   on('button[data-del]', function (b) { b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); delAsk = null; saveSettings(); renderRecents(); }; });
