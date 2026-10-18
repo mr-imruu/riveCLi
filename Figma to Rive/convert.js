@@ -155,11 +155,11 @@
       if (blur && o.hasChildren) warn(node, 'layer blur only blurs this box\'s own paint, not the things inside it');
 
       function featherFill(e, inner) {
-        if (e.spread) warn(node, 'shadow spread is ignored');
+        if (e.spread && !(o.splitShadow && !inner)) warn(node, 'shadow spread is ignored');
         // An inner shadow cannot spread further than the shape is wide; huge blur values (Figma allows them) would just wash
         // everything out when drawn over the contents, so the strength is capped relative to the shape's smaller side.
         var strength = e.radius;
-        if (inner && o.splitInner) strength = Math.min(e.radius * (options.innerShadowScale || 1), (options.innerShadowCap || 0.35) * Math.min(w, h));
+        if (inner && o.splitInner) strength = Math.min(e.radius * (options.innerShadowScale || 1), (options.innerShadowCap || 0.7) * Math.min(w, h));
         return '<Fill fillRule="clockwise"' + (options.effectBlendModes === false ? '' : paintBlend(e, node)) + ' name="' + (inner ? 'Inner Shadow' : 'Shadow') + '"><SolidColor colorValue="' + colorHex(e.color) +
           '" name="Color"/><Feather strength="' + num(strength) + '" offsetX="' + num(e.offset ? e.offset.x : 0) + '" offsetY="' +
           num(e.offset ? e.offset.y : 0) + '"' + (inner ? ' inner="true"' : '') + ' name="Feather"/></Fill>';
@@ -217,7 +217,17 @@
       }
 
       var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', innerOut = '';
-      if (surface) drops.forEach(function (e) { var f = featherFill(e, false); if (o.splitShadow) shadowOut += f; else out += f; shadowed = true; });
+      if (surface) drops.forEach(function (e) {
+        var f = featherFill(e, false);
+        if (o.splitShadow && e.spread && Math.abs(e.spread) > 0.01) {
+          // Spread grows or shrinks the shadow's shape. The wrapper does not clip, so cast the shadow from a box of that size.
+          var sp = e.spread, ssid = id(), bw = Math.max(1, w + 2 * sp), bh = Math.max(1, h + 2 * sp);
+          shadowOut += '<LayoutComponent width="' + num(bw) + '" height="' + num(bh) + '" styleId="' + ssid + '" clip="false" name="Shadow" id="' + id() + '">' +
+            '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sp) + '" positionLeftUnitsValue="points" positionTop="' + num(-sp) + '" positionTopUnitsValue="points"' +
+            radiusAttrs(radii(node).map(function (v) { return Math.max(0, v + sp); })) + ' name="Shadow Style" id="' + ssid + '"/>' + f + '</LayoutComponent>';
+        } else if (o.splitShadow) shadowOut += f; else out += f;
+        shadowed = true;
+      });
       var shadowBlocksClip = shadowed && !o.splitShadow;
       var align = o.forceCenter ? 'CENTER' : (node.strokeAlign || 'CENTER');
       if (hasStroke) {
