@@ -1118,7 +1118,7 @@ function showSelection(sel) {
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
 function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked }; }
-var selKey = null, links = {}, recents = [], curFile = '';
+var resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
 function linkChanged() { if (!curFile) return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
 function copyText(t) {
@@ -1136,7 +1136,7 @@ function renderRecents() {
   el.innerHTML = '<div class="sec">Recent exports</div>' + recents.map(function (x, i) {
     return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
       (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
-      (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and send them to the same place">Update</button>' : '') + '</div></div>';
+      (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') + '</div></div>';
   }).join('');
   Array.prototype.forEach.call(el.querySelectorAll('button[data-copy]'), function (b) {
     b.onclick = function () { var ok = copyText(recents[+b.getAttribute('data-copy')].url); b.textContent = ok ? 'Copied' : 'Select and copy from Open'; setTimeout(function () { b.textContent = 'Copy link'; }, 1500); };
@@ -1144,7 +1144,7 @@ function renderRecents() {
   Array.prototype.forEach.call(el.querySelectorAll('button[data-resend]'), function (b) {
     b.onclick = function () {
       var x = recents[+b.getAttribute('data-resend')];
-      projEl.value = x.name; nameEdited = true; if (x.link) linkEl.value = x.link;
+      projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = x.link || '';
       parent.postMessage({ pluginMessage: { type: 'select', ids: x.ids } }, '*');
       setTimeout(function () { ask('send'); }, 450);
     };
@@ -1303,8 +1303,8 @@ onmessage = function (e) {
   last = { name: name, bytes: m.imageBytes || {} };
   if (mode === 'zip') { out.innerHTML = '<div class="box ok">Converted ' + m.nodes.length + ' frame(s).</div>' + notesHtml(res) + warningsHtml(res) + zipHtml(res, name); return; }
   if (m.fileName) curFile = curFile || m.fileName;
-  linkChanged();
   var fileId = ((linkEl.value.match(/file\/[^\/]+\/(\d+)/) || linkEl.value.match(/^\s*(\d+)\s*$/) || [])[1]) || '';
+  if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; } else linkChanged(); // Update must not change the remembered link
   if (linkEl.value.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
   var selIds = (m.nodes || []).map(function (n) { return n.id; }), frameNames = (m.nodes || []).map(function (n) { return n.name; });
   function runExport() {
@@ -1319,7 +1319,7 @@ onmessage = function (e) {
     out.innerHTML = html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
-    addRecent({ name: r.name, time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : (prev && prev.url) || '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
+    addRecent({ name: r.name, time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
     var pb = document.getElementById('push');
     if (pb) pb.onclick = function () {
       pb.disabled = true; pb.textContent = 'Pushing…';
@@ -1327,7 +1327,7 @@ onmessage = function (e) {
         var h = '<div class="box ' + (p.ok ? 'ok' : 'bad') + '"><b>' + (p.ok ? 'Pushed to Rive' : 'Push failed') + '</b>' +
           (p.url ? '<br><a href="' + p.url + '" target="_blank">' + p.url + '</a>' : '') + (p.ok ? '' : '<pre>' + esc(p.output) + '</pre>') + '</div>';
         out.insertAdjacentHTML('afterbegin', h); pb.textContent = 'Pushed';
-        if (p.ok) patchRecent(r.name, { pushed: true, time: Date.now(), url: p.url || fileUrl, link: p.url || String(r.fileId || '') });
+        if (p.ok) patchRecent(r.name, { pushed: true, time: Date.now(), url: p.url || fileUrl, link: r.mode === 'existing' ? String(r.fileId || '') : '' });
       }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
     };
     if (pb && optAuto.checked) pb.click();

@@ -1,0 +1,8 @@
+name: file-2661764
+logs:
+  file: build/rive.log
+  problems: build/problems.log
+main: "[bg] Start with strategic clarity_Kit"
+push:
+  projectId: 2023216
+  fileId: 2661764
