@@ -353,7 +353,7 @@
       if (blur && o.hasChildren) warn(node, 'layer blur only blurs this box\'s own paint, not the things inside it');
 
       function featherFill(e, inner) {
-        if (e.spread && !(o.splitShadow && !inner)) warn(node, 'shadow spread is ignored');
+        if (e.spread && !(o.splitShadow && !o.flowShadow && !inner)) warn(node, 'shadow spread is ignored');
         // An inner shadow cannot spread further than the shape is wide; huge blur values (Figma allows them) would just wash
         // everything out when drawn over the contents, so the strength is capped relative to the shape's smaller side.
         var strength = e.radius;
@@ -426,7 +426,7 @@
       var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', shadowBoxes = '', innerOut = '';
       if (surface) drops.forEach(function (e) {
         var f = featherFill(e, false);
-        if (o.splitShadow && e.spread && Math.abs(e.spread) > 0.01) {
+        if (o.splitShadow && !o.flowShadow && e.spread && Math.abs(e.spread) > 0.01) {
           // Spread grows or shrinks the shadow's shape. The wrapper does not clip, so cast the shadow from a box of that size.
           var sp = e.spread, ssid = id(), bw = Math.max(1, w + 2 * sp), bh = Math.max(1, h + 2 * sp);
           shadowBoxes += '<LayoutComponent width="' + num(bw) + '" height="' + num(bh) + '" styleId="' + ssid + '" clip="false" name="Shadow" id="' + id() + '">' +
@@ -446,7 +446,7 @@
           return false;
         });
         if (align === 'INSIDE' && !shadowBlocksClip && !o.noClip) { tail += strokesAt(sw * 2); clip = true; }
-        else if (align === 'OUTSIDE' && o.splitShadow) {
+        else if (align === 'OUTSIDE' && o.splitShadow && !o.flowShadow) {
           // The wrapper does not clip, so an outline box slightly larger than the frame, stroked on its centre line, gives a true outside stroke
           // whatever the fill is (a double-width stroke would show through a see-through fill).
           var osid = id();
@@ -454,7 +454,7 @@
             '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sw / 2) + '" positionLeftUnitsValue="points" positionTop="' + num(-sw / 2) + '" positionTopUnitsValue="points"' +
             radiusAttrs(radii(node).map(function (v) { return v > 0 ? v + sw / 2 : 0; })) + ' name="Outside Stroke Style" id="' + osid + '"/>' + strokesAt(sw) + '</LayoutComponent>';
         }
-        else if (align === 'OUTSIDE' && opaque) { out += strokesAt(sw * 2); } // with a shadow wrapper the stroke goes on the wrapper, which does not clip
+        else if (align === 'OUTSIDE' && opaque) { if (o.splitShadow) shadowOut += strokesAt(sw * 2); else out += strokesAt(sw * 2); } // with a shadow wrapper the stroke goes on the wrapper, which does not clip
         else {
           if (align !== 'CENTER') warn(node, 'stroke is ' + align + ' but ' + (align === 'INSIDE' ? 'it also has a shadow that cannot be separated here' : 'the fill is not opaque') + '; it is drawn centred instead');
           tail += strokesAt(sw);
@@ -971,7 +971,7 @@
       // A clipping box also clips its own shadow. So when a frame clips AND casts a shadow, the shadow is drawn by a
       // wrapper that does not clip, and the frame itself (clip on) sits inside it.
       var wrapShadow = hasDrop && (node.clipsContent || insideStroke) && !!(visiblePaints(node.fills).length || visiblePaints(node.strokes).length || img);
-      var paints = paintsXml(node, w, h, { hasImage: !!img, hasChildren: (node.children || []).length > 0, splitShadow: wrapShadow, splitInner: options.innerShadowOverChildren !== false && (node.children || []).some(function (c) { return c.visible !== false; }) });
+      var paints = paintsXml(node, w, h, { hasImage: !!img, hasChildren: (node.children || []).length > 0, splitShadow: wrapShadow, flowShadow: !!(parentIsAL && inFlow), splitInner: options.innerShadowOverChildren !== false && (node.children || []).some(function (c) { return c.visible !== false; }) });
       var o = { styleId: id(), name: node.name, sizing: parentIsAL && inFlow ? sz : { h: 'fixed', v: 'fixed' } };
       // A frame without auto layout has free-placed children that Rive cannot
       // measure, so "hug" would collapse it to nothing. Keep the drawn size.
