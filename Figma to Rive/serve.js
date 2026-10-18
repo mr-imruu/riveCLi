@@ -310,6 +310,18 @@ function handler(req, res) {
         const v = await run(['--version'], ROOT);
         return send(200, { ok: v.ok, rive: v.output, projectId: cfg.projectId || null, realFonts: fs.readdirSync(FONTS).filter(f => /\.(ttf|otf)$/i.test(f)) });
       }
+      if (req.method === 'GET' && req.url.startsWith('/artboards?fileId=')) {
+        // The artboards that are in a Rive file right now (pulled fresh), so the plugin can list them project by project.
+        const fid = (req.url.split('fileId=')[1] || '').split('&')[0].replace(/\D/g, ''), dir = path.join(EXPORTS, 'file-' + fid);
+        if (!fid) return send(400, { error: 'bad file id' });
+        const linked = fs.existsSync(path.join(dir, 'rive.yaml'));
+        const dl = linked ? await run(['pull', dir, '--yes'], ROOT) : await run(['create', dir, '--from-remote-file=' + fid], ROOT);
+        if (!dl.ok) return send(200, { ok: false, error: dl.output.slice(-300), artboards: [] });
+        const text = fs.readFileSync(path.join(dir, 'scene.rml'), 'utf8');
+        const dec = s => s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+        const artboards = [...text.matchAll(/<Artboard\s[^>]*>/g)].map(m => ({ name: dec((m[0].match(/\sname="([^"]*)"/) || [])[1] || ''), component: /\sisComponent="true"/.test(m[0]) }));
+        return send(200, { ok: true, artboards });
+      }
       if (req.method === 'GET' && req.url.startsWith('/artboards')) {
         // Artboard names in an export's scene, so older Recent entries can fill their Artboards tab.
         const nm = safeName(decodeURIComponent((req.url.split('name=')[1] || '').split('&')[0])), f = path.join(EXPORTS, nm, 'scene.rml');

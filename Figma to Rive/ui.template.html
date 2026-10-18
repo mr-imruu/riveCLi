@@ -204,7 +204,7 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
-var addTo = '', artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
+var liveCache = {}, liveTried = {}, addTo = '', artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
 var REFRESH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg>';
 var refreshing = false;
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
@@ -234,10 +234,24 @@ function renderRecents() {
       call('/artboards?name=' + encodeURIComponent(x.name)).then(function (r) { if (r.names && r.names.length) { delete artErr[x.name]; x.frames = r.names; x.fb = true; saveSettings(); } else artErr[x.name] = 'no artboards found in its export'; if (recentTab === 'artboards') renderRecents(); }).catch(function (er) { delete tried[x.name]; artErr[x.name] = String(er.message || er); if (recentTab === 'artboards') renderRecents(); });
     });
     var hiddenCount = 0; recents.forEach(function (x) { hiddenCount += Object.keys(x.hidden || {}).length; });
-    recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, time: x.time, url: x.url }); }); });
+    recents.forEach(function (x) {
+      var fid = projFileId(x); if (!fid || liveTried[fid]) return; liveTried[fid] = true;
+      call('/artboards?fileId=' + fid).then(function (r) { if (r.ok) { liveCache[fid] = r.artboards; renderRecents(); } else delete liveTried[fid]; }).catch(function () { delete liveTried[fid]; });
+    });
+    recents.forEach(function (x, i) {
+      x.__live = false;
+      var fid = projFileId(x), live = fid && liveCache[fid];
+      if (!live) return;
+      var byName = {}; (x.frames || []).forEach(function (f, k) { byName[String(f).trim()] = x.fb ? undefined : (x.ids || [])[k]; });
+      var seen = {};
+      live.forEach(function (a) { seen[a.name.trim()] = true; var id = byName[a.name.trim()], key = id || a.name; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: a.name, id: id, comp: a.component, project: x.name, time: x.time, url: x.url, live: true }); });
+      (x.frames || []).forEach(function (f, k) { var nm = String(f).trim(); if (seen[nm]) return; var id = x.fb ? undefined : (x.ids || [])[k], key = id || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: nm, id: id, project: x.name, time: x.time, url: x.url, live: true, missing: true }); });
+      x.__live = true;
+    });
+    recents.forEach(function (x, i) { if (x.__live) return; (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, time: x.time, url: x.url }); }); });
     body = items.length ? items.map(function (it, j) {
       var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from Rive?</b><br><span class="muted">A backup is saved.</span><p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
-      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
+      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + (it.missing ? 'not in Rive' : it.comp ? 'component' : it.live ? 'in Rive' : ago(it.time)) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
         (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
         (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
@@ -247,7 +261,7 @@ function renderRecents() {
   refreshAddTo();
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
-  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
+  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; liveTried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
   on('#showHidden', function (b) { b.onclick = function () { recents.forEach(function (x) { x.hidden = {}; }); saveSettings(); renderRecents(); }; });
   on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; if (recentTab === 'artboards') resolveNames(); renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
