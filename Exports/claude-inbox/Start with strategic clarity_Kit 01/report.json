@@ -1,0 +1,181 @@
+{
+ "verdict": "Will import, with differences",
+ "score": 84,
+ "counts": {
+  "error": 0,
+  "warning": 2,
+  "info": 5
+ },
+ "issues": [
+  {
+   "id": "bg-blur",
+   "severity": "warning",
+   "title": "Background blur (frosted glass)",
+   "why": "Background blur is not supported in Rive.",
+   "fix": "Fake it with a semi-transparent fill, or add a blurred copy of the background image.",
+   "count": 6,
+   "nodes": [
+    {
+     "id": "3398:13544",
+     "name": "Window"
+    },
+    {
+     "id": "3398:13563",
+     "name": "Check"
+    },
+    {
+     "id": "3398:13571",
+     "name": "Badge"
+    },
+    {
+     "id": "3398:13575",
+     "name": "Limitation"
+    },
+    {
+     "id": "3398:13580",
+     "name": "Badge 3"
+    },
+    {
+     "id": "3398:13584",
+     "name": "Badge 4"
+    }
+   ]
+  },
+  {
+   "id": "blend",
+   "severity": "warning",
+   "title": "Blend modes with no Rive equivalent",
+   "why": "The LINEAR_BURN blend mode does not exist in Rive, so the layer blends normally.",
+   "fix": "Flatten the effect into the colours, or pick the closest mode (for example Multiply or Screen) in Figma.",
+   "count": 1,
+   "nodes": [
+    {
+     "id": "3398:13562",
+     "name": "Ellipse 5"
+    }
+   ]
+  },
+  {
+   "id": "spread",
+   "severity": "info",
+   "title": "Shadows with spread",
+   "why": "Shadow spread is ignored; the shadow imports at the layer's own size.",
+   "fix": "Set spread to 0 and adjust blur and offset, or use a larger shape under the layer.",
+   "count": 11,
+   "nodes": [
+    {
+     "id": "3398:13544",
+     "name": "Window"
+    },
+    {
+     "id": "3398:13563",
+     "name": "Check"
+    },
+    {
+     "id": "3398:13567",
+     "name": "Tag"
+    },
+    {
+     "id": "3398:13571",
+     "name": "Badge"
+    },
+    {
+     "id": "3398:13571",
+     "name": "Badge"
+    },
+    {
+     "id": "3398:13575",
+     "name": "Limitation"
+    },
+    {
+     "id": "3398:13575",
+     "name": "Limitation"
+    },
+    {
+     "id": "3398:13580",
+     "name": "Badge 3"
+    },
+    {
+     "id": "3398:13580",
+     "name": "Badge 3"
+    },
+    {
+     "id": "3398:13584",
+     "name": "Badge 4"
+    },
+    {
+     "id": "3398:13584",
+     "name": "Badge 4"
+    }
+   ]
+  },
+  {
+   "id": "instance",
+   "severity": "info",
+   "title": "Component instances are detached",
+   "why": "Instances import as ordinary layout; they stay linked to nothing, so editing the component later will not update them in Rive.",
+   "fix": "The main component is also added as a Rive component artboard you can reuse.",
+   "count": 1,
+   "nodes": [
+    {
+     "id": "3398:13540",
+     "name": "AI"
+    }
+   ]
+  },
+  {
+   "id": "stroke-shadow",
+   "severity": "info",
+   "title": "Inside/outside strokes with a shadow",
+   "why": "These cannot be combined (the clip would cut the shadow), so the stroke is drawn centred.",
+   "fix": "Use a centre stroke, or put the shadow on a separate rectangle underneath.",
+   "count": 1,
+   "nodes": [
+    {
+     "id": "3398:13543",
+     "name": "Dot"
+    }
+   ]
+  },
+  {
+   "id": "fonts",
+   "severity": "info",
+   "title": "2 font files to supply",
+   "why": "Rive does not read fonts from Figma, so each font and weight needs a .ttf file: Geist-SemiBold.ttf, Geist-Medium.ttf.",
+   "fix": "Put the files in the helper's Fonts Library folder (or the project's fonts folder) using exactly these names. Without them a stand-in font is used.",
+   "count": 1,
+   "nodes": []
+  },
+  {
+   "id": "illustration",
+   "severity": "info",
+   "title": "Treated as an illustration",
+   "why": "This design is mostly shapes with little text and no real layout, so layout and naming tips are left out of the score.",
+   "fix": "Nothing to do. Keep layers grouped by part (for example one group per icon) if you plan to animate them.",
+   "count": 1,
+   "nodes": []
+  }
+ ],
+ "fonts": [
+  {
+   "family": "Geist",
+   "style": "SemiBold",
+   "file": "Geist-SemiBold.ttf"
+  },
+  {
+   "family": "Geist",
+   "style": "Medium",
+   "file": "Geist-Medium.ttf"
+  }
+ ],
+ "stats": {
+  "nodes": 62,
+  "frames": 28,
+  "texts": 2,
+  "images": 0,
+  "autoLayoutFrames": 14,
+  "hidden": 0,
+  "instances": 1,
+  "kind": "illustration"
+ }
+}

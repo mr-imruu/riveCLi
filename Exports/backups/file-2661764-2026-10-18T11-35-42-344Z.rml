@@ -1,0 +1,810 @@
+<Rive version="1" kind="fragment">
+    <Artboard defaultStateMachineId="0:7" width="500" height="500" styleId="0:5" x="-83" name="Artboard" id="0:2">
+        <LayoutComponentStyle name="Artboard Style" id="0:5"/>
+        <Fill name="Background" id="0:13">
+            <SolidColor colorValue="FF282828" name="Color" id="0:14"/>
+        </Fill>
+        <StateMachine name="State Machine 1" id="0:7">
+            <StateMachineLayer name="Layer 1" id="0:8">
+                <AnimationState animationId="0:6" x="200" id="0:12"/>
+                <AnyState x="200" y="-120" id="0:15"/>
+                <ExitState x="400" y="-120" id="0:16"/>
+                <EntryState id="0:17">
+                    <StateTransition stateToId="0:12" id="0:18"/>
+                </EntryState>
+            </StateMachineLayer>
+        </StateMachine>
+        <LinearAnimation name="Animation 1" id="0:6"/>
+    </Artboard>
+    <Artboard defaultStateMachineId="19:229" isComponent="true" width="120" height="120" styleId="19:228" y="768" name="AI" id="19:100">
+        <LayoutComponentStyle name="Artboard Style" id="19:228"/>
+        <LayoutComponent width="120" height="120" styleId="19:231" name="Frame 2147228967" id="19:237">
+            <LayoutComponentStyle gapHorizontal="11.538" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Frame 2147228967 Style" id="19:231"/>
+            <Fill name="Fill" id="0:751">
+                <RadialGradient startX="41.599998" startY="36.799999" endX="121.6" endY="36.799999" name="Gradient" id="0:752">
+                    <GradientStop colorValue="FFB3C4F2" id="0:753"/>
+                    <GradientStop colorValue="FF5B83FF" position="0.34999999" id="0:754"/>
+                    <GradientStop colorValue="FF3764E3" position="0.80000001" id="0:755"/>
+                    <GradientStop colorValue="FF2039CC" position="1" id="0:756"/>
+                </RadialGradient>
+            </Fill>
+            <LayoutComponent clip="true" width="120" height="120" styleId="19:235" name="Inner Shadow" id="19:236">
+                <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Inner Shadow Style" id="19:235"/>
+                <Fill fillRule="clockwise" name="Inner Shadow" id="0:757">
+                    <SolidColor colorValue="40FFFFFF" name="Color" id="0:758"/>
+                    <Feather strength="32" offsetY="8" inner="true" name="Feather" id="0:759"/>
+                </Fill>
+                <Fill fillRule="clockwise" name="Inner Shadow" id="0:760">
+                    <SolidColor colorValue="B2FFFFFF" name="Color" id="0:761"/>
+                    <Feather strength="24" offsetY="-4" inner="true" name="Feather" id="0:762"/>
+                </Fill>
+            </LayoutComponent>
+            <Text alignValue="center" name="AI" id="19:234">
+                <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="AI Layout" id="0:763"/>
+                <TextStylePaint fontSize="60" lineHeight="66" letterSpacing="-2.4000001" fontAssetId="19:232" familyName="Geist" styleName="SemiBold" name="Style 1" id="19:233">
+                    <Fill name="Fill" id="0:764">
+                        <SolidColor colorValue="FFFFFFFF" name="Color" id="0:765"/>
+                    </Fill>
+                </TextStylePaint>
+                <TextValueRun styleId="19:233" text="AI" name="Run 1" id="0:766"/>
+            </Text>
+        </LayoutComponent>
+        <StateMachine name="State Machine 1" id="19:229">
+            <StateMachineLayer name="Layer 1" id="19:230">
+                <AnyState x="200" y="-120" id="0:767"/>
+                <ExitState x="400" y="-120" id="0:768"/>
+                <EntryState id="0:769"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+    <Artboard defaultStateMachineId="19:102" clip="true" width="710" height="568" styleId="19:101" x="537" name="Start with strategic clarity_Kit 01" id="19:227">
+        <LayoutComponentStyle name="Artboard Style" id="19:101"/>
+        <Fill name="Fill" id="0:351">
+            <SolidColor colorValue="FFFFFFFF" name="Color" id="0:352"/>
+        </Fill>
+        <LayoutComponent width="710" height="524" styleId="19:104" name="Container 3" id="19:226">
+            <LayoutComponentStyle positionTop="20" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Container 3 Style" id="19:104"/>
+            <Node name="Container 3 (Wrapper)" id="0:353">
+                <LayoutComponent width="110" height="110" styleId="19:105" name="Settings" id="19:117">
+                    <LayoutComponentStyle positionLeft="561" positionTop="285" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Settings Style" id="19:105"/>
+                    <Node name="Settings (Wrapper)" id="0:354">
+                        <LayoutComponent width="60" height="60" styleId="19:113" name="Badge 4 Shadow" id="19:114">
+                            <LayoutComponentStyle positionLeft="25" positionTop="25" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Badge 4 Shadow Style" id="19:113"/>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:355">
+                                <SolidColor colorValue="41B8FF7E" name="Color" id="0:356"/>
+                                <Feather strength="34.849998" offsetY="23.709999" name="Feather" id="0:357"/>
+                            </Fill>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:358">
+                                <SolidColor colorValue="57FF5800" name="Color" id="0:359"/>
+                                <Feather strength="107" offsetY="72" name="Feather" id="0:360"/>
+                            </Fill>
+                            <LayoutComponent clip="true" width="60" height="60" styleId="19:106" name="Badge 4" id="19:115">
+                                <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Badge 4 Style" id="19:106"/>
+                                <Fill name="Fill" id="0:361">
+                                    <RadialGradient startX="19" startY="9.5" endX="74.101997" endY="9.5" name="Gradient" id="0:362">
+                                        <GradientStop id="0:363"/>
+                                        <GradientStop colorValue="FFB8FF7E" position="1" id="0:364"/>
+                                    </RadialGradient>
+                                </Fill>
+                                <LayoutComponent clip="true" width="60" height="60" styleId="19:111" name="Inner Shadow" id="19:112">
+                                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Inner Shadow Style" id="19:111"/>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:365">
+                                        <SolidColor colorValue="B2B8FF7E" name="Color" id="0:366"/>
+                                        <Feather strength="8" offsetX="-7" offsetY="-4" inner="true" name="Feather" id="0:367"/>
+                                    </Fill>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:368">
+                                        <SolidColor colorValue="80FFFFFF" name="Color" id="0:369"/>
+                                        <Feather strength="18" offsetY="31" inner="true" name="Feather" id="0:370"/>
+                                    </Fill>
+                                </LayoutComponent>
+                                <LayoutComponent width="26" height="26" styleId="19:107" name="settings" id="19:110">
+                                    <LayoutComponentStyle name="settings Style" id="19:107"/>
+                                    <Node name="settings (Wrapper)" id="0:371">
+                                        <Shape x="13" y="13" name="Vector" id="19:108">
+                                            <PointsPath isClosed="true" name="Path" id="0:372">
+                                                <CubicDetachedVertex inRotation="-1.571" inDistance="2.2090001" outRotation="1.571" outDistance="2.2090001" x="4" id="0:373"/>
+                                                <CubicDetachedVertex inDistance="2.2090001" outRotation="3.142" outDistance="2.2090001" y="4" id="0:374"/>
+                                                <CubicDetachedVertex inRotation="1.571" inDistance="2.2090001" outRotation="-1.571" outDistance="2.2090001" x="-4" id="0:375"/>
+                                                <CubicDetachedVertex inRotation="3.142" inDistance="2.2090001" outDistance="2.2090001" y="-4" id="0:376"/>
+                                            </PointsPath>
+                                            <Stroke thickness="2" name="Stroke" id="0:377">
+                                                <SolidColor colorValue="FF213100" name="Color" id="0:378"/>
+                                            </Stroke>
+                                        </Shape>
+                                        <Shape x="13.5" y="13" name="Vector" id="19:109">
+                                            <PointsPath isClosed="true" isClockwise="false" name="Path" id="0:379">
+                                                <CubicDetachedVertex inRotation="1.057" inDistance="0.76700002" x="9.967" y="-5.3530002" id="0:380"/>
+                                                <CubicDetachedVertex outRotation="-2.0840001" outDistance="0.81800002" x="9.4350004" y="-6.2950001" id="0:381"/>
+                                                <CubicDetachedVertex inRotation="0.39399999" inDistance="0.37" outRotation="-2.7479999" outDistance="0.37" x="8.4899998" y="-7.506" id="0:382"/>
+                                                <CubicDetachedVertex inRotation="-0.28200001" inDistance="0.80500001" x="6.9879999" y="-7.3119998" id="0:383"/>
+                                                <CubicDetachedVertex outRotation="2.9100001" outDistance="0.50700003" x="5.6739998" y="-6.934" id="0:384"/>
+                                                <CubicDetachedVertex inRotation="0.48300001" inDistance="0.509" x="4.211" y="-7.1199999" id="0:385"/>
+                                                <CubicDetachedVertex outRotation="-2.562" outDistance="0.46200001" x="3.848" y="-7.3340001" id="0:386"/>
+                                                <CubicDetachedVertex inRotation="1.212" inDistance="0.46799999" x="2.9990001" y="-8.3990002" id="0:387"/>
+                                                <CubicDetachedVertex outRotation="-1.886" outDistance="0.764" x="2.6400001" y="-9.4960003" id="0:388"/>
+                                                <CubicDetachedVertex inRotation="0.63599998" inDistance="0.34999999" outRotation="-2.506" outDistance="0.34999999" x="2.003" y="-10.792" id="0:389"/>
+                                                <CubicDetachedVertex inDistance="0.74800003" x="0.60000002" y="-11" id="0:390"/>
+                                                <CubicDetachedVertex outRotation="3.142" outDistance="0.74800003" x="-0.60000002" y="-11" id="0:391"/>
+                                                <CubicDetachedVertex inRotation="-0.63599998" inDistance="0.34999999" outRotation="2.506" outDistance="0.34999999" x="-2.003" y="-10.792" id="0:392"/>
+                                                <CubicDetachedVertex inRotation="-1.256" inDistance="0.764" x="-2.6400001" y="-9.4960003" id="0:393"/>
+                                                <CubicDetachedVertex outRotation="1.9299999" outDistance="0.46799999" x="-2.9990001" y="-8.3990002" id="0:394"/>
+                                                <CubicDetachedVertex inRotation="-0.579" inDistance="0.46200001" x="-3.848" y="-7.3340001" id="0:395"/>
+                                                <CubicDetachedVertex outRotation="2.658" outDistance="0.509" x="-4.211" y="-7.1199999" id="0:396"/>
+                                                <CubicDetachedVertex inRotation="0.23100001" inDistance="0.50700003" x="-5.6739998" y="-6.934" id="0:397"/>
+                                                <CubicDetachedVertex outRotation="-2.859" outDistance="0.80500001" x="-6.9879999" y="-7.3119998" id="0:398"/>
+                                                <CubicDetachedVertex inRotation="-0.39399999" inDistance="0.37" outRotation="2.7479999" outDistance="0.37" x="-8.4899998" y="-7.506" id="0:399"/>
+                                                <CubicDetachedVertex inRotation="-1.057" inDistance="0.81800002" x="-9.4350004" y="-6.2950001" id="0:400"/>
+                                                <CubicDetachedVertex outRotation="2.0840001" outDistance="0.76700002" x="-9.967" y="-5.3530002" id="0:401"/>
+                                                <CubicDetachedVertex inRotation="-1.673" inDistance="0.35699999" outRotation="1.4680001" outDistance="0.35699999" x="-10.496" y="-3.9960001" id="0:402"/>
+                                                <CubicDetachedVertex inRotation="-2.293" inDistance="0.76300001" x="-9.7019997" y="-2.78" id="0:403"/>
+                                                <CubicDetachedVertex outRotation="0.912" outDistance="0.44400001" x="-8.592" y="-1.513" id="0:404"/>
+                                                <CubicDetachedVertex inRotation="-1.571" inDistance="0.55000001" outRotation="1.571" outDistance="0.55000001" x="-8.1280003" id="0:405"/>
+                                                <CubicDetachedVertex inRotation="-0.91299999" inDistance="0.44400001" x="-8.592" y="1.512" id="0:406"/>
+                                                <CubicDetachedVertex outRotation="2.293" outDistance="0.76300001" x="-9.7019997" y="2.78" id="0:407"/>
+                                                <CubicDetachedVertex inRotation="-1.4680001" inDistance="0.35800001" outRotation="1.673" outDistance="0.35699999" x="-10.496" y="3.9960001" id="0:408"/>
+                                                <CubicDetachedVertex inRotation="-2.0840001" inDistance="0.76700002" x="-9.967" y="5.3530002" id="0:409"/>
+                                                <CubicDetachedVertex outRotation="1.057" outDistance="0.81800002" x="-9.4350004" y="6.2950001" id="0:410"/>
+                                                <CubicDetachedVertex inRotation="-2.7479999" inDistance="0.37" outRotation="0.39399999" outDistance="0.37" x="-8.4899998" y="7.506" id="0:411"/>
+                                                <CubicDetachedVertex inRotation="2.859" inDistance="0.80500001" x="-6.9879999" y="7.3119998" id="0:412"/>
+                                                <CubicDetachedVertex outRotation="-0.23100001" outDistance="0.50700003" x="-5.6739998" y="6.934" id="0:413"/>
+                                                <CubicDetachedVertex inRotation="-2.658" inDistance="0.509" x="-4.211" y="7.1199999" id="0:414"/>
+                                                <CubicDetachedVertex outRotation="0.579" outDistance="0.46200001" x="-3.848" y="7.3340001" id="0:415"/>
+                                                <CubicDetachedVertex inRotation="-1.9299999" inDistance="0.46799999" x="-2.9990001" y="8.3979998" id="0:416"/>
+                                                <CubicDetachedVertex outRotation="1.256" outDistance="0.764" x="-2.6400001" y="9.4960003" id="0:417"/>
+                                                <CubicDetachedVertex inRotation="-2.506" inDistance="0.34999999" outRotation="0.63499999" outDistance="0.34999999" x="-2.003" y="10.792" id="0:418"/>
+                                                <CubicDetachedVertex inRotation="3.142" inDistance="0.74800003" x="-0.60000002" y="11" id="0:419"/>
+                                                <CubicDetachedVertex outDistance="0.74800003" x="0.60000002" y="11" id="0:420"/>
+                                                <CubicDetachedVertex inRotation="2.506" inDistance="0.34999999" outRotation="-0.63599998" outDistance="0.34999999" x="2.003" y="10.792" id="0:421"/>
+                                                <CubicDetachedVertex inRotation="1.886" inDistance="0.764" x="2.6400001" y="9.4960003" id="0:422"/>
+                                                <CubicDetachedVertex outRotation="-1.212" outDistance="0.46799999" x="2.9990001" y="8.3979998" id="0:423"/>
+                                                <CubicDetachedVertex inRotation="2.562" inDistance="0.46200001" x="3.848" y="7.3340001" id="0:424"/>
+                                                <CubicDetachedVertex outRotation="-0.48300001" outDistance="0.509" x="4.211" y="7.1199999" id="0:425"/>
+                                                <CubicDetachedVertex inRotation="-2.9100001" inDistance="0.50800002" x="5.6739998" y="6.934" id="0:426"/>
+                                                <CubicDetachedVertex outRotation="0.28200001" outDistance="0.80500001" x="6.9879999" y="7.3119998" id="0:427"/>
+                                                <CubicDetachedVertex inRotation="2.7479999" inDistance="0.37" outRotation="-0.39399999" outDistance="0.37" x="8.4899998" y="7.506" id="0:428"/>
+                                                <CubicDetachedVertex inRotation="2.0840001" inDistance="0.81800002" x="9.4350004" y="6.2950001" id="0:429"/>
+                                                <CubicDetachedVertex outRotation="-1.057" outDistance="0.76700002" x="9.967" y="5.3530002" id="0:430"/>
+                                                <CubicDetachedVertex inRotation="1.4680001" inDistance="0.35699999" outRotation="-1.673" outDistance="0.35800001" x="10.496" y="3.9960001" id="0:431"/>
+                                                <CubicDetachedVertex inRotation="0.84899998" inDistance="0.76300001" x="9.7019997" y="2.78" id="0:432"/>
+                                                <CubicDetachedVertex outRotation="-2.2290001" outDistance="0.44400001" x="8.592" y="1.512" id="0:433"/>
+                                                <CubicDetachedVertex inRotation="1.571" inDistance="0.55000001" outRotation="-1.571" outDistance="0.55000001" x="8.1280003" id="0:434"/>
+                                                <CubicDetachedVertex inRotation="2.2290001" inDistance="0.44400001" x="8.592" y="-1.513" id="0:435"/>
+                                                <CubicDetachedVertex outRotation="-0.84899998" outDistance="0.76300001" x="9.7019997" y="-2.78" id="0:436"/>
+                                                <CubicDetachedVertex inRotation="1.673" inDistance="0.35699999" outRotation="-1.4680001" outDistance="0.35699999" x="10.496" y="-3.9960001" id="0:437"/>
+                                            </PointsPath>
+                                            <Stroke thickness="2" cap="round" name="Stroke" id="0:438">
+                                                <SolidColor colorValue="FF213100" name="Color" id="0:439"/>
+                                            </Stroke>
+                                        </Shape>
+                                    </Node>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <Shape x="55" y="55" opacity="0.60000002" name="Glow / gear" id="19:116">
+                            <Ellipse width="110" height="110" name="Path" id="0:440"/>
+                            <Fill fillRule="clockwise" name="Fill" id="0:441">
+                                <SolidColor colorValue="1A4D75E2" name="Color" id="0:442"/>
+                                <Feather strength="36" name="Feather" id="0:443"/>
+                            </Fill>
+                        </Shape>
+                    </Node>
+                </LayoutComponent>
+                <LayoutComponent width="120" height="120" styleId="19:118" name="View" id="19:130">
+                    <LayoutComponentStyle positionLeft="329" positionTop="334" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="View Style" id="19:118"/>
+                    <Node name="View (Wrapper)" id="0:444">
+                        <LayoutComponent width="60" height="60" styleId="19:126" name="Badge 3 Shadow" id="19:127">
+                            <LayoutComponentStyle positionLeft="30" positionTop="30" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Badge 3 Shadow Style" id="19:126"/>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:445">
+                                <SolidColor colorValue="278C00FF" name="Color" id="0:446"/>
+                                <Feather strength="34.849998" offsetY="23.709999" name="Feather" id="0:447"/>
+                            </Fill>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:448">
+                                <SolidColor colorValue="0A0037FF" name="Color" id="0:449"/>
+                                <Feather strength="107" offsetY="72" name="Feather" id="0:450"/>
+                            </Fill>
+                            <LayoutComponent clip="true" width="60" height="60" styleId="19:119" name="Badge 3" id="19:128">
+                                <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Badge 3 Style" id="19:119"/>
+                                <Fill name="Fill" id="0:451">
+                                    <RadialGradient startX="19" startY="9.5" endX="74.101997" endY="9.5" name="Gradient" id="0:452">
+                                        <GradientStop id="0:453"/>
+                                        <GradientStop colorValue="FFCFC5FF" position="1" id="0:454"/>
+                                    </RadialGradient>
+                                </Fill>
+                                <LayoutComponent clip="true" width="60" height="60" styleId="19:124" name="Inner Shadow" id="19:125">
+                                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Inner Shadow Style" id="19:124"/>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:455">
+                                        <SolidColor colorValue="FFB09FFF" name="Color" id="0:456"/>
+                                        <Feather strength="8" offsetX="-7" offsetY="-4" inner="true" name="Feather" id="0:457"/>
+                                    </Fill>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:458">
+                                        <SolidColor colorValue="80FFFFFF" name="Color" id="0:459"/>
+                                        <Feather strength="18" offsetY="31" inner="true" name="Feather" id="0:460"/>
+                                    </Fill>
+                                </LayoutComponent>
+                                <LayoutComponent width="26" height="26" styleId="19:120" name="view" id="19:123">
+                                    <LayoutComponentStyle name="view Style" id="19:120"/>
+                                    <Node name="view (Wrapper)" id="0:461">
+                                        <Shape x="13.5" y="13.5" name="Vector" id="19:121">
+                                            <PointsPath isClosed="true" isClockwise="false" name="Path" id="0:462">
+                                                <CubicDetachedVertex inRotation="1.571" inDistance="1.933" outRotation="-1.571" outDistance="1.933" x="3.5" id="0:463"/>
+                                                <CubicDetachedVertex inDistance="1.933" outRotation="3.142" outDistance="1.933" y="-3.5" id="0:464"/>
+                                                <CubicDetachedVertex inRotation="-1.571" inDistance="1.933" outRotation="1.571" outDistance="1.933" x="-3.5" id="0:465"/>
+                                                <CubicDetachedVertex inRotation="3.142" inDistance="1.933" outDistance="1.933" y="3.5" id="0:466"/>
+                                            </PointsPath>
+                                            <Stroke thickness="2" name="Stroke" id="0:467">
+                                                <SolidColor colorValue="FF2D00FF" name="Color" id="0:468"/>
+                                            </Stroke>
+                                        </Shape>
+                                        <Shape x="13" y="12.5" name="Vector" id="19:122">
+                                            <PointsPath isClosed="true" name="Path" id="0:469">
+                                                <CubicDetachedVertex inRotation="-2.2030001" inDistance="2.5439999" outRotation="0.93900001" outDistance="0.56599998" x="10.498" y="-1.023" id="0:470"/>
+                                                <CubicDetachedVertex inRotation="-1.571" inDistance="0.338" outRotation="1.571" outDistance="0.338" x="11" id="0:471"/>
+                                                <CubicDetachedVertex inRotation="-0.93900001" inDistance="0.56599998" outRotation="2.2030001" outDistance="2.5439999" x="10.498" y="1.023" id="0:472"/>
+                                                <CubicDetachedVertex inDistance="5.158" outRotation="3.142" outDistance="5.158" y="7.5" id="0:473"/>
+                                                <CubicDetachedVertex inRotation="0.93900001" inDistance="2.5439999" outRotation="-2.2030001" outDistance="0.56599998" x="-10.498" y="1.023" id="0:474"/>
+                                                <CubicDetachedVertex inRotation="1.571" inDistance="0.338" outRotation="-1.571" outDistance="0.338" x="-11" id="0:475"/>
+                                                <CubicDetachedVertex inRotation="2.2030001" inDistance="0.56599998" outRotation="-0.93900001" outDistance="2.5439999" x="-10.498" y="-1.023" id="0:476"/>
+                                                <CubicDetachedVertex inRotation="3.142" inDistance="5.158" outDistance="5.158" y="-7.5" id="0:477"/>
+                                            </PointsPath>
+                                            <Stroke thickness="2" name="Stroke" id="0:478">
+                                                <SolidColor colorValue="FF2D00FF" name="Color" id="0:479"/>
+                                            </Stroke>
+                                        </Shape>
+                                    </Node>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <Shape x="60" y="60" name="Glow / eye" id="19:129">
+                            <Ellipse width="120" height="120" name="Path" id="0:480"/>
+                            <Fill fillRule="clockwise" name="Fill" id="0:481">
+                                <SolidColor colorValue="1A7B5CFF" name="Color" id="0:482"/>
+                                <Feather strength="36" name="Feather" id="0:483"/>
+                            </Fill>
+                        </Shape>
+                    </Node>
+                </LayoutComponent>
+                <LayoutComponent width="60" height="60" styleId="19:139" name="Limitation Shadow" id="19:140">
+                    <LayoutComponentStyle positionLeft="521" positionTop="90" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Limitation Shadow Style" id="19:139"/>
+                    <Fill fillRule="clockwise" name="Shadow" id="0:484">
+                        <SolidColor colorValue="5AFF5800" name="Color" id="0:485"/>
+                        <Feather strength="34.849998" offsetY="23.709999" name="Feather" id="0:486"/>
+                    </Fill>
+                    <Fill fillRule="clockwise" name="Shadow" id="0:487">
+                        <SolidColor colorValue="57FF5800" name="Color" id="0:488"/>
+                        <Feather strength="107" offsetY="72" name="Feather" id="0:489"/>
+                    </Fill>
+                    <LayoutComponent clip="true" width="60" height="60" styleId="19:131" name="Limitation" id="19:141">
+                        <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Limitation Style" id="19:131"/>
+                        <Fill name="Fill" id="0:490">
+                            <RadialGradient startX="19" startY="9.5" endX="74.101997" endY="9.5" name="Gradient" id="0:491">
+                                <GradientStop id="0:492"/>
+                                <GradientStop colorValue="FFFFAA7E" position="1" id="0:493"/>
+                            </RadialGradient>
+                        </Fill>
+                        <LayoutComponent clip="true" width="60" height="60" styleId="19:137" name="Inner Shadow" id="19:138">
+                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Inner Shadow Style" id="19:137"/>
+                            <Fill fillRule="clockwise" name="Inner Shadow" id="0:494">
+                                <SolidColor colorValue="B2F88042" name="Color" id="0:495"/>
+                                <Feather strength="8" offsetX="-7" offsetY="-4" inner="true" name="Feather" id="0:496"/>
+                            </Fill>
+                            <Fill fillRule="clockwise" name="Inner Shadow" id="0:497">
+                                <SolidColor colorValue="80FFFFFF" name="Color" id="0:498"/>
+                                <Feather strength="18" offsetY="31" inner="true" name="Feather" id="0:499"/>
+                            </Fill>
+                        </LayoutComponent>
+                        <LayoutComponent width="26" height="26" styleId="19:132" name="limitation" id="19:136">
+                            <LayoutComponentStyle name="limitation Style" id="19:132"/>
+                            <Node name="limitation (Wrapper)" id="0:500">
+                                <Shape x="12.5" y="12.5" name="Vector" id="19:133">
+                                    <PointsPath isClosed="true" name="Path" id="0:501">
+                                        <CubicDetachedVertex inRotation="-1.571" inDistance="0.82800001" outRotation="1.571" outDistance="0.82800001" x="1.5" id="0:502"/>
+                                        <CubicDetachedVertex inDistance="0.82800001" outRotation="3.142" outDistance="0.82800001" y="1.5" id="0:503"/>
+                                        <CubicDetachedVertex inRotation="1.571" inDistance="0.82800001" outRotation="-1.571" outDistance="0.82800001" x="-1.5" id="0:504"/>
+                                        <CubicDetachedVertex inRotation="3.142" inDistance="0.82800001" outDistance="0.82800001" y="-1.5" id="0:505"/>
+                                    </PointsPath>
+                                    <Stroke thickness="2" cap="round" join="round" name="Stroke" id="0:506">
+                                        <SolidColor colorValue="FFD44800" name="Color" id="0:507"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="17.5" y="8" name="Vector" id="19:134">
+                                    <PointsPath name="Path" id="0:508">
+                                        <StraightVertex x="-2.5" y="3" id="0:509"/>
+                                        <StraightVertex x="2.5" y="-3" id="0:510"/>
+                                    </PointsPath>
+                                    <Stroke thickness="2" cap="round" join="round" name="Stroke" id="0:511">
+                                        <SolidColor colorValue="FFD44800" name="Color" id="0:512"/>
+                                    </Stroke>
+                                </Shape>
+                                <Shape x="13" y="13" name="Vector" id="19:135">
+                                    <PointsPath name="Path" id="0:513">
+                                        <CubicDetachedVertex outRotation="2.201" outDistance="0.95899999" x="-4.4000001" y="8.8889999" id="0:514"/>
+                                        <CubicDetachedVertex inRotation="-0.126" inDistance="0.46900001" outRotation="3.016" outDistance="0.46900001" x="-5.6599998" y="9.9919996" id="0:515"/>
+                                        <CubicDetachedVertex inRotation="0.69700003" inDistance="0.838" outRotation="-2.4449999" outDistance="3.118" x="-7.0890002" y="9.2440004" id="0:516"/>
+                                        <CubicDetachedVertex inRotation="1.571" inDistance="3.345" outRotation="-1.571" outDistance="6.0229998" x="-11" y="0.90499997" id="0:517"/>
+                                        <CubicDetachedVertex inRotation="3.142" inDistance="6.0749998" outDistance="6.0749998" y="-10" id="0:518"/>
+                                        <CubicDetachedVertex inRotation="-1.571" inDistance="6.0229998" outRotation="1.571" outDistance="3.345" x="11" y="0.90499997" id="0:519"/>
+                                        <CubicDetachedVertex inRotation="-0.69700003" inDistance="3.118" outRotation="2.4449999" outDistance="0.838" x="7.0890002" y="9.2440004" id="0:520"/>
+                                        <CubicDetachedVertex inRotation="0.126" inDistance="0.46900001" outRotation="-3.016" outDistance="0.46900001" x="5.6599998" y="9.9919996" id="0:521"/>
+                                        <CubicDetachedVertex inRotation="0.94" inDistance="0.95899999" x="4.4000001" y="8.8889999" id="0:522"/>
+                                    </PointsPath>
+                                    <Stroke thickness="2" cap="round" join="round" name="Stroke" id="0:523">
+                                        <SolidColor colorValue="FFD44800" name="Color" id="0:524"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                    </LayoutComponent>
+                </LayoutComponent>
+                <LayoutComponent width="110" height="110" styleId="19:142" name="Security-check" id="19:154">
+                    <LayoutComponentStyle positionLeft="280" positionTop="123" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Security-check Style" id="19:142"/>
+                    <Node name="Security-check (Wrapper)" id="0:525">
+                        <LayoutComponent width="60" height="60" styleId="19:150" name="Badge Shadow" id="19:151">
+                            <LayoutComponentStyle positionLeft="25" positionTop="25" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Badge Shadow Style" id="19:150"/>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:526">
+                                <SolidColor colorValue="5A00FF80" name="Color" id="0:527"/>
+                                <Feather strength="34.849998" offsetY="23.709999" name="Feather" id="0:528"/>
+                            </Fill>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:529">
+                                <SolidColor colorValue="5700FF2F" name="Color" id="0:530"/>
+                                <Feather strength="107" offsetY="72" name="Feather" id="0:531"/>
+                            </Fill>
+                            <LayoutComponent clip="true" width="60" height="60" styleId="19:143" name="Badge" id="19:152">
+                                <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Badge Style" id="19:143"/>
+                                <Fill name="Fill" id="0:532">
+                                    <RadialGradient startX="18.5" startY="9.5" endX="73.874001" endY="9.5" name="Gradient" id="0:533">
+                                        <GradientStop id="0:534"/>
+                                        <GradientStop colorValue="FFADF6D0" position="0.514" id="0:535"/>
+                                        <GradientStop colorValue="FF00C35C" position="1" id="0:536"/>
+                                    </RadialGradient>
+                                </Fill>
+                                <LayoutComponent clip="true" width="60" height="60" styleId="19:148" name="Inner Shadow" id="19:149">
+                                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Inner Shadow Style" id="19:148"/>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:537">
+                                        <SolidColor colorValue="3300F27D" name="Color" id="0:538"/>
+                                        <Feather strength="8" offsetX="-7" offsetY="-4" inner="true" name="Feather" id="0:539"/>
+                                    </Fill>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:540">
+                                        <SolidColor colorValue="80FFFFFF" name="Color" id="0:541"/>
+                                        <Feather strength="18" offsetY="31" inner="true" name="Feather" id="0:542"/>
+                                    </Fill>
+                                </LayoutComponent>
+                                <LayoutComponent width="26" height="26" styleId="19:144" name="security-check" id="19:147">
+                                    <LayoutComponentStyle name="security-check Style" id="19:144"/>
+                                    <Node name="security-check (Wrapper)" id="0:543">
+                                        <Shape x="13.5" y="12" name="Vector" id="19:145">
+                                            <PointsPath isClockwise="false" name="Path" id="0:544">
+                                                <StraightVertex x="-3.5" id="0:545"/>
+                                                <CubicDetachedVertex inRotation="-1.947" inDistance="1.88" x="-1.1670001" y="2" id="0:546"/>
+                                                <CubicDetachedVertex inRotation="2.8110001" inDistance="3.0829999" x="3.5" y="-2" id="0:547"/>
+                                            </PointsPath>
+                                            <Stroke thickness="2" cap="round" join="round" name="Stroke" id="0:548">
+                                                <SolidColor colorValue="FF012A16" name="Color" id="0:549"/>
+                                            </Stroke>
+                                        </Shape>
+                                        <Shape x="13" y="13" name="Vector" id="19:146">
+                                            <PointsPath isClosed="true" isClockwise="false" name="Path" id="0:550">
+                                                <CubicDetachedVertex inRotation="0.458" inDistance="1.149" outRotation="-2.684" outDistance="2.3440001" x="7.454" y="-9.3549995" id="0:551"/>
+                                                <CubicDetachedVertex inDistance="2.779" outRotation="3.142" outDistance="2.779" y="-11" id="0:552"/>
+                                                <CubicDetachedVertex inRotation="-0.458" inDistance="2.3440001" outRotation="2.684" outDistance="1.149" x="-7.454" y="-9.3549995" id="0:553"/>
+                                                <CubicDetachedVertex inRotation="-1.012" inDistance="0.94199997" outRotation="2.1300001" outDistance="0.94199997" x="-9.5" y="-7.7950001" id="0:554"/>
+                                                <CubicDetachedVertex inRotation="-1.571" inDistance="1.546" x="-10" y="-4.677" id="0:555"/>
+                                                <CubicDetachedVertex outRotation="1.571" outDistance="6.2519999" x="-10" y="-0.83899999" id="0:556"/>
+                                                <CubicDetachedVertex inRotation="-2.671" inDistance="3.28" outRotation="0.47099999" outDistance="0.91500002" x="-2.03" y="10.377" id="0:557"/>
+                                                <CubicDetachedVertex inRotation="3.142" inDistance="0.80699998" outDistance="0.80699998" y="11" id="0:558"/>
+                                                <CubicDetachedVertex inRotation="2.6700001" inDistance="0.91500002" outRotation="-0.47099999" outDistance="3.28" x="2.03" y="10.377" id="0:559"/>
+                                                <CubicDetachedVertex inRotation="1.571" inDistance="6.2519999" x="10" y="-0.83899999" id="0:560"/>
+                                                <CubicDetachedVertex outRotation="-1.571" outDistance="1.546" x="10" y="-4.677" id="0:561"/>
+                                                <CubicDetachedVertex inRotation="1.012" inDistance="0.94199997" outRotation="-2.1300001" outDistance="0.94199997" x="9.5" y="-7.7950001" id="0:562"/>
+                                            </PointsPath>
+                                            <Stroke thickness="2" cap="round" join="round" name="Stroke" id="0:563">
+                                                <SolidColor colorValue="FF012A16" name="Color" id="0:564"/>
+                                            </Stroke>
+                                        </Shape>
+                                    </Node>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <Shape x="55" y="55" name="Glow / shield" id="19:153">
+                            <Ellipse width="110" height="110" name="Path" id="0:565"/>
+                            <Fill fillRule="clockwise" name="Fill" id="0:566">
+                                <SolidColor colorValue="1A2ABD76" name="Color" id="0:567"/>
+                                <Feather strength="36" name="Feather" id="0:568"/>
+                            </Fill>
+                        </Shape>
+                    </Node>
+                </LayoutComponent>
+                <LayoutComponent width="85" height="22" styleId="19:166" name="Tag Shadow" id="19:167">
+                    <LayoutComponentStyle positionLeft="433" positionTop="344" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" name="Tag Shadow Style" id="19:166"/>
+                    <LayoutComponent clip="true" width="85" height="22" styleId="19:157" name="Tag" id="19:168">
+                        <LayoutComponentStyle gapHorizontal="4" paddingLeft="8" paddingRight="8" paddingTop="2" paddingBottom="2" layoutAlignmentType="centerLeft" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Tag Style" id="19:157"/>
+                        <Fill name="Fill" id="0:569">
+                            <RadialGradient startX="42.5" startY="11" endX="68.5" endY="11" name="Gradient" id="0:570">
+                                <GradientStop colorValue="FF13A864" id="0:571"/>
+                                <GradientStop colorValue="FF2DB177" position="1" id="0:572"/>
+                            </RadialGradient>
+                        </Fill>
+                        <LayoutComponent clip="true" width="85" height="22" styleId="19:164" name="Inner Shadow" id="19:165">
+                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" name="Inner Shadow Style" id="19:164"/>
+                            <Fill fillRule="clockwise" name="Inner Shadow" id="0:573">
+                                <SolidColor colorValue="73FFFFFF" name="Color" id="0:574"/>
+                                <Feather strength="6" offsetY="1" inner="true" name="Feather" id="0:575"/>
+                            </Fill>
+                        </LayoutComponent>
+                        <LayoutComponent clip="true" width="11" height="11" styleId="19:158" name="icon/check 2" id="19:160">
+                            <LayoutComponentStyle name="icon/check 2 Style" id="19:158"/>
+                            <Node name="icon/check 2 (Wrapper)" id="0:576">
+                                <Shape x="5.5" y="5.5" name="Vector" id="19:159">
+                                    <PointsPath name="Path" id="0:577">
+                                        <StraightVertex x="3.5" y="-2.5" id="0:578"/>
+                                        <StraightVertex x="-1.312" y="2.5" id="0:579"/>
+                                        <StraightVertex x="-3.5" y="0.227" id="0:580"/>
+                                    </PointsPath>
+                                    <Stroke cap="round" join="round" name="Stroke" id="0:581">
+                                        <SolidColor colorValue="FFFFFFFF" name="Color" id="0:582"/>
+                                    </Stroke>
+                                </Shape>
+                            </Node>
+                        </LayoutComponent>
+                        <Text name="Approved" id="19:163">
+                            <LayoutParticipant layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Approved Layout" id="0:583"/>
+                            <TextStylePaint lineHeight="18" fontAssetId="19:161" familyName="Geist" styleName="Medium" name="Style 1" id="19:162">
+                                <Fill name="Fill" id="0:584">
+                                    <SolidColor colorValue="FFFFFFFF" name="Color" id="0:585"/>
+                                </Fill>
+                            </TextStylePaint>
+                            <TextValueRun styleId="19:162" text="Approved" name="Run 1" id="0:586"/>
+                        </Text>
+                    </LayoutComponent>
+                    <LayoutComponent width="77" height="14" styleId="19:155" name="Shadow" id="19:156">
+                        <LayoutComponentStyle positionLeft="4" positionTop="4" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="75" cornerRadiusTR="75" cornerRadiusBL="75" cornerRadiusBR="75" name="Shadow Style" id="19:155"/>
+                        <Fill fillRule="clockwise" name="Shadow" id="0:587">
+                            <SolidColor colorValue="FF2ABD76" name="Color" id="0:588"/>
+                            <Feather strength="36" offsetX="-10" offsetY="16" name="Feather" id="0:589"/>
+                        </Fill>
+                    </LayoutComponent>
+                </LayoutComponent>
+                <Shape x="316" y="261" name="Dot" id="19:169">
+                    <Ellipse width="8" height="8" name="Path" id="0:590"/>
+                    <Fill fillRule="clockwise" name="Shadow" id="0:591">
+                        <SolidColor colorValue="992152DB" name="Color" id="0:592"/>
+                        <Feather strength="8" name="Feather" id="0:593"/>
+                    </Fill>
+                    <Stroke thickness="4" name="Stroke" id="0:594">
+                        <SolidColor colorValue="FFFFFFFF" name="Color" id="0:595"/>
+                    </Stroke>
+                    <Fill name="Fill" id="0:596">
+                        <SolidColor colorValue="FF2152DB" name="Color" id="0:597"/>
+                    </Fill>
+                </Shape>
+                <Shape x="475" y="262" name="Orbit" id="19:170">
+                    <Ellipse width="320" height="320" name="Path" id="0:598"/>
+                    <Stroke thickness="2" cap="round" name="Stroke" id="0:599">
+                        <SolidColor colorValue="BF4D75E2" name="Color" id="0:600"/>
+                        <DashPath name="Dashes" id="0:601">
+                            <Dash length="4" name="Dash" id="0:602"/>
+                            <Dash length="7" name="Gap" id="0:603"/>
+                        </DashPath>
+                    </Stroke>
+                </Shape>
+                <LayoutComponent width="315" height="275" styleId="19:171" name="Inside" id="19:222">
+                    <LayoutComponentStyle positionLeft="325" positionTop="136" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Inside Style" id="19:171"/>
+                    <Node name="Inside (Wrapper)" id="0:604">
+                        <LayoutComponent width="44" height="44" styleId="19:182" name="Check Shadow" id="19:183">
+                            <LayoutComponentStyle positionLeft="212" positionTop="47" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="99" cornerRadiusTR="99" cornerRadiusBL="99" cornerRadiusBR="99" name="Check Shadow Style" id="19:182"/>
+                            <LayoutComponent clip="true" width="44" height="44" styleId="19:174" name="Check" id="19:184">
+                                <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="99" cornerRadiusTR="99" cornerRadiusBL="99" cornerRadiusBR="99" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Check Style" id="19:174"/>
+                                <Fill name="Fill" id="0:605">
+                                    <SolidColor colorValue="E5FFFFFF" name="Color" id="0:606"/>
+                                </Fill>
+                                <Stroke thickness="2" name="Stroke" id="0:607">
+                                    <SolidColor colorValue="FFFFFFFF" name="Color" id="0:608"/>
+                                </Stroke>
+                                <LayoutComponent clip="true" width="28" height="28" styleId="19:175" name="Icon dot" id="19:181">
+                                    <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Icon dot Style" id="19:175"/>
+                                    <Fill name="Fill" id="0:609">
+                                        <LinearGradient endX="20" endY="20" name="Gradient" id="0:610">
+                                            <GradientStop colorValue="FF4BE3A0" id="0:611"/>
+                                            <GradientStop colorValue="FF14A864" position="1" id="0:612"/>
+                                        </LinearGradient>
+                                    </Fill>
+                                    <LayoutComponent clip="true" width="28" height="28" styleId="19:179" name="Inner Shadow" id="19:180">
+                                        <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Inner Shadow Style" id="19:179"/>
+                                        <Fill fillRule="clockwise" name="Inner Shadow" id="0:613">
+                                            <SolidColor colorValue="80FFFFFF" name="Color" id="0:614"/>
+                                            <Feather strength="4" offsetY="2" inner="true" name="Feather" id="0:615"/>
+                                        </Fill>
+                                    </LayoutComponent>
+                                    <LayoutComponent clip="true" width="16" height="16" styleId="19:176" name="icon/check" id="19:178">
+                                        <LayoutComponentStyle name="icon/check Style" id="19:176"/>
+                                        <Node name="icon/check (Wrapper)" id="0:616">
+                                            <Shape x="8.5" y="7.5" name="Vector" id="19:177">
+                                                <PointsPath name="Path" id="0:617">
+                                                    <StraightVertex x="5.5" y="-3.5" id="0:618"/>
+                                                    <StraightVertex x="-2.062" y="3.5" id="0:619"/>
+                                                    <StraightVertex x="-5.5" y="0.31799999" id="0:620"/>
+                                                </PointsPath>
+                                                <Stroke thickness="2" cap="round" join="round" name="Stroke" id="0:621">
+                                                    <SolidColor colorValue="FFFFFFFF" name="Color" id="0:622"/>
+                                                </Stroke>
+                                            </Shape>
+                                        </Node>
+                                    </LayoutComponent>
+                                </LayoutComponent>
+                            </LayoutComponent>
+                            <LayoutComponent width="40" height="40" styleId="19:172" name="Shadow" id="19:173">
+                                <LayoutComponentStyle positionLeft="2" positionTop="2" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="97" cornerRadiusTR="97" cornerRadiusBL="97" cornerRadiusBR="97" name="Shadow Style" id="19:172"/>
+                                <Fill fillRule="clockwise" name="Shadow" id="0:623">
+                                    <SolidColor colorValue="732ABD76" name="Color" id="0:624"/>
+                                    <Feather strength="18" offsetY="6" name="Feather" id="0:625"/>
+                                </Fill>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <LayoutComponent width="184" height="140" styleId="19:216" name="Window Shadow" id="19:217">
+                            <LayoutComponentStyle positionLeft="58" positionTop="56" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Window Shadow Style" id="19:216"/>
+                            <Fill fillRule="clockwise" name="Shadow" id="0:626">
+                                <SolidColor colorValue="337AACFB" name="Color" id="0:627"/>
+                                <Feather strength="20" offsetX="11" offsetY="11" name="Feather" id="0:628"/>
+                            </Fill>
+                            <LayoutComponent clip="true" width="184" height="140" styleId="19:189" name="Window" id="19:218">
+                                <LayoutComponentStyle cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" layoutWidthScaleType="fill" layoutHeightScaleType="fill" name="Window Style" id="19:189"/>
+                                <Fill name="Fill" id="0:629">
+                                    <LinearGradient startX="45.5" startY="38.5" endX="-25.5" endY="-13.5" name="Gradient" id="0:630">
+                                        <GradientStop colorValue="FFB0BCFF" id="0:631"/>
+                                        <GradientStop colorValue="FFCBDDFE" position="1" id="0:632"/>
+                                    </LinearGradient>
+                                </Fill>
+                                <LayoutComponent clip="true" width="184" height="140" styleId="19:214" name="Inner Shadow" id="19:215">
+                                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="12" cornerRadiusTR="12" cornerRadiusBL="12" cornerRadiusBR="12" name="Inner Shadow Style" id="19:214"/>
+                                    <Fill fillRule="clockwise" blendModeValue="softLight" name="Inner Shadow" id="0:633">
+                                        <SolidColor colorValue="6EFFFFFF" name="Color" id="0:634"/>
+                                        <Feather strength="37.700001" offsetX="0.75" offsetY="3" inner="true" name="Feather" id="0:635"/>
+                                    </Fill>
+                                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:636">
+                                        <SolidColor colorValue="FFFFFFFF" name="Color" id="0:637"/>
+                                        <Feather strength="98" offsetX="-1" offsetY="-3.25" inner="true" name="Feather" id="0:638"/>
+                                    </Fill>
+                                </LayoutComponent>
+                                <Node name="Window (Wrapper)" id="0:639">
+                                    <Shape x="21" y="34" name="Ellipse" id="19:190">
+                                        <Ellipse width="96" height="64" name="Path" id="0:640"/>
+                                        <Fill fillRule="clockwise" name="Fill" id="0:641">
+                                            <RadialGradient startX="-22.5" startY="-28" endX="39.924" endY="-28" name="Gradient" id="0:642">
+                                                <GradientStop colorValue="E5002BFF" id="0:643"/>
+                                                <GradientStop colorValue="E5FFFFFF" position="1" id="0:644"/>
+                                            </RadialGradient>
+                                            <Feather strength="44" name="Feather" id="0:645"/>
+                                        </Fill>
+                                    </Shape>
+                                    <Shape blendModeValue="hue" x="171" y="136" name="Ellipse" id="19:191">
+                                        <Ellipse width="96" height="64" name="Path" id="0:646"/>
+                                        <Fill fillRule="clockwise" name="Fill" id="0:647">
+                                            <RadialGradient startX="-9" startY="-19" endX="53.146" endY="-19" name="Gradient" id="0:648">
+                                                <GradientStop colorValue="E5FF00AA" id="0:649"/>
+                                                <GradientStop colorValue="E5FFFFFF" position="1" id="0:650"/>
+                                            </RadialGradient>
+                                            <Feather strength="44" name="Feather" id="0:651"/>
+                                        </Fill>
+                                    </Shape>
+                                    <LayoutComponent clip="true" width="183" height="114" styleId="19:192" name="Body" id="19:208">
+                                        <LayoutComponentStyle gapHorizontal="12" paddingLeft="8" paddingRight="8" paddingTop="8" paddingBottom="8" positionLeft="1" positionTop="26" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="centerLeft" positionTypeValue="absolute" cornerRadiusBL="10" cornerRadiusBR="10" name="Body Style" id="19:192"/>
+                                        <Fill blendModeValue="softLight" name="Fill" id="0:652">
+                                            <SolidColor colorValue="FF007BFF" name="Color" id="0:653"/>
+                                        </Fill>
+                                        <LayoutComponent clip="true" width="92" height="94" styleId="19:193" name="Image" id="19:201">
+                                            <LayoutComponentStyle gapVertical="8" paddingLeft="8" paddingRight="8" paddingTop="8" paddingBottom="8" flexDirectionValue="column" cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Image Style" id="19:193"/>
+                                            <Fill name="Fill" id="0:654">
+                                                <SolidColor colorValue="4D000BE3" name="Color" id="0:655"/>
+                                            </Fill>
+                                            <LayoutComponent clip="true" width="76" height="52" styleId="19:194" name="Thumb" id="19:196">
+                                                <LayoutComponentStyle layoutAlignmentType="center" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" name="Thumb Style" id="19:194"/>
+                                                <Fill name="Fill" id="0:656">
+                                                    <SolidColor colorValue="99FFFFFF" name="Color" id="0:657"/>
+                                                </Fill>
+                                                <Fill blendModeValue="additive" name="Fill" id="0:658">
+                                                    <LinearGradient startX="2.5" startY="0.5" endX="75.5" endY="55.5" name="Gradient" id="0:659">
+                                                        <GradientStop colorValue="80000DFF" id="0:660"/>
+                                                        <GradientStop colorValue="80666666" position="1" id="0:661"/>
+                                                    </LinearGradient>
+                                                </Fill>
+                                                <Shape name="Vector" id="19:195">
+                                                    <LayoutParticipant width="39" height="27" name="Vector Layout" id="0:662"/>
+                                                    <PointsPath isClosed="true" name="Path" id="0:663">
+                                                        <CubicDetachedVertex inRotation="-1.571" inDistance="2.1210001" outRotation="1.571" outDistance="2.1210001" x="-2.023" y="-9.6429996" id="0:664"/>
+                                                        <CubicDetachedVertex inDistance="2.188" outRotation="3.142" outDistance="2.188" x="-6.0009999" y="-5.7859998" id="0:665"/>
+                                                        <CubicDetachedVertex inRotation="1.571" inDistance="2.1210001" outRotation="-1.571" outDistance="2.1210001" x="-9.9790001" y="-9.6429996" id="0:666"/>
+                                                        <CubicDetachedVertex inRotation="3.142" inDistance="2.188" outDistance="2.188" x="-6.0009999" y="-13.5" id="0:667"/>
+                                                    </PointsPath>
+                                                    <PointsPath isClosed="true" name="Path" id="0:668">
+                                                        <CubicDetachedVertex inRotation="2.145" inDistance="1.1720001" x="-0.82999998" y="3.954" id="0:669"/>
+                                                        <CubicDetachedVertex outRotation="-0.99400002" outDistance="1.495" x="6.1110001" y="-6.8270001" id="0:670"/>
+                                                        <CubicDetachedVertex inRotation="-2.0880001" inDistance="1.487" x="9.552" y="-6.7309999" id="0:671"/>
+                                                        <CubicDetachedVertex outRotation="1.0650001" outDistance="1.477" x="19.257999" y="10.646" id="0:672"/>
+                                                        <CubicDetachedVertex inDistance="1.512" x="17.507" y="13.5" id="0:673"/>
+                                                        <CubicDetachedVertex outRotation="3.142" outDistance="1.512" x="-17.517" y="13.5" id="0:674"/>
+                                                        <CubicDetachedVertex inRotation="2.1110001" inDistance="1.507" x="-19.226999" y="10.626" id="0:675"/>
+                                                        <CubicDetachedVertex outRotation="-1.036" outDistance="1.21" x="-13.101" y="0.057999998" id="0:676"/>
+                                                        <CubicDetachedVertex inRotation="-2.474" inDistance="1.215" x="-10.118" y="-0.50099999" id="0:677"/>
+                                                        <CubicDetachedVertex outRotation="0.662" outDistance="1.16" x="-3.7539999" y="4.4359999" id="0:678"/>
+                                                    </PointsPath>
+                                                    <Fill fillRule="evenOdd" name="Fill" id="0:679">
+                                                        <SolidColor colorValue="FF2152DB" name="Color" id="0:680"/>
+                                                    </Fill>
+                                                </Shape>
+                                            </LayoutComponent>
+                                            <LayoutComponent clip="true" width="60" height="18" styleId="19:197" opacity="0.69999999" name="Lines" id="19:200">
+                                                <LayoutComponentStyle gapVertical="6" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Lines Style" id="19:197"/>
+                                                <Shape name="Bar" id="19:198">
+                                                    <LayoutParticipant width="60" height="6" name="Bar Layout" id="0:681"/>
+                                                    <Rectangle cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" width="60" height="6" name="Path" id="0:682"/>
+                                                    <Fill name="Fill" id="0:683">
+                                                        <SolidColor colorValue="E5FFFFFF" name="Color" id="0:684"/>
+                                                    </Fill>
+                                                </Shape>
+                                                <Shape name="Bar 2" id="19:199">
+                                                    <LayoutParticipant width="36" height="6" name="Bar 2 Layout" id="0:685"/>
+                                                    <Rectangle cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" width="36" height="6" name="Path" id="0:686"/>
+                                                    <Fill name="Fill" id="0:687">
+                                                        <SolidColor colorValue="E5FFFFFF" name="Color" id="0:688"/>
+                                                    </Fill>
+                                                </Shape>
+                                            </LayoutComponent>
+                                        </LayoutComponent>
+                                        <LayoutComponent clip="true" width="48" height="54" styleId="19:202" name="Specs" id="19:207">
+                                            <LayoutComponentStyle gapVertical="10" flexDirectionValue="column" layoutWidthScaleType="hug" layoutHeightScaleType="hug" name="Specs Style" id="19:202"/>
+                                            <Shape name="Bar 3" id="19:203">
+                                                <LayoutParticipant width="48" height="6" name="Bar 3 Layout" id="0:689"/>
+                                                <Rectangle cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" width="48" height="6" name="Path" id="0:690"/>
+                                                <Fill name="Fill" id="0:691">
+                                                    <SolidColor colorValue="E5FFFFFF" name="Color" id="0:692"/>
+                                                </Fill>
+                                            </Shape>
+                                            <Shape name="Bar 4" id="19:204">
+                                                <LayoutParticipant width="34" height="6" name="Bar 4 Layout" id="0:693"/>
+                                                <Rectangle cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" width="34" height="6" name="Path" id="0:694"/>
+                                                <Fill name="Fill" id="0:695">
+                                                    <SolidColor colorValue="E5FFFFFF" name="Color" id="0:696"/>
+                                                </Fill>
+                                            </Shape>
+                                            <Shape name="Bar 5" id="19:205">
+                                                <LayoutParticipant width="42" height="6" name="Bar 5 Layout" id="0:697"/>
+                                                <Rectangle cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" width="42" height="6" name="Path" id="0:698"/>
+                                                <Fill name="Fill" id="0:699">
+                                                    <SolidColor colorValue="E5FFFFFF" name="Color" id="0:700"/>
+                                                </Fill>
+                                            </Shape>
+                                            <Shape name="Bar 6" id="19:206">
+                                                <LayoutParticipant width="24" height="6" name="Bar 6 Layout" id="0:701"/>
+                                                <Rectangle cornerRadiusTL="8" cornerRadiusTR="8" cornerRadiusBL="8" cornerRadiusBR="8" width="24" height="6" name="Path" id="0:702"/>
+                                                <Fill name="Fill" id="0:703">
+                                                    <SolidColor colorValue="E5FFFFFF" name="Color" id="0:704"/>
+                                                </Fill>
+                                            </Shape>
+                                        </LayoutComponent>
+                                    </LayoutComponent>
+                                    <LayoutComponent clip="true" width="183" height="26" styleId="19:209" name="Header" id="19:213">
+                                        <LayoutComponentStyle gapHorizontal="4" paddingLeft="14" paddingTop="9" paddingBottom="9" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Header Style" id="19:209"/>
+                                        <Fill name="Fill" id="0:705">
+                                            <SolidColor colorValue="66FFFFFF" name="Color" id="0:706"/>
+                                        </Fill>
+                                        <Fill name="Fill" id="0:707">
+                                            <LinearGradient startX="75.5" startY="-13" endX="76" endY="26" name="Gradient" id="0:708">
+                                                <GradientStop colorValue="FF9CB5FF" id="0:709"/>
+                                                <GradientStop position="1" id="0:710"/>
+                                            </LinearGradient>
+                                        </Fill>
+                                        <Shape name="Ellipse" id="19:210">
+                                            <LayoutParticipant width="7" height="7" name="Ellipse Layout" id="0:711"/>
+                                            <Ellipse width="7" height="7" name="Path" id="0:712"/>
+                                            <Fill name="Fill" id="0:713">
+                                                <SolidColor colorValue="FF2300FF" name="Color" id="0:714"/>
+                                            </Fill>
+                                        </Shape>
+                                        <Shape name="Ellipse" id="19:211">
+                                            <LayoutParticipant width="7" height="7" name="Ellipse Layout" id="0:715"/>
+                                            <Ellipse width="7" height="7" name="Path" id="0:716"/>
+                                            <Fill name="Fill" id="0:717">
+                                                <SolidColor colorValue="FF715CFB" name="Color" id="0:718"/>
+                                            </Fill>
+                                        </Shape>
+                                        <Shape name="Ellipse" id="19:212">
+                                            <LayoutParticipant width="7" height="7" name="Ellipse Layout" id="0:719"/>
+                                            <Ellipse width="7" height="7" name="Path" id="0:720"/>
+                                            <Fill name="Fill" id="0:721">
+                                                <SolidColor colorValue="FFACBAEC" name="Color" id="0:722"/>
+                                            </Fill>
+                                        </Shape>
+                                    </LayoutComponent>
+                                </Node>
+                            </LayoutComponent>
+                            <LayoutComponent width="124" height="80" styleId="19:185" name="Shadow" id="19:186">
+                                <LayoutComponentStyle positionLeft="30" positionTop="30" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Shadow Style" id="19:185"/>
+                                <Fill fillRule="clockwise" blendModeValue="hardLight" name="Shadow" id="0:723">
+                                    <SolidColor colorValue="5C005DFF" name="Color" id="0:724"/>
+                                    <Feather strength="92" offsetX="9.25" offsetY="53.75" name="Feather" id="0:725"/>
+                                </Fill>
+                            </LayoutComponent>
+                            <LayoutComponent width="185" height="141" styleId="19:187" name="Outside Stroke" id="19:188">
+                                <LayoutComponentStyle positionLeft="-0.5" positionTop="-0.5" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="12.5" cornerRadiusTR="12.5" cornerRadiusBL="12.5" cornerRadiusBR="12.5" name="Outside Stroke Style" id="19:187"/>
+                                <Stroke name="Stroke" id="0:726">
+                                    <SolidColor colorValue="D9FFFFFF" name="Color" id="0:727"/>
+                                </Stroke>
+                            </LayoutComponent>
+                        </LayoutComponent>
+                        <Shape x="110" y="110" name="Glow / window blue" id="19:219">
+                            <Ellipse width="220" height="220" name="Path" id="0:728"/>
+                            <Fill fillRule="clockwise" name="Fill" id="0:729">
+                                <SolidColor colorValue="1A8FB0FF" name="Color" id="0:730"/>
+                                <Feather strength="70" name="Feather" id="0:731"/>
+                            </Fill>
+                        </Shape>
+                        <Shape x="230" y="190" name="Glow / window warm" id="19:220">
+                            <Ellipse width="170" height="170" name="Path" id="0:732"/>
+                            <Fill fillRule="clockwise" name="Fill" id="0:733">
+                                <SolidColor colorValue="142152DB" name="Color" id="0:734"/>
+                                <Feather strength="60" name="Feather" id="0:735"/>
+                            </Fill>
+                        </Shape>
+                        <Shape x="200" y="210" name="Glow / window pink" id="19:221">
+                            <Ellipse width="120" height="120" name="Path" id="0:736"/>
+                            <Fill fillRule="clockwise" name="Fill" id="0:737">
+                                <SolidColor colorValue="1AFF7A9A" name="Color" id="0:738"/>
+                                <Feather strength="50" name="Feather" id="0:739"/>
+                            </Fill>
+                        </Shape>
+                    </Node>
+                </LayoutComponent>
+                <Shape x="249" y="262.005" name="Line" id="19:223">
+                    <PointsPath name="Path" id="0:740">
+                        <StraightVertex x="-66" id="0:741"/>
+                        <StraightVertex x="66" id="0:742"/>
+                    </PointsPath>
+                    <Stroke thickness="2" name="Stroke" id="0:743">
+                        <LinearGradient startX="-66" endX="66" name="Gradient" id="0:744">
+                            <GradientStop colorValue="00FFFFFF" id="0:745"/>
+                            <GradientStop colorValue="FF2152DB" position="1" id="0:746"/>
+                        </LinearGradient>
+                    </Stroke>
+                </Shape>
+                <LayoutComponent width="120" height="120" styleId="19:224" name="AI" id="19:225">
+                    <LayoutComponentStyle positionLeft="55" positionTop="202" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="AI Style" id="19:224"/>
+                    <NestedArtboardLeaf fit="contain" artboardId="19:100" name="AI" id="0:747"/>
+                </LayoutComponent>
+            </Node>
+        </LayoutComponent>
+        <StateMachine name="State Machine 1" id="19:102">
+            <StateMachineLayer name="Layer 1" id="19:103">
+                <AnyState x="200" y="-120" id="0:748"/>
+                <ExitState x="400" y="-120" id="0:749"/>
+                <EntryState id="0:750"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+    <ComponentAsset artboardId="19:100" name="AI" id="0:770"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="1:159"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="1:224"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="2:228"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="3:175"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="3:330"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="4:108"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="4:263"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="5:207"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="6:207"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="7:233"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="8:205"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="9:208"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="10:208"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="11:208"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="12:210"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="13:159"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="13:226"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="14:161"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="14:232"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="15:218"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="16:161"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="16:232"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="17:228"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="18:177"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="18:350"/>
+    <FontAsset file="Geist Medium.ttf" assetId="7109315" name="Geist Medium" id="19:161"/>
+    <FontAsset file="Geist SemiBold.ttf" assetId="7109316" name="Geist SemiBold" id="19:232"/>
+</Rive>
