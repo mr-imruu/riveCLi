@@ -66,13 +66,25 @@
   input:disabled { opacity: .5; }
   .recent { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
   .recent .rtop { display: flex; justify-content: space-between; gap: 8px; } .recent .rtop b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .recent { position: relative; }
+  .recent .trash { position: absolute; right: 6px; bottom: 6px; margin: 0; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: none; color: var(--muted); border-radius: 6px; opacity: 0; transition: opacity .12s, color .12s, background .12s; }
+  .recent:hover .trash, .recent .trash:focus-visible { opacity: 1; } .recent .trash:hover { color: var(--err); background: #3a3a3a; filter: none; }
+  .rtabs { display: flex; gap: 4px; padding: 2px; border-radius: 8px; background: var(--panel); width: fit-content; }
+  .rtab { margin: 0; padding: 4px 12px; border-radius: 6px; background: none; color: var(--muted); font-size: 11px; } .rtab:hover { color: var(--text); filter: none; } .rtab.on { background: #3a3a3a; color: var(--text); }
+  .recent .rbtns { padding-right: 28px; }
   .recent .rbtns { display: flex; gap: 6px; flex-wrap: wrap; } .recent .rbtns button { margin: 6px 0 0; } .recent a { text-decoration: none; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #6b6b6b; align-self: center; margin-left: auto; margin-right: 2px; flex: none; }
   .dot + .gear { margin-left: 0; }
   .dot.ok { background: var(--ok); } .dot.bad { background: var(--err); } .dot.off { background: #6b6b6b; }
   .score b.n { min-width: 44px; text-align: center; }
   .score .sub { margin-top: 4px; }
-  .issue h3 { display: flex; align-items: baseline; gap: 6px; }
+  .issue { padding: 0; }
+  .ihead { display: flex; align-items: center; gap: 8px; width: 100%; margin: 0; padding: 10px; background: none; color: var(--text); text-align: left; border-radius: 8px; font-weight: 600; }
+  .ihead:hover { background: #2f2f2f; filter: none; }
+  .ihead .ititle { flex: 1; min-width: 0; }
+  .ihead .chev { width: 7px; height: 7px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .12s; flex: none; margin-right: 2px; }
+  .issue.open .chev { transform: rotate(45deg); }
+  .ibody { padding: 0 10px 10px; } .ibody[hidden] { display: none; }
   .issue .why { margin-top: 2px; }
   .head-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; } .head-actions button { margin: 0; }
   .group-title { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 18px 0 0; }
@@ -86,47 +98,44 @@
   <button class="gear" id="gear" title="Settings" aria-label="Settings">&#9881;</button>
 </div>
 <div id="settings" hidden>
-  <label for="token">Helper token <span class="muted">(printed by the helper window). Press Enter to save.</span></label>
-  <input id="token" placeholder="paste token, then press Enter" autocomplete="off" spellcheck="false">
+  <label for="token">Helper token</label>
+  <input id="token" placeholder="Paste, then press Enter" autocomplete="off" spellcheck="false">
   <div class="muted" id="tokenNote"></div>
-  <div class="muted" id="helperState" style="margin-top:8px"></div>
+  <div class="muted" id="helperState" style="margin-top:6px"></div>
 </div>
 <div id="paneAnalysis" hidden>
-  <p>Check the selected frames <b>before</b> importing. See what will break or look different in Rive, and how to fix it in Figma.</p>
-  <div class="head-actions"><button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, frame previews and design data in the helper's claude-inbox folder">Send to Claude</button>
+  <div class="head-actions"><button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, previews and design data in the helper's claude-inbox folder">Send to Claude</button>
   <span class="muted" id="selInfo"></span></div>
   <div id="analysisOut"></div>
 </div>
 <div id="paneImport">
-<div class="box" id="detected" style="margin-top:0">Select a frame in Figma to begin.</div>
+<div class="box" id="detected" style="margin-top:0">Select a frame to begin.</div>
 
-<div class="sec">Name</div>
-<div class="field">
-  <label for="projname">File name in Rive</label>
-  <input id="projname" placeholder="detected from the selected frame">
-  <div class="hint">The artboard keeps the frame name.</div>
-</div>
+<div class="sec">File name</div>
+<input id="projname" placeholder="From the selected frame">
 
 <div class="sec">Destination</div>
-<div class="field">
-  <label for="filelink">Add to an open Rive file <span class="muted">(optional)</span></label>
-  <input id="filelink" placeholder="Paste its link or id, or leave empty for a new file">
+<div class="rtabs" id="destTabs"><button class="rtab on" data-dest="account">My account</button><button class="rtab" data-dest="open">Open Rive file</button></div>
+<div class="field" id="linkWrap" hidden style="margin-top:8px">
+  <input id="filelink" placeholder="Paste the file's link or id" aria-label="Open Rive file link">
 </div>
+<div class="hint" id="destHint"></div>
 
 <details class="opts">
-  <summary>Import options</summary>
+  <summary>Options</summary>
   <div class="body">
-    <label class="chk"><input type="checkbox" id="optArtboard" checked><span><b>Frame properties become the artboard's</b><br><span class="muted">Size, fill and layout. Uncheck to import the frame as a layout box inside a plain artboard.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optComp" checked><span><b>Components</b><br><span class="muted">Instances are detached into layout; each main component also becomes a Rive component artboard.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optInner" checked><span><b>Inner shadows cover inner layers</b><br><span class="muted">Like Figma. Uncheck to keep them under the contents.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optAuto"><span><b>Push automatically after it verifies</b><br><span class="muted">Skips the extra click. This changes your Rive file straight away.</span></span></label>
+    <label class="chk" title="Size, fill and layout of the frame become the artboard's. Off: the frame is a layout box inside a plain artboard."><input type="checkbox" id="optArtboard" checked><span>Frame becomes the artboard</span></label>
+    <label class="chk" title="Each main component becomes its own Rive component artboard."><input type="checkbox" id="optComp" checked><span>Components as artboards</span></label>
+    <label class="chk" title="Instances become live nested artboards of their component. Needs Components on. Off: plain layout."><input type="checkbox" id="optLink" checked><span>Link instances to components</span></label>
+    <label class="chk" title="Inner shadows also cover the layers inside, like Figma."><input type="checkbox" id="optInner" checked><span>Inner shadows over contents</span></label>
+    <label class="chk" title="Open Rive file only. The old artboard is swapped for the new one, even after a rename. Edits you made to it in Rive are lost (a backup is saved). Off: saves a new artboard."><input type="checkbox" id="optReplace" checked><span>Update replaces the artboard</span></label>
+    <label class="chk" title="Pushes as soon as the export verifies. Updates still wait for you."><input type="checkbox" id="optAuto"><span>Push automatically</span></label>
   </div>
 </details>
 
 <div class="actions">
-  <button id="send">Send to Rive</button><button id="zip" class="alt" title="Download the converted files without using the helper">Zip only</button>
+  <button id="send">Send to Rive</button><button id="zip" class="alt" title="Download the converted files without the helper">Zip</button>
 </div>
-<div class="hint" style="margin-top:8px">Auto layout becomes Rive layout. Text stays live text.</div>
 
 <div id="out"></div>
 <div id="recents"></div>
@@ -137,7 +146,7 @@
 <script>
 var HELPER = 'http://localhost:4747';
 var projEl = document.getElementById('projname'), detectedEl = document.getElementById('detected'), nameEdited = false;
-var out = document.getElementById('out'), tokenEl = document.getElementById('token'), linkEl = document.getElementById('filelink'), optArt = document.getElementById('optArtboard'), optComp = document.getElementById('optComp'), optInner = document.getElementById('optInner'), optAuto = document.getElementById('optAuto'), mode = 'send', last = null;
+var out = document.getElementById('out'), tokenEl = document.getElementById('token'), linkEl = document.getElementById('filelink'), optArt = document.getElementById('optArtboard'), optComp = document.getElementById('optComp'), optInner = document.getElementById('optInner'), optAuto = document.getElementById('optAuto'), optReplace = document.getElementById('optReplace'), optLink = document.getElementById('optLink'), mode = 'send', last = null;
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*');
 function ask(m) { mode = m; parent.postMessage({ pluginMessage: { type: 'convert', components: optComp.checked } }, '*'); }
@@ -157,28 +166,27 @@ function keepFrameName(sel) {
   if (!sel || !sel.count || !tokenEl.value.trim()) return;
   frameTimer = setTimeout(function () {
     call('/frame', { name: cleanName(sel.names[0]), names: sel.names, types: sel.types, ids: sel.ids, sizes: sel.sizes, page: sel.page, file: sel.file })
-      .then(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Name saved for Claude.'; })
-      .catch(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Helper is off, so the name was not saved (start node serve.js).'; });
+      .then(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = ''; })
+      .catch(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = ''; });
   }, 500);
 }
 function showSelection(sel) {
   var key = sel && sel.ids ? sel.ids.join(',') : '';
   if (key !== selKey) { if (selKey !== null) out.innerHTML = ''; selKey = key; } // a different selection means the last result no longer applies
-  if (sel && sel.file && sel.file !== curFile) { curFile = sel.file; linkEl.value = links[curFile] || ''; }
+  if (sel && sel.file && sel.file !== curFile) { curFile = sel.file; applyDest(dests[curFile] || (links[curFile] ? 'open' : 'account')); }
   var has = !!(sel && sel.count);
   document.getElementById('send').disabled = !has; document.getElementById('zip').disabled = !has;
-  if (!sel || !sel.count) { detectedEl.className = 'box'; detectedEl.innerHTML = 'Select a frame in Figma to begin.'; if (!nameEdited) projEl.value = ''; return; }
+  if (!sel || !sel.count) { detectedEl.className = 'box'; detectedEl.innerHTML = 'Select a frame to begin.'; if (!nameEdited) projEl.value = ''; return; }
   var first = sel.names[0], isFrame = FRAMEISH[sel.types[0]];
   detectedEl.className = 'box ' + (isFrame ? 'ok' : 'warn');
-  detectedEl.innerHTML = '<b>Detected frame:</b> ' + esc(first) + (sel.count > 1 ? ' <span class="muted">+' + (sel.count - 1) + ' more</span>' : '') +
-    '<br><span class="muted" id="keptNote"></span><br><span class="muted">' + (isFrame ? 'Its name is saved for Claude and is used as the artboard and Rive file name.' : 'This is not a frame. Select a frame, component or group.') + '</span>';
+  detectedEl.innerHTML = '<b>' + esc(first) + '</b>' + (sel.count > 1 ? ' <span class="muted">+' + (sel.count - 1) + '</span>' : '') + '<span class="muted" id="keptNote"></span>' + (isFrame ? '' : '<br><span class="muted">Not a frame. Select a frame, component or group.</span>');
   if (!nameEdited) projEl.value = cleanName(first);
   if (isFrame) keepFrameName(sel);
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
-function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked }; }
-var selKey = null, links = {}, recents = [], curFile = '';
-function linkChanged() { if (!curFile) return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
+function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked, replace: optReplace.checked, link: optLink.checked }; }
+var dests = {}, curDest = 'account', artTarget = null, forceReplace = false, viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
+function linkChanged() { if (!curFile || curDest !== 'open') return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
 function copyText(t) {
   var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
@@ -189,31 +197,138 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
+var recentTab = 'projects', delAsk = null, delMsg = {};
+var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
+var TRASH_TIP = 'Click: remove from this list. Cmd+Click: also delete from Rive.';
+function trashBtn(attr, val) { return '<button class="trash" ' + attr + '="' + val + '" title="' + TRASH_TIP + '" aria-label="' + TRASH_TIP + '">' + TRASH + '</button>'; }
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
-  el.innerHTML = '<div class="sec">Recent exports</div>' + recents.map(function (x, i) {
-    return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
-      (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
-      (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and send them to the same place">Update</button>' : '') + '</div></div>';
-  }).join('');
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-copy]'), function (b) {
+  var head = '<div class="sec">Recent exports</div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
+  var body = '', items = [];
+  if (recentTab === 'projects') {
+    body = recents.map(function (x, i) {
+      var ask = delAsk === 'p' + i ? '<div class="box warn" style="margin:8px 0 0">Whole files can only be deleted in Rive.<p style="margin:8px 0 0">' + (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm">Open in Rive</button></a>' : '') + '<button class="sm alt" data-del="' + i + '">Remove from list</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
+      return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
+        (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
+        (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') +
+        '</div>' + ask + (delAsk === 'p' + i ? '' : trashBtn('data-ptrash', i)) + '</div>';
+    }).join('');
+  } else {
+    recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { var key = (x.ids || [])[k] || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: (x.ids || [])[k], project: x.name, time: x.time, url: x.url }); }); });
+    body = items.length ? items.map(function (it, j) {
+      var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from Rive?</b><br><span class="muted">A backup is saved.</span><p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
+      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
+        (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
+        (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
+        (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
+    }).join('') : '<p class="muted">No artboards yet.</p>';
+  }
+  el.innerHTML = head + body;
+  function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
+  function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
+  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; renderRecents(); }; });
+  on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
+  on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
+  on('button[data-del]', function (b) { b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); delAsk = null; saveSettings(); renderRecents(); }; });
+  on('button[data-atrash]', function (b) { b.onclick = function (e) { var j = +b.getAttribute('data-atrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'a' + j; renderRecents(); } else { hide(items[j]); renderRecents(); } }; });
+  on('button[data-adelok]', function (b) {
+    b.onclick = function () {
+      var it = items[+b.getAttribute('data-adelok')]; b.disabled = true; b.textContent = 'Deleting…';
+      call('/delete-artboard', { name: it.project, artboard: it.frame }).then(function (r) {
+        delAsk = null;
+        if (r.ok || r.gone) { hide(it); if (!r.ok) delMsg[it.key + '|' + it.project] = ''; }
+        else delMsg[it.key + '|' + it.project] = r.output;
+        renderRecents();
+        if (!r.ok && !r.gone) out.innerHTML = '<div class="box bad"><b>Could not delete the artboard.</b><pre>' + esc(r.output) + '</pre></div>';
+        else if (r.gone) out.innerHTML = '<div class="box info">' + esc(r.output) + ' I removed it from your list.</div>';
+        else out.innerHTML = '<div class="box ok"><b>Deleted “' + esc(it.frame) + '” from the Rive file.</b></div>';
+      }).catch(function (er) { delAsk = null; renderRecents(); out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '</div>'; });
+    };
+  });
+  on('button[data-aupdate]', function (b) {
+    b.onclick = function () {
+      var it = items[+b.getAttribute('data-aupdate')], fid = (String(it.url).match(/\/(\d+)\s*$/) || [])[1];
+      if (!fid) return;
+      viaUpdate = true; artTarget = { name: it.project }; forceReplace = true;
+      resendPrev = linkEl.value; linkEl.value = fid;
+      parent.postMessage({ pluginMessage: { type: 'select', ids: [it.id] } }, '*');
+      setTimeout(function () { ask('send'); }, 450);
+    };
+  });
+  on('button[data-pick]', function (b) { b.onclick = function () { parent.postMessage({ pluginMessage: { type: 'select', ids: [items[+b.getAttribute('data-pick')].id] } }, '*'); }; });
+  on('button[data-copy]', function (b) {
     b.onclick = function () { var ok = copyText(recents[+b.getAttribute('data-copy')].url); b.textContent = ok ? 'Copied' : 'Select and copy from Open'; setTimeout(function () { b.textContent = 'Copy link'; }, 1500); };
   });
-  Array.prototype.forEach.call(el.querySelectorAll('button[data-resend]'), function (b) {
+  on('button[data-resend]', function (b) {
     b.onclick = function () {
       var x = recents[+b.getAttribute('data-resend')];
-      projEl.value = x.name; nameEdited = true; if (x.link) linkEl.value = x.link;
+      viaUpdate = true; projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = (x.mode ? x.mode === 'existing' : /^\d+$/.test(x.link || '')) ? x.link : ''; // old entries: only a plain file id means an open-file send
       parent.postMessage({ pluginMessage: { type: 'select', ids: x.ids } }, '*');
       setTimeout(function () { ask('send'); }, 450);
     };
   });
 }
+// ---- what changed since the last export of this file ----------------------
+function hash(str) { var h = 5381, i; for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+function flatten(nodes) {
+  var map = {}, count = 0;
+  (function walk(list, path) {
+    (list || []).forEach(function (n) {
+      if (count++ > 3000) return;
+      var sig = hash(JSON.stringify([n.fills, n.strokes, n.effects, n.opacity, n.cornerRadius, n.visible, n.layoutMode, n.fontSize, n.fontName, n.itemSpacing, n.paddingLeft, n.paddingTop]));
+      var chars = n.characters == null ? null : String(n.characters);
+      map[n.id] = [n.name, n.type, Math.round(n.width), Math.round(n.height), Math.round(n.x), Math.round(n.y), chars == null ? null : chars.slice(0, 60), chars == null ? null : hash(chars), sig, path];
+      walk(n.children, (path ? path + ' / ' : '') + n.name);
+    });
+  })(nodes, '');
+  return map;
+}
+function diffSnaps(prev, cur) {
+  var d = { added: [], removed: [], renamed: [], text: [], moved: [], style: [] }, id;
+  for (id in cur) {
+    var c = cur[id], p = prev[id];
+    if (!p) { d.added.push(c[0]); continue; }
+    if (p[0] !== c[0]) d.renamed.push(p[0] + ' \u2192 ' + c[0]);
+    if (c[7] !== p[7]) d.text.push(c[0] + ': \u201C' + (p[6] || '') + '\u201D \u2192 \u201C' + (c[6] || '') + '\u201D');
+    if (c[2] !== p[2] || c[3] !== p[3] || c[4] !== p[4] || c[5] !== p[5]) d.moved.push(c[0] + (c[2] !== p[2] || c[3] !== p[3] ? ' (' + p[2] + '\u00D7' + p[3] + ' \u2192 ' + c[2] + '\u00D7' + c[3] + ')' : ' (moved)'));
+    if (c[8] !== p[8]) d.style.push(c[0]);
+  }
+  for (id in prev) if (!cur[id]) d.removed.push(prev[id][0]);
+  return d;
+}
+function cardHtml(title, badge, body, sev) {
+  return '<div class="issue ' + sev + '"><button class="ihead" data-tog="1" aria-expanded="false"><span class="ititle">' + title + '</span>' + (badge !== '' && badge != null ? '<span class="muted">' + badge + '</span>' : '') + '<span class="chev" aria-hidden="true"></span></button><div class="ibody" hidden>' + body + '</div></div>';
+}
+out.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.ihead[data-tog]'); if (!b) return;
+  var card = b.parentNode, body = card.querySelector('.ibody');
+  body.hidden = !body.hidden; card.classList.toggle('open', !body.hidden); b.setAttribute('aria-expanded', String(!body.hidden));
+});
+function changesHtml(d, when, all) {
+  var rows = [['added', 'New layers'], ['removed', 'Removed layers'], ['renamed', 'Renamed'], ['text', 'Text changed'], ['moved', 'Resized or moved'], ['style', 'Look changed']], total = 0, h = '';
+  rows.forEach(function (r) {
+    var list = d[r[0]]; if (!list.length) return; total += list.length;
+    h += '<div style="margin-top:6px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, all ? list.length : 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (!all && list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
+  });
+  return cardHtml('Changes' + (when ? ' since ' + ago(when) : ''), total || 'none', total ? h : '<span class="muted">No changes.</span>', 'info');
+}
+var DEST_HINT = { account: 'Creates a file in your account and keeps updating it.', open: 'Adds to a file you already have open in Rive.' };
+function applyDest(mode) {
+  curDest = mode;
+  Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) { b.classList.toggle('on', b.getAttribute('data-dest') === mode); });
+  document.getElementById('linkWrap').hidden = mode !== 'open';
+  document.getElementById('destHint').textContent = DEST_HINT[mode];
+  linkEl.value = mode === 'open' ? (links[curFile] || '') : '';
+}
+Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) {
+  b.onclick = function () { applyDest(b.getAttribute('data-dest')); if (curFile) { dests[curFile] = curDest; saveSettings(); } if (curDest === 'open') linkEl.focus(); };
+});
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
 document.getElementById('send').onclick = function () { ask('send'); };
 var settingsEl = document.getElementById('settings'), gearEl = document.getElementById('gear'), tokenNote = document.getElementById('tokenNote');
 function toggleSettings(open) { settingsEl.hidden = !open; gearEl.classList.toggle('on', open); if (open) tokenEl.focus(); }
-function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents } }, '*'); }
+function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents, snaps: snaps, dests: dests } }, '*'); }
 var dotEl = document.getElementById('dot'), stateEl = document.getElementById('helperState');
 function setHelper(cls, text) { dotEl.className = 'dot ' + cls; dotEl.title = 'Helper: ' + text; stateEl.textContent = 'Helper: ' + text; }
 function checkHelper() {
@@ -238,10 +353,10 @@ function call(path, body) {
     .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); });
 }
 function notesHtml(res) {
-  return (res.notes && res.notes.length) ? '<div class="box info"><ul>' + res.notes.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+  return (res.notes && res.notes.length) ? cardHtml('Notes', res.notes.length, '<ul>' + res.notes.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul>', 'info') : '';
 }
 function warningsHtml(res) {
-  return res.warnings.length ? '<div class="box warn"><b>Not converted</b><ul>' + res.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>' : '';
+  return res.warnings.length ? cardHtml('Not converted', res.warnings.length, '<ul>' + res.warnings.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul>', 'warning') : '';
 }
 function zipHtml(res, name) {
   var enc = new TextEncoder();
@@ -311,12 +426,11 @@ function renderAnalysis(snap) {
         }
         layers += (ids.length > 1 ? '<button class="sm alt" data-ids="' + esc(ids.join(',')) + '">Select all ' + (i.count > ids.length ? 'first ' + ids.length : ids.length) + '</button>' : '') + '</div>';
       }
-      var long = (i.why + ' ' + i.fix).length > 170, openText = !!expandedText[i.id];
-      h += '<div class="issue ' + sev + '"><h3>' + esc(i.title) + (i.count > 1 ? ' <span class="muted">×' + i.count + '</span>' : '') + '</h3>' +
-        '<div class="why">' + esc(i.why) + '</div>' +
-        '<div class="fix" ' + (long && !openText ? 'style="max-height:2.9em;overflow:hidden"' : '') + '><b>How to fix:</b> ' + esc(i.fix) + '</div>' +
-        (long ? '<button class="linkbtn" data-text="' + esc(i.id) + '">' + (openText ? 'See less' : 'See more') + '</button>' : '') +
-        layers + '</div>';
+      var openCard = !!expandedText[i.id];
+      h += '<div class="issue ' + sev + (openCard ? ' open' : '') + '"><button class="ihead" data-card="' + esc(i.id) + '" aria-expanded="' + openCard + '"><span class="ititle">' + esc(i.title) + '</span>' + (i.count > 1 ? '<span class="muted">\u00D7' + i.count + '</span>' : '') + '<span class="chev" aria-hidden="true"></span></button>' +
+        '<div class="ibody"' + (openCard ? '' : ' hidden') + '><div class="why">' + esc(i.why) + '</div>' +
+        '<div class="fix"><b>How to fix:</b> ' + esc(i.fix) + '</div>' +
+        layers + '</div></div>';
     });
   });
   h += '<p style="margin-top:16px"><button id="goImport">' + (r.counts.error ? 'Import anyway' : 'Go to import') + '</button></p>';
@@ -339,8 +453,11 @@ function renderAnalysis(snap) {
       b.textContent = expanded[id] ? 'See less' : 'See ' + (more.querySelectorAll('.chip').length) + ' more';
     };
   });
-  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-text]'), function (b) {
-    b.onclick = function () { expandedText[b.getAttribute('data-text')] = !expandedText[b.getAttribute('data-text')]; renderAnalysis(window.lastSnap); };
+  Array.prototype.forEach.call(analysisOut.querySelectorAll('button[data-card]'), function (b) {
+    b.onclick = function () {
+      var id = b.getAttribute('data-card'), card = b.parentNode, body = card.querySelector('.ibody');
+      expandedText[id] = !expandedText[id]; body.hidden = !expandedText[id]; card.classList.toggle('open', !!expandedText[id]); b.setAttribute('aria-expanded', !!expandedText[id]);
+    };
   });
   document.getElementById('goImport').onclick = function () { showTab('import'); };
 }
@@ -354,44 +471,56 @@ onmessage = function (e) {
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
     return;
   }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; } showSelection(m.selection); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
   if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');
-  var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, innerShadowOverChildren: optInner.checked });
+  var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, linkComponents: optLink.checked, innerShadowOverChildren: optInner.checked });
   last = { name: name, bytes: m.imageBytes || {} };
   if (mode === 'zip') { out.innerHTML = '<div class="box ok">Converted ' + m.nodes.length + ' frame(s).</div>' + notesHtml(res) + warningsHtml(res) + zipHtml(res, name); return; }
   if (m.fileName) curFile = curFile || m.fileName;
-  linkChanged();
   var fileId = ((linkEl.value.match(/file\/[^\/]+\/(\d+)/) || linkEl.value.match(/^\s*(\d+)\s*$/) || [])[1]) || '';
-  if (linkEl.value.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
+  var linkUsed = linkEl.value; // what this send really uses (Update may differ from the field)
+  if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; } else linkChanged(); // Update must not change the remembered link
+  if (linkUsed.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
+  var curSnap = flatten(m.nodes), wasUpdate = viaUpdate, target = artTarget, forced = forceReplace; viaUpdate = false; artTarget = null; forceReplace = false;
   var selIds = (m.nodes || []).map(function (n) { return n.id; }), frameNames = (m.nodes || []).map(function (n) { return n.name; });
+  var replacePairs = [];
+  if (fileId && (optReplace.checked || forced)) {
+    var pmapOf = function (key) { return (snaps[key] || {}).map || {}; };
+    var pmap = {}; [snaps['file-' + fileId] && 'file-' + fileId, target && target.name].forEach(function (k) { if (k) { var mp = pmapOf(k); for (var id in mp) if (!pmap[id]) pmap[id] = mp[id]; } });
+    (m.nodes || []).forEach(function (n) { var nw = String(n.name).trim(); replacePairs.push({ old: pmap[n.id] ? String(pmap[n.id][0]).trim() : nw, new: nw }); });
+    (m.components || []).forEach(function (c) { var nm = String(c.name).trim(); replacePairs.push({ old: nm, new: nm }); });
+  }
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
-  return call('/export', { name: name, rml: res.rml, yaml: res.yaml, fonts: res.fonts, fileId: fileId, images: res.images.map(function (im) { return { file: im.file, base64: toB64(last.bytes[im.hash]) }; }) }).then(function (r) {
-    var ok = r.verify.ok, f = r.fonts, html = '<div class="box ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Built and verified with rive' : 'rive found errors') + '</b>' +
-      '<br>' + (r.mode === 'existing' ? 'Added to your open file (nothing in it removed): <b>' + (r.added || []).map(esc).join(', ') + '</b>. A copy of the file as it is now is saved in <code>Exports/backups/</code>.' : 'Saved in <code>Exports/' + esc(r.name) + '</code>') + (ok ? '' : '<pre>' + esc(r.verify.output) + '</pre>') + '</div>';
-    if (f.standIn.length) html += '<div class="box warn"><b>Stand-in fonts used</b> (add real files to <code>Fonts Library/</code> and send again):<ul>' + f.standIn.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+  return call('/export', { name: name, rml: res.rml, yaml: res.yaml, fonts: res.fonts, fileId: fileId, replace: replacePairs, images: res.images.map(function (im) { return { file: im.file, base64: toB64(last.bytes[im.hash]) }; }) }).then(function (r) {
+    var ok = r.verify.ok, f = r.fonts, html = '<div class="box ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Built and verified' : 'rive found errors') + '</b>' +
+      (r.mode === 'existing' ? '<br>' + (r.replaced && r.replaced.length ? 'Replaced: <b>' + r.replaced.map(esc).join(', ') + '</b><br>' : '') + 'Now in the file: <b>' + (r.added || []).map(esc).join(', ') + '</b>' : '') + (ok ? '' : '<pre>' + esc(r.verify.output) + '</pre>') + '</div>';
+    if (f.standIn.length) html += '<div class="box warn"><b>Stand-in fonts used</b><ul>' + f.standIn.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>Add them to <code>Fonts Library/</code> and send again.</div>';
     if (f.missing.length) html += '<div class="box bad"><b>Missing fonts</b>: ' + f.missing.map(esc).join(', ') + '</div>';
     html += notesHtml(res) + warningsHtml(res);
-    if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
-    out.innerHTML = html + zipHtml(res, name);
+    var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : (ok && wasUpdate ? '<div class="box info">No earlier record to compare. Changes show from the next update.</div>' : '');
+    if (ok) { snaps[r.name] = { time: Date.now(), map: curSnap }; var keep = Object.keys(snaps).sort(function (a, b) { return snaps[b].time - snaps[a].time; }); keep.slice(5).forEach(function (k) { delete snaps[k]; }); }
+    var banner = ok ? '<div class="box warn" id="notPushed"><b>Not pushed yet</b><p style="margin:8px 0 0"><button id="push">' + (r.mode === 'existing' ? 'Add to my Rive file' : 'Push to Rive') + '</button></p></div>' : '';
+    out.innerHTML = banner + changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
-    addRecent({ name: r.name, time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : (prev && prev.url) || '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
+    if (target) patchRecent(target.name, { time: Date.now() }); else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
     var pb = document.getElementById('push');
     if (pb) pb.onclick = function () {
       pb.disabled = true; pb.textContent = 'Pushing…';
       call('/push', { name: r.name, label: 'Figma import' }).then(function (p) {
         var h = '<div class="box ' + (p.ok ? 'ok' : 'bad') + '"><b>' + (p.ok ? 'Pushed to Rive' : 'Push failed') + '</b>' +
           (p.url ? '<br><a href="' + p.url + '" target="_blank">' + p.url + '</a>' : '') + (p.ok ? '' : '<pre>' + esc(p.output) + '</pre>') + '</div>';
+        var np = document.getElementById('notPushed'); if (np && p.ok) np.parentNode.removeChild(np);
         out.insertAdjacentHTML('afterbegin', h); pb.textContent = 'Pushed';
-        if (p.ok) patchRecent(r.name, { pushed: true, time: Date.now(), url: p.url || fileUrl, link: p.url || String(r.fileId || '') });
+        if (p.ok) patchRecent(target ? target.name : r.name, target ? { pushed: true, time: Date.now() } : { pushed: true, time: Date.now(), url: p.url || fileUrl, link: r.mode === 'existing' ? String(r.fileId || '') : '' });
       }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
     };
-    if (pb && optAuto.checked) pb.click();
+    if (pb && optAuto.checked && !prevSnap && !wasUpdate) pb.click(); // an update always waits, so you can read the change report first
   }).catch(function (er) {
-    out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder and paste its token. You can still use “Zip only”.</div>' + warningsHtml(res) + zipHtml(res, name);
+    out.innerHTML = '<div class="box bad"><b>Helper not reachable.</b> Start it with <code>Start Helper.command</code>. Zip still works.</div>' + warningsHtml(res) + zipHtml(res, name);
   });
   }
   // Before sending: warn about fonts that are not in the library, and about updating a file that was already pushed.
@@ -399,10 +528,14 @@ onmessage = function (e) {
   var again = !fileId && recents.filter(function (x) { return x.name === name && x.pushed; })[0];
   call('/status').then(function (st) { return st.realFonts || []; }, function () { return null; }).then(function (real) {
     var miss = real ? wanted.filter(function (f) { return real.indexOf(f) < 0; }) : [], msgs = [];
-    if (miss.length) msgs.push('<b>These fonts are not in your Fonts Library</b>, so a stand-in font will be used: <ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>');
-    if (again) msgs.push('<b>“' + esc(name) + '” was already pushed.</b> Sending again updates that same Rive file (the old version stays in its revision history).');
+    if (miss.length) msgs.push(cardHtml('Fonts missing', miss.length, '<ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul><span class="muted">A stand-in font is used.</span>', 'warning'));
+    var renamedAb = replacePairs.filter(function (x) { return x.old !== x.new; });
+    if (renamedAb.length) msgs.push(cardHtml('Artboard renamed in Rive', renamedAb.length, '<ul>' + renamedAb.map(function (x) { return '<li>' + esc(x.old) + ' \u2192 <b>' + esc(x.new) + '</b></li>'; }).join('') + '</ul><span class="muted">Replaces the old artboard. Edits you made to it in Rive are lost (backup saved).</span>', 'warning'));
+    if (again) msgs.push(cardHtml('Already pushed', '', 'This updates the same Rive file.', 'info'));
+    var gateKey = fileId ? 'file-' + fileId : name, before = snaps[gateKey];
+    if (before) msgs.unshift(changesHtml(diffSnaps(before.map, curSnap), before.time, true));
     if (!msgs.length) { runExport(); return; }
-    out.innerHTML = '<div class="box warn">' + msgs.join('<br>') + '<p style="margin:10px 0 0"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></p></div>';
+    out.innerHTML = msgs.join('') + '<div class="actions"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></div>';
     document.getElementById('goOn').onclick = runExport;
     document.getElementById('goStop').onclick = function () { out.innerHTML = ''; };
   });

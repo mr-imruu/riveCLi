@@ -58,7 +58,7 @@ function snapshot(node, ctx) {
     o.segments.forEach(function (s) { (s.fills || []).forEach(function (p) { if (p.type === 'IMAGE' && p.imageHash) ctx.hashes[p.imageHash] = true; }); });
   }
   if ('vectorPaths' in node) o.vectorPaths = node.vectorPaths;
-  if (node.type === 'INSTANCE') ctx.instances.push(node);
+  if (node.type === 'INSTANCE') { ctx.instances.push(node); ctx.instanceSnaps.push(o); }
   if ('children' in node) o.children = node.children.map(function (c) { return snapshot(c, ctx); });
   return o;
 }
@@ -72,13 +72,14 @@ function imageExt(b) {
 }
 
 async function build(sel, wantComponents, forAnalysis) {
-  var ctx = { hashes: {}, instances: [] };
+  var ctx = { hashes: {}, instances: [], instanceSnaps: [] };
   var nodes = sel.map(function (n) { return snapshot(n, ctx); });
   // Detached instances: collect their main components so they can also become component artboards.
   var components = [], seen = {};
   if (wantComponents) {
     for (var i = 0; i < ctx.instances.length; i++) {
       var main = await ctx.instances[i].getMainComponentAsync();
+      if (main) ctx.instanceSnaps[i].mainComponentId = main.id; // lets the converter link the instance to its component artboard
       if (main && !seen[main.id]) { seen[main.id] = true; components.push(snapshot(main, ctx)); }
     }
   }
@@ -107,8 +108,8 @@ function sendSelection() { var i = selectionInfo(); i.type = 'selection'; figma.
 
 figma.ui.onmessage = function (msg) {
   if (msg.type === 'loadSettings') {
-    Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts'), figma.clientStorage.getAsync('links'), figma.clientStorage.getAsync('recents')]).then(function (v) {
-      figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, links: v[3] || {}, recents: v[4] || [], selection: selectionInfo() });
+    Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts'), figma.clientStorage.getAsync('links'), figma.clientStorage.getAsync('recents'), figma.clientStorage.getAsync('snaps'), figma.clientStorage.getAsync('dests')]).then(function (v) {
+      figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, links: v[3] || {}, recents: v[4] || [], snaps: v[5] || {}, dests: v[6] || {}, selection: selectionInfo() });
     });
     return;
   }
@@ -116,6 +117,8 @@ figma.ui.onmessage = function (msg) {
     figma.clientStorage.setAsync('token', msg.token); figma.clientStorage.setAsync('fileLink', msg.fileLink); figma.clientStorage.setAsync('opts', msg.opts);
     if (msg.links) figma.clientStorage.setAsync('links', msg.links);
     if (msg.recents) figma.clientStorage.setAsync('recents', msg.recents);
+    if (msg.snaps) figma.clientStorage.setAsync('snaps', msg.snaps);
+    if (msg.dests) figma.clientStorage.setAsync('dests', msg.dests);
     return;
   }
   if (msg.type === 'convert') {

@@ -53,7 +53,29 @@ function standInFont() {
 // ---- add the import to an existing Rive file ------------------------------
 // Pull the live file, append the imported artboards (ids moved to a free namespace so
 // nothing collides), keep what is already there. Nothing is removed from the file.
-function mergeIntoExisting(existing, incoming) {
+// Cut one artboard (and its component entry) out of a scene by name. Returns its old stage position too.
+function cutArtboard(text, name) {
+  const re = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const hit = text.match(new RegExp('<Artboard(?=\\s)[^>]*?\\sname="' + re(xmlAttr(name)) + '"[^>]*>[\\s\\S]*?</Artboard>'));
+  if (!hit) return { found: false, text };
+  const tag = hit[0].match(/^<Artboard\s[^>]*>/)[0], aid = (tag.match(/\sid="([^"]+)"/) || [])[1];
+  let out = text.replace(hit[0], '');
+  if (aid) out = out.replace(new RegExp('<ComponentAsset [^>]*artboardId="' + re(aid) + '"[^>]*/>\\s*'), '');
+  return { found: true, text: out, x: (tag.match(/\sx="(-?[\d.]+)"/) || [])[1] || '0', y: (tag.match(/\sy="(-?[\d.]+)"/) || [])[1] || '0' };
+}
+const xmlAttr = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function mergeIntoExisting(existing, incoming, replace) {
+  const escRe = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // "Replace" mode: swap an artboard that is already in the file for its new version (even if the frame was renamed),
+  // in the same spot on the stage. Its component entry goes too. Only artboards named in `replace` are touched.
+  const replaced = [], slots = {};
+  for (const pr of replace || []) {
+    const cut = cutArtboard(existing, pr.old);
+    if (!cut.found) continue;
+    slots[xmlAttr(pr.new)] = { x: cut.x, y: cut.y };
+    existing = cut.text;
+    replaced.push(pr.old);
+  }
   const used = [...existing.matchAll(/"(\d+):\d+"/g)].map(m => +m[1]);
   const ns = (used.length ? Math.max(...used) : 0) + 1;
   const inc = incoming.replace(/((?:id|Id|Ids)=")0:(\d+)"/g, (_, a, n) => a + ns + ':' + n + '"');
@@ -83,8 +105,9 @@ function mergeIntoExisting(existing, incoming) {
   artboards = artboards.map(a => {
     const w = +((a.match(/<Artboard\s[^>]*?\swidth="([\d.]+)"/) || [])[1] || 0);
     // Drop the converter's own stage position; place it after what is already in the file.
-    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + cursor + '" y="0" ');
-    cursor += w + 120;
+    const nm0 = (a.match(/<Artboard [^>]*?name="([^"]*)"/) || [])[1], slot = slots[nm0];
+    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + (slot ? slot.x : cursor) + '" y="' + (slot ? slot.y : 0) + '" ');
+    if (!slot) cursor += w + 120;
     remap.forEach(([ref, from, to]) => { a = a.split(ref + '="' + from + '"').join(ref + '="' + to + '"'); });
     a = a.replace(/(<Artboard [^>]*?name=")([^"]*)(")/, (m, pre, nm, post) => {
       // Re-importing the same frame: the new artboard is called "<name> - updated" (then "- updated 2" ...) and the old one is kept.
@@ -97,7 +120,7 @@ function mergeIntoExisting(existing, incoming) {
     return a;
   });
   const merged = existing.replace(/<\/Rive>\s*$/, artboards.join('\n    ') + '\n    ' + keepAssets.join('\n    ') + '\n    ' + compAssets.join('\n    ') + '\n</Rive>\n');
-  return { merged, added, namespace: ns };
+  return { merged, added, replaced, namespace: ns };
 }
 
 // ---- inbox: a design report Claude can read ---------------------------------
@@ -195,7 +218,8 @@ async function doExportExisting(body) {
   // it finds in there, and ships any other file type as an asset.
   fs.mkdirSync(path.join(EXPORTS, 'backups'), { recursive: true });
   fs.writeFileSync(path.join(EXPORTS, 'backups', 'file-' + fileId + '-' + new Date().toISOString().replace(/[:.]/g, '-') + '.rml'), existing);
-  const m = mergeIntoExisting(existing, String(body.rml));
+  const rep = (Array.isArray(body.replace) ? body.replace : []).slice(0, 200).filter(p => p && typeof p.old === 'string' && typeof p.new === 'string');
+  const m = mergeIntoExisting(existing, String(body.rml), rep);
   fs.writeFileSync(scenePath, m.merged);
   fs.mkdirSync(path.join(dir, 'fonts'), { recursive: true });
   writeImages(dir, body.images);
@@ -209,7 +233,29 @@ async function doExportExisting(body) {
   }
   const verify = await run([dir, '--verify'], dir);
   if (!verify.ok) fs.writeFileSync(scenePath, existing); // never leave a broken merge behind
-  return { dir, name: 'file-' + fileId, mode: 'existing', fileId, added: m.added, verify, fonts: { real, standIn, missing }, linked: true };
+  return { dir, name: 'file-' + fileId, mode: 'existing', fileId, added: m.added, replaced: m.replaced, verify, fonts: { real, standIn, missing }, linked: true };
+}
+
+// Delete ONE artboard from the Rive file an export is linked to: pull the live file, cut the artboard, verify, push.
+async function doDeleteArtboard(body) {
+  const name = safeName(body.name), dir = path.join(EXPORTS, name), ab = String(body.artboard || '').trim();
+  const yamlPath = path.join(dir, 'rive.yaml');
+  if (!ab) return { ok: false, output: 'No artboard name given.' };
+  if (!fs.existsSync(yamlPath) || !/^push:/m.test(fs.readFileSync(yamlPath, 'utf8'))) return { ok: false, output: 'This export is not linked to a Rive file, so there is nothing in Rive to delete.' };
+  const dl = await run(['pull', dir, '--yes'], ROOT);
+  if (!dl.ok) return { ok: false, output: 'Could not download your Rive file:\n' + dl.output };
+  const scenePath = path.join(dir, 'scene.rml'), existing = fs.readFileSync(scenePath, 'utf8');
+  if ((existing.match(/<Artboard(?=\s)/g) || []).length <= 1) return { ok: false, output: 'That is the only artboard in the file, so I did not delete it.' };
+  const cut = cutArtboard(existing, ab);
+  if (!cut.found) return { ok: false, gone: true, output: 'There is no artboard called "' + ab + '" in the Rive file (already deleted or renamed).' };
+  fs.mkdirSync(path.join(EXPORTS, 'backups'), { recursive: true });
+  fs.writeFileSync(path.join(EXPORTS, 'backups', 'before-delete-' + name + '-' + new Date().toISOString().replace(/[:.]/g, '-') + '.rml'), existing);
+  fs.writeFileSync(scenePath, cut.text);
+  const verify = await run([dir, '--verify'], dir);
+  if (!verify.ok) { fs.writeFileSync(scenePath, existing); return { ok: false, output: 'The file would not build without it, so nothing was deleted:\n' + verify.output }; }
+  const push = await run(['push', dir, '--yes', '--name=Removed artboard ' + ab], dir);
+  if (!push.ok) fs.writeFileSync(scenePath, existing);
+  return { ok: push.ok, output: push.output };
 }
 
 async function doPush(body) {
@@ -243,6 +289,7 @@ function handler(req, res) {
       if (req.method === 'POST' && req.url === '/frame') return send(200, doFrame(body));
       if (req.method === 'POST' && req.url === '/inbox') return send(200, doInbox(body));
       if (req.method === 'POST' && req.url === '/export') return send(200, await doExport(body));
+      if (req.method === 'POST' && req.url === '/delete-artboard') return send(200, await doDeleteArtboard(body));
       if (req.method === 'POST' && req.url === '/push') return send(200, await doPush(body));
       send(404, { error: 'not found' });
     } catch (e) { send(500, { error: String(e.message || e) }); }
