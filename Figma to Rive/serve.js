@@ -310,6 +310,19 @@ function handler(req, res) {
         const v = await run(['--version'], ROOT);
         return send(200, { ok: v.ok, rive: v.output, projectId: cfg.projectId || null, realFonts: fs.readdirSync(FONTS).filter(f => /\.(ttf|otf)$/i.test(f)) });
       }
+      if (req.method === 'GET' && req.url === '/files') {
+        // Every file in your Rive account's projects right now, so the plugin always matches the account.
+        const pid = (fs.existsSync(CONFIG) ? JSON.parse(fs.readFileSync(CONFIG, 'utf8')) : {}).projectId;
+        const rows = o => o.split('\n').filter(l => l.startsWith('{')).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean);
+        let ws = [];
+        if (pid) { const probe = await run(['ls', String(pid), '--json'], ROOT), m = probe.output.match(/workspace [^(]*\((\d+)\)/); if (m) ws = ['--workspace=' + m[1]]; }
+        const plist = await run(['ls', '--json'].concat(ws), ROOT);
+        const projects = rows(plist.output).filter(r => r.kind === 'project').map(r => r.projectId);
+        if (pid && projects.indexOf(+pid) < 0) projects.push(+pid);
+        const files = [];
+        for (const prj of projects) for (const r of rows((await run(['ls', String(prj), '--all', '--json'].concat(ws), ROOT)).output)) if (r.kind === 'file') files.push({ id: r.fileId, name: r.name, projectId: prj });
+        return send(200, { ok: plist.ok || files.length > 0, files });
+      }
       if (req.method === 'GET' && req.url.startsWith('/artboards?fileId=')) {
         // The artboards that are in a Rive file right now (pulled fresh), so the plugin can list them project by project.
         const fid = (req.url.split('fileId=')[1] || '').split('&')[0].replace(/\D/g, ''), dir = path.join(EXPORTS, 'file-' + fid);

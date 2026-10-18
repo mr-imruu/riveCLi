@@ -1236,6 +1236,28 @@ function resolveNames() {
   var ids = []; recents.forEach(function (x) { if (!x.fb) (x.ids || []).forEach(function (id) { if (id && ids.indexOf(id) < 0) ids.push(id); }); });
   if (ids.length) parent.postMessage({ pluginMessage: { type: 'resolveNames', ids: ids } }, '*');
 }
+var accountFiles = null;
+function slug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function fileUrl(f) { return 'https://editor.rive.app/file/' + slug(f.name) + '/' + f.id; }
+function syncAccount() {
+  call('/files').then(function (r) { if (r && r.ok && r.files) { accountFiles = r.files; applyAccount(); } }).catch(function () {});
+}
+// Make the list match your Rive account: one entry per file with its real name, files that were deleted disappear, files you never sent from here appear.
+function applyAccount() {
+  var byId = {}; accountFiles.forEach(function (f) { byId[String(f.id)] = f; });
+  var seen = {}, out = [];
+  recents.slice().sort(function (a, b) { return (b.time || 0) - (a.time || 0); }).forEach(function (x) {
+    var fid = projFileId(x);
+    if (!fid) { out.push(x); return; }
+    if (!byId[fid] || seen[fid]) return;
+    seen[fid] = true; x.title = byId[fid].name; x.url = fileUrl(byId[fid]); out.push(x);
+  });
+  accountFiles.forEach(function (f) {
+    var fid = String(f.id); if (seen[fid]) return;
+    out.push({ name: 'file-' + fid, title: f.name, time: 0, ids: [], frames: [], link: fid, mode: 'existing', url: fileUrl(f), pushed: true });
+  });
+  recents = out; saveSettings(); renderRecents();
+}
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
@@ -1244,7 +1266,7 @@ function renderRecents() {
   if (recentTab === 'projects') {
     body = recents.map(function (x, i) {
       var ask = delAsk === 'p' + i ? '<div class="box warn" style="margin:8px 0 0">Whole files can only be deleted in Rive.<p style="margin:8px 0 0">' + (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm">Open in Rive</button></a>' : '') + '<button class="sm alt" data-del="' + i + '">Remove from list</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
-      return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
+      return '<div class="recent"><div class="rtop"><b>' + esc(x.title || x.name) + '</b><span class="muted">' + (x.time ? ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') : 'in your account') + '</span></div><div class="rbtns">' +
         (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
         (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') +
         '</div>' + ask + (delAsk === 'p' + i ? '' : trashBtn('data-ptrash', i)) + '</div>';
@@ -1267,13 +1289,13 @@ function renderRecents() {
       if (!live) return;
       var byName = {}; (x.frames || []).forEach(function (f, k) { byName[String(f).trim()] = x.fb ? undefined : (x.ids || [])[k]; });
       var seen = {};
-      live.forEach(function (a) { seen[a.name.trim()] = true; var id = byName[a.name.trim()], key = id || a.name; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: a.name, id: id, comp: a.component, project: x.name, time: x.time, url: x.url, live: true }); });
+      live.forEach(function (a) { seen[a.name.trim()] = true; var id = byName[a.name.trim()], key = id || a.name; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: a.name, id: id, comp: a.component, project: x.name, projectTitle: x.title, time: x.time, url: x.url, live: true }); });
       x.__live = true;
     });
-    recents.forEach(function (x, i) { if (x.__live) return; (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, time: x.time, url: x.url }); }); });
+    recents.forEach(function (x, i) { if (x.__live) return; (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, projectTitle: x.title, time: x.time, url: x.url }); }); });
     body = items.length ? items.map(function (it, j) {
       var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from Rive?</b><br><span class="muted">A backup is saved.</span><p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
-      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + (it.missing ? 'not in Rive' : it.comp ? 'component' : it.live ? 'in Rive' : ago(it.time)) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
+      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + (it.missing ? 'not in Rive' : it.comp ? 'component' : it.live ? 'in Rive' : ago(it.time)) + '</span></div><div class="muted">in ' + esc(it.projectTitle || it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
         (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
         (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
@@ -1283,9 +1305,9 @@ function renderRecents() {
   refreshAddTo();
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
-  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; liveTried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
+  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; liveTried = {}; syncAccount(); b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
   on('#showHidden', function (b) { b.onclick = function () { recents.forEach(function (x) { x.hidden = {}; }); saveSettings(); renderRecents(); }; });
-  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; if (recentTab === 'artboards') { liveTried = {}; tried = {}; resolveNames(); } renderRecents(); }; });
+  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; syncAccount(); if (recentTab === 'artboards') { liveTried = {}; tried = {}; resolveNames(); } renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
   on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
   on('button[data-del]', function (b) { b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); delAsk = null; saveSettings(); renderRecents(); }; });
@@ -1388,7 +1410,7 @@ function refreshAddTo() {
   var sel = document.getElementById('addTo'), wrap = document.getElementById('addWrap');
   var opts = recents.filter(function (x) { return projFileId(x); });
   if (!opts.some(function (x) { return x.name === addTo; })) addTo = '';
-  sel.innerHTML = '<option value="">New project</option>' + opts.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x.name === addTo ? ' selected' : '') + '>Add to: ' + esc(x.name) + '</option>'; }).join('');
+  sel.innerHTML = '<option value="">New project</option>' + opts.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x.name === addTo ? ' selected' : '') + '>Add to: ' + esc(x.title || x.name) + '</option>'; }).join('');
   wrap.hidden = !(curDest === 'account' && opts.length);
 }
 document.getElementById('addTo').onchange = function () { addTo = this.value; };
@@ -1562,8 +1584,8 @@ onmessage = function (e) {
     if (changed) { saveSettings(); renderRecents(); }
     return;
   }
-  if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(function () { renderRecents(); resolveNames(); }, wait); return; }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
+  if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(function () { renderRecents(); resolveNames(); syncAccount(); }, wait); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); syncAccount(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
   if (m.type === 'error') { artTarget = null; forceReplace = false; viaUpdate = false; if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; }
     out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
