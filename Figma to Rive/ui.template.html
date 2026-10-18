@@ -66,6 +66,12 @@
   input:disabled { opacity: .5; }
   .recent { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
   .recent .rtop { display: flex; justify-content: space-between; gap: 8px; } .recent .rtop b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .recent { position: relative; }
+  .recent .trash { position: absolute; right: 6px; bottom: 6px; margin: 0; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: none; color: var(--muted); border-radius: 6px; opacity: 0; transition: opacity .12s, color .12s, background .12s; }
+  .recent:hover .trash, .recent .trash:focus-visible { opacity: 1; } .recent .trash:hover { color: var(--err); background: #3a3a3a; filter: none; }
+  .rtabs { display: flex; gap: 4px; padding: 2px; border-radius: 8px; background: var(--panel); width: fit-content; }
+  .rtab { margin: 0; padding: 4px 12px; border-radius: 6px; background: none; color: var(--muted); font-size: 11px; } .rtab:hover { color: var(--text); filter: none; } .rtab.on { background: #3a3a3a; color: var(--text); }
+  .recent .rbtns { padding-right: 28px; }
   .recent .rbtns { display: flex; gap: 6px; flex-wrap: wrap; } .recent .rbtns button { margin: 6px 0 0; } .recent a { text-decoration: none; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #6b6b6b; align-self: center; margin-left: auto; margin-right: 2px; flex: none; }
   .dot + .gear { margin-left: 0; }
@@ -190,14 +196,38 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
+var recentTab = 'projects';
+var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
-  el.innerHTML = '<div class="sec">Recent exports</div>' + recents.map(function (x, i) {
-    return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
-      (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
-      (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') + '</div></div>';
-  }).join('');
+  var head = '<div class="sec">Recent exports</div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
+  var body = '';
+  if (recentTab === 'projects') {
+    body = recents.map(function (x, i) {
+      return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
+        (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
+        (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') +
+        '</div><button class="trash" data-del="' + i + '" title="Remove from this list" aria-label="Remove from this list">' + TRASH + '</button></div>';
+    }).join('');
+  } else {
+    var items = [];
+    recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { items.push({ frame: f, id: (x.ids || [])[k], project: x.name, time: x.time, url: x.url }); }); });
+    body = items.length ? items.map(function (it, j) {
+      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div><div class="rbtns">' +
+        (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
+        (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') + '</div></div>';
+    }).join('') : '<p class="muted">No artboards recorded yet. They appear after your next send.</p>';
+    el.pickItems = items;
+  }
+  el.innerHTML = head + body;
+  Array.prototype.forEach.call(el.querySelectorAll('button[data-rt]'), function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); renderRecents(); }; });
+  Array.prototype.forEach.call(el.querySelectorAll('button[data-del]'), function (b) {
+    b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); saveSettings(); renderRecents(); };
+  });
+  Array.prototype.forEach.call(el.querySelectorAll('button[data-pick]'), function (b) {
+    b.onclick = function () { var it = el.pickItems[+b.getAttribute('data-pick')]; parent.postMessage({ pluginMessage: { type: 'select', ids: [it.id] } }, '*'); };
+  });
   Array.prototype.forEach.call(el.querySelectorAll('button[data-copy]'), function (b) {
     b.onclick = function () { var ok = copyText(recents[+b.getAttribute('data-copy')].url); b.textContent = ok ? 'Copied' : 'Select and copy from Open'; setTimeout(function () { b.textContent = 'Copy link'; }, 1500); };
   });
