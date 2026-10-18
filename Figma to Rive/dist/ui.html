@@ -497,12 +497,14 @@
         var cx = tx + a * w / 2 + c * h / 2, cy = ty + b * w / 2 + d * h / 2;
         var rot = Math.atan2(b, a);
         if (Math.abs(rot) < 1e-4) rot = 0;
-        return { cx: cx, cy: cy, x: cx - w / 2, y: cy - h / 2, rot: rot };
+        return { cx: cx, cy: cy, x: cx - w / 2, y: cy - h / 2, rot: rot, flip: a * d - c * b < 0 };
       }
       var r = node.rotation ? -node.rotation * Math.PI / 180 : 0;
       return { cx: node.x + w / 2, cy: node.y + h / 2, x: node.x, y: node.y, rot: r };
     }
     function rotAttr(p) { return p.rot ? ' rotation="' + num(p.rot) + '"' : ''; }
+    // A mirrored frame (negative determinant): rotate by atan2(b, a) as usual, and what is left is a top-to-bottom flip of its own contents.
+    function flipAttr(p) { return ''; } // a LayoutComponent cannot be mirrored directly; its contents are (see the wrapper Node)
 
     // ---- corner radius -----------------------------------------------
     function radii(node) {
@@ -793,9 +795,9 @@
         var plS = place(node), sidS = id(), sz0 = ctx.sizing;
         var inner = shapeXml(Object.assign({}, node, { relativeTransform: null, rotation: 0, x: 0, y: 0 }), { inLayout: false });
         inner = inner.replace(/ x="[^"]*" y="[^"]*"/, ' x="' + num(node.width / 2) + '" y="' + num(node.height / 2) + '"');
-        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(plS) + ' styleId="' + sidS + '" clip="false" name="' + esc(node.name) + ' Slot" id="' + id() + '">' +
+        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(plS) + flipAttr(plS) + ' styleId="' + sidS + '" clip="false" name="' + esc(node.name) + ' Slot" id="' + id() + '">' +
           '<LayoutComponentStyle layoutWidthScaleType="' + sz0.h + '" layoutHeightScaleType="' + sz0.v + '" name="' + esc(node.name) + ' Slot Style" id="' + sidS + '"/>' +
-          (plS.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') + '<Node name="Art">' + inner + '</Node></LayoutComponent>';
+          ((plS.rot || plS.flip) ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') + '<Node name="Art">' + inner + '</Node></LayoutComponent>';
       }
       var geo = geometryXml(tight ? adjustedGeometry(node, tight.d) : node);
       if (!geo) { warn(node, 'unsupported node type skipped'); return ''; }
@@ -854,9 +856,9 @@
         var plain = Object.assign({}, node, { relativeTransform: null, rotation: 0, x: 0, y: 0 });
         var inner = shapeXml(plain, { inLayout: false });
         inner = inner.replace(/ x="[^"]*" y="[^"]*"/, ' x="' + num(node.width / 2) + '" y="' + num(node.height / 2) + '"');
-        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(pl) + ' styleId="' + styleId + '" name="' + esc(node.name) + ' Pin" id="' + id() + '">' +
+        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(pl) + flipAttr(pl) + ' styleId="' + styleId + '" name="' + esc(node.name) + ' Pin" id="' + id() + '">' +
           styleXml({}, { styleId: styleId, name: node.name + ' Pin', sizing: { h: 'fixed', v: 'fixed' }, pinned: { x: pl.x, y: pl.y } }) +
-          (pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
+          ((pl.rot || pl.flip) ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
           '<Node name="Art">' + inner + '</Node></LayoutComponent>';
       }
       var ringArcs = angularRingShapes(node, inFlow, sz);
@@ -983,7 +985,7 @@
       var clip = wrapShadow ? true : ((node.clipsContent && !paints.shadowed) || paints.clip);
       if (!wrapShadow && node.clipsContent && paints.shadowed) warn(node, 'clip content is turned off so its shadow can show');
       if (wrapShadow && !node.clipsContent) warn(node, 'clip content is on for this frame so its inside stroke can be drawn (its shadow still shows)');
-      var inner = node.__nested ? '<NestedArtboardLeaf artboardId="' + node.__nested + '" fit="contain" name="' + esc(String(node.__nestedName).trim()) + '"/>' : al ? childrenXml(node, true) : '<Node name="' + esc(String(node.name).trim()) + ' (Wrapper)">' + childrenXml(node, false) + '</Node>';
+      var inner = node.__nested ? '<NestedArtboardLeaf artboardId="' + node.__nested + '" fit="contain" name="' + esc(String(node.__nestedName).trim()) + '"/>' : al ? childrenXml(node, true) : '<Node' + (pl.flip ? ' y="' + num(h) + '" scaleY="-1"' : '') + ' name="' + esc(String(node.name).trim()) + ' (Wrapper)">' + childrenXml(node, false) + '</Node>';
       var imgXml = img ? imageWrapper(node, img, w, h) : '';
       // In Figma an inner shadow also shades the layers inside the frame, so it is drawn on an overlay ABOVE the contents
       // (first sibling = on top), clipped to the frame's rounded shape.
@@ -994,12 +996,12 @@
           '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="0" positionLeftUnitsValue="points" positionTop="0" positionTopUnitsValue="points"' +
           radiusAttrs(radii(node)) + ' name="Inner Shadow Style" id="' + osid + '"/>' + paints.innerXml + '</LayoutComponent>';
       }
-      var origin = pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '';
+      var origin = (pl.rot || pl.flip) ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '';
       var opac = (node.opacity !== undefined && node.opacity < 1) ? ' opacity="' + num(node.opacity) + '"' : '';
 
       if (!wrapShadow) {
         o.pinned = pinned;
-        var attrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + blendAttr(node) + ' styleId="' + o.styleId + '" clip="' + (clip ? 'true' : 'false') + '"' + opac;
+        var attrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + flipAttr(pl) + blendAttr(node) + ' styleId="' + o.styleId + '" clip="' + (clip ? 'true' : 'false') + '"' + opac;
         return '<LayoutComponent' + attrs + ' name="' + esc(node.name) + '" id="' + id() + '">' +
           styleXml(node, o) + origin + paints.xml + overlay + inner + imgXml + '</LayoutComponent>';
       }
@@ -1010,7 +1012,7 @@
       var outer = { styleId: wrapStyleId, name: node.name + ' Shadow', sizing: o.sizing, pinned: pinned };
       var innerSizing = { h: o.sizing.h === 'hug' ? 'hug' : 'fill', v: o.sizing.v === 'hug' ? 'hug' : 'fill' };
       var innerO = { styleId: innerStyleId, name: node.name, sizing: innerSizing };
-      var wrapAttrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + blendAttr(node) + ' styleId="' + wrapStyleId + '" clip="false"' + opac;
+      var wrapAttrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + flipAttr(pl) + blendAttr(node) + ' styleId="' + wrapStyleId + '" clip="false"' + opac;
       var innerAttrs = ' width="' + num(w) + '" height="' + num(h) + '" styleId="' + innerStyleId + '" clip="true"';
       return '<LayoutComponent' + wrapAttrs + ' name="' + esc(node.name) + ' Shadow" id="' + id() + '">' +
         styleXml(radiusNode, outer) + origin + paints.shadowXml +
