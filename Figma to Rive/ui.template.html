@@ -185,7 +185,7 @@ function showSelection(sel) {
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
 function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked, replace: optReplace.checked, link: optLink.checked }; }
-var viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
+var artTarget = null, forceReplace = false, viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
 function linkChanged() { if (!curFile) return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
 function copyText(t) {
@@ -220,6 +220,7 @@ function renderRecents() {
       var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from the Rive file?</b><br>It is removed from the file in your account. A backup is saved, and the old version stays in Rive’s revision history.<p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
       return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
+        (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) +
         (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
     }).join('') : '<p class="muted">No artboards recorded yet. They appear after your next send.</p>';
   }
@@ -243,6 +244,16 @@ function renderRecents() {
         else if (r.gone) out.innerHTML = '<div class="box info">' + esc(r.output) + ' I removed it from your list.</div>';
         else out.innerHTML = '<div class="box ok"><b>Deleted “' + esc(it.frame) + '” from the Rive file.</b></div>';
       }).catch(function (er) { delAsk = null; renderRecents(); out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '</div>'; });
+    };
+  });
+  on('button[data-aupdate]', function (b) {
+    b.onclick = function () {
+      var it = items[+b.getAttribute('data-aupdate')], fid = (String(it.url).match(/\/(\d+)\s*$/) || [])[1];
+      if (!fid) return;
+      viaUpdate = true; artTarget = { name: it.project }; forceReplace = true;
+      resendPrev = linkEl.value; linkEl.value = fid;
+      parent.postMessage({ pluginMessage: { type: 'select', ids: [it.id] } }, '*');
+      setTimeout(function () { ask('send'); }, 450);
     };
   });
   on('button[data-pick]', function (b) { b.onclick = function () { parent.postMessage({ pluginMessage: { type: 'select', ids: [items[+b.getAttribute('data-pick')].id] } }, '*'); }; });
@@ -452,11 +463,12 @@ onmessage = function (e) {
   var linkUsed = linkEl.value; // what this send really uses (Update may differ from the field)
   if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; } else linkChanged(); // Update must not change the remembered link
   if (linkUsed.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
-  var curSnap = flatten(m.nodes), wasUpdate = viaUpdate; viaUpdate = false;
+  var curSnap = flatten(m.nodes), wasUpdate = viaUpdate, target = artTarget, forced = forceReplace; viaUpdate = false; artTarget = null; forceReplace = false;
   var selIds = (m.nodes || []).map(function (n) { return n.id; }), frameNames = (m.nodes || []).map(function (n) { return n.name; });
   var replacePairs = [];
-  if (fileId && optReplace.checked) {
-    var pmap = (snaps['file-' + fileId] || {}).map || {};
+  if (fileId && (optReplace.checked || forced)) {
+    var pmapOf = function (key) { return (snaps[key] || {}).map || {}; };
+    var pmap = {}; [snaps['file-' + fileId] && 'file-' + fileId, target && target.name].forEach(function (k) { if (k) { var mp = pmapOf(k); for (var id in mp) if (!pmap[id]) pmap[id] = mp[id]; } });
     (m.nodes || []).forEach(function (n) { var nw = String(n.name).trim(); replacePairs.push({ old: pmap[n.id] ? String(pmap[n.id][0]).trim() : nw, new: nw }); });
     (m.components || []).forEach(function (c) { var nm = String(c.name).trim(); replacePairs.push({ old: nm, new: nm }); });
   }
@@ -474,7 +486,7 @@ onmessage = function (e) {
     out.innerHTML = changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
-    addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
+    if (target) patchRecent(target.name, { time: Date.now() }); else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
     var pb = document.getElementById('push');
     if (pb) pb.onclick = function () {
       pb.disabled = true; pb.textContent = 'Pushing…';
@@ -482,7 +494,7 @@ onmessage = function (e) {
         var h = '<div class="box ' + (p.ok ? 'ok' : 'bad') + '"><b>' + (p.ok ? 'Pushed to Rive' : 'Push failed') + '</b>' +
           (p.url ? '<br><a href="' + p.url + '" target="_blank">' + p.url + '</a>' : '') + (p.ok ? '' : '<pre>' + esc(p.output) + '</pre>') + '</div>';
         out.insertAdjacentHTML('afterbegin', h); pb.textContent = 'Pushed';
-        if (p.ok) patchRecent(r.name, { pushed: true, time: Date.now(), url: p.url || fileUrl, link: r.mode === 'existing' ? String(r.fileId || '') : '' });
+        if (p.ok) patchRecent(target ? target.name : r.name, target ? { pushed: true, time: Date.now() } : { pushed: true, time: Date.now(), url: p.url || fileUrl, link: r.mode === 'existing' ? String(r.fileId || '') : '' });
       }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
     };
     if (pb && optAuto.checked && !prevSnap && !wasUpdate) pb.click(); // an update always waits, so you can read the change report first
