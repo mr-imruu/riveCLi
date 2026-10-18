@@ -569,7 +569,22 @@
           (pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
           '<Node name="Art">' + inner + '</Node></LayoutComponent>';
       }
-      return shapeXml(node, { inLayout: inFlow, sizing: sz });
+      return endCapsXml(node, inFlow) + shapeXml(node, { inLayout: inFlow, sizing: sz });
+    }
+
+    // Figma's "dot" stroke end (CIRCLE_FILLED) has no Rive equivalent: draw a small filled circle at that end, above the line.
+    function endCapsXml(node, inFlow) {
+      if (!node.endCaps || !node.endCaps.length || inFlow || !node.relativeTransform) return '';
+      var stroke = visiblePaints(node.strokes)[0];
+      if (!stroke) return '';
+      var m = node.relativeTransform, sw = node.strokeWeight || 1, d = Math.max(3, 5.5 * sw), out = '';
+      node.endCaps.forEach(function (c) {
+        if (c.cap !== 'CIRCLE_FILLED') { warn(node, 'stroke end "' + c.cap + '" is drawn as a plain end'); return; }
+        var ax = m[0][2] + m[0][0] * c.x + m[0][1] * c.y, ay = m[1][2] + m[1][0] * c.x + m[1][1] * c.y;
+        out += shapeXml({ id: node.id + ':cap', name: node.name + ' end dot', type: 'ELLIPSE', visible: true, x: ax - d / 2, y: ay - d / 2, width: d, height: d, opacity: node.opacity === undefined ? 1 : node.opacity,
+          rotation: 0, relativeTransform: null, fills: [stroke], strokes: [], effects: [] }, { inLayout: false });
+      });
+      return out;
     }
 
     function containerXml(node, parent, parentIsAL, inFlow, sz) {

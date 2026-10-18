@@ -58,6 +58,12 @@ function snapshot(node, ctx) {
     o.segments.forEach(function (s) { (s.fills || []).forEach(function (p) { if (p.type === 'IMAGE' && p.imageHash) ctx.hashes[p.imageHash] = true; }); });
   }
   if ('vectorPaths' in node) o.vectorPaths = node.vectorPaths;
+  // Different ends can have different caps (a dot at one end). The node-level cap is then "mixed", so read it per point.
+  if (node.type === 'VECTOR' && node.strokeCap === MIXED && node.vectorNetwork) {
+    var caps = [];
+    node.vectorNetwork.vertices.forEach(function (v) { if (v.strokeCap && v.strokeCap !== 'NONE' && v.strokeCap !== 'ROUND' && v.strokeCap !== 'SQUARE') caps.push({ x: v.x, y: v.y, cap: v.strokeCap }); });
+    if (caps.length) o.endCaps = caps;
+  }
   if (node.type === 'INSTANCE') { ctx.instances.push(node); ctx.instanceSnaps.push(o); }
   if ('children' in node) o.children = node.children.map(function (c) { return snapshot(c, ctx); });
   return o;
