@@ -200,8 +200,19 @@
         }
         return out;
       }
+      // Figma draws a gradient border that fades to a transparent white as a soft white highlight line all the way round, not a line that vanishes.
+      // Measured against Figma's own render: the line stays about as strong as its first stop and turns white by the middle. Match that.
+      function whiteFadeBorder(p) {
+        var st = p.type === 'GRADIENT_LINEAR' && p.gradientStops && p.gradientStops.length === 2 ? p.gradientStops.slice().sort(function (x, y) { return x.position - y.position; }) : null;
+        if (!st) return p;
+        var a0 = st[0].color.a === undefined ? 1 : st[0].color.a, a1 = st[1].color.a === undefined ? 1 : st[1].color.a, c1 = st[1].color;
+        if (!(a1 < 0.05 && a0 > 0.2 && c1.r > 0.95 && c1.g > 0.95 && c1.b > 0.95)) return p;
+        var white = { r: 1, g: 1, b: 1, a: Math.min(1, a0 * 1.05) };
+        return Object.assign({}, p, { gradientStops: [st[0], { position: 0.5, color: white }, { position: 1, color: white }] });
+      }
       function strokesAt(thickness) {
-        return strokes.map(function (p) {
+        return strokes.map(function (p0) {
+          var p = whiteFadeBorder(p0);
           if (options.angularRings === 'strokes' && p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
           var body = paintBody(p, node, w, h, undefined, o.centered);
           return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + (node.__arc ? '<TrimPath start="0" end="' + num(node.__arc.len) + '" offset="' + num(node.__arc.offset) + '" modeValue="1" name="Arc"/>' : '') + '</Stroke>' : '';
@@ -213,9 +224,15 @@
       var shadowBlocksClip = shadowed && !o.splitShadow;
       var align = o.forceCenter ? 'CENTER' : (node.strokeAlign || 'CENTER');
       if (hasStroke) {
-        var opaque = fills.some(function (p) { return p.type === 'SOLID' && (p.opacity === undefined || p.opacity >= 0.99) && (p.color.a === undefined || p.color.a >= 0.99); });
+        // An opaque fill (solid, or a gradient with no see-through stops) hides the inner half of a double-width stroke, leaving a true outside stroke.
+        var opaque = fills.some(function (p) {
+          if (p.opacity !== undefined && p.opacity < 0.99) return false;
+          if (p.type === 'SOLID') return p.color.a === undefined || p.color.a >= 0.99;
+          if (p.type.indexOf('GRADIENT') === 0 && p.gradientStops && p.gradientStops.length) return p.gradientStops.every(function (g) { return g.color.a === undefined || g.color.a >= 0.99; });
+          return false;
+        });
         if (align === 'INSIDE' && !shadowBlocksClip && !o.noClip) { tail += strokesAt(sw * 2); clip = true; }
-        else if (align === 'OUTSIDE' && opaque) { out += strokesAt(sw * 2); }
+        else if (align === 'OUTSIDE' && opaque) { if (o.splitShadow) shadowOut += strokesAt(sw * 2); else out += strokesAt(sw * 2); } // with a shadow wrapper the stroke goes on the wrapper, which does not clip
         else {
           if (align !== 'CENTER') warn(node, 'stroke is ' + align + ' but ' + (align === 'INSIDE' ? 'it also has a shadow that cannot be separated here' : 'the fill is not opaque') + '; it is drawn centred instead');
           tail += strokesAt(sw);
