@@ -17,7 +17,31 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
+  // Figma keeps the layers inside a group positioned relative to the group's PARENT frame, not to the group.
+  // Rive groups are their own space, so move each group's children into group-local coordinates first.
+  function mulT(A, B) {
+    return [[A[0][0] * B[0][0] + A[0][1] * B[1][0], A[0][0] * B[0][1] + A[0][1] * B[1][1], A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][2]],
+      [A[1][0] * B[0][0] + A[1][1] * B[1][0], A[1][0] * B[0][1] + A[1][1] * B[1][1], A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2]]];
+  }
+  function invT(T) {
+    var a = T[0][0], c = T[0][1], tx = T[0][2], b = T[1][0], d = T[1][1], ty = T[1][2], det = a * d - c * b;
+    if (Math.abs(det) < 1e-9) return null;
+    return [[d / det, -c / det, (c * ty - d * tx) / det], [-b / det, a / det, (b * tx - a * ty) / det]];
+  }
+  function rebaseGroups(node) {
+    var T = node.relativeTransform, out = Object.assign({}, node);
+    if (node.children) {
+      out.children = node.children.map(function (c) {
+        var cT = c.relativeTransform, kid = rebaseGroups(c), inv = (node.type === 'GROUP' && T && cT) ? invT(T) : null;
+        if (inv) { var m = mulT(inv, cT); kid.relativeTransform = m; kid.x = m[0][2]; kid.y = m[1][2]; }
+        return kid;
+      });
+    }
+    return out;
+  }
+
   function convert(snapshot, options) {
+    snapshot = Object.assign({}, snapshot, { nodes: (snapshot.nodes || []).map(rebaseGroups), components: (snapshot.components || []).map(rebaseGroups) });
     options = options || {};
     var warnings = [];
     var fonts = {}; // key -> {family, style, file, assetId}
@@ -87,7 +111,27 @@
           return '<GradientStop colorValue="' + colorHex(st.color, op) + '" position="' + num(st.position) + '"/>';
         }).join('');
         var cx0 = c0[0] * w - gx, cy0 = c0[1] * h - gy;
-        return '<RadialGradient startX="' + num(cx0) + '" startY="' + num(cy0) + '" endX="' + num(cx0 + (rx + ry) / 2) + '" endY="' + num(cy0) +
+        // Rive's radial gradient is a circle. For an elliptical one, pick the circle that best matches the ellipse over the area the shape covers.
+        var rrad = (rx + ry) / 2;
+        if (options.ellipseRadial !== 'average' && Math.abs(rx - ry) > Math.max(rx, ry) * 0.12) {
+          var Ax = (c1[0] - c0[0]) * w, Ay = (c1[1] - c0[1]) * h, Bx = (c2[0] - c0[0]) * w, By = (c2[1] - c0[1]) * h, det = Ax * By - Ay * Bx;
+          if (Math.abs(det) > 1e-6) {
+            var pts = [], gi, gj;
+            for (gj = 0; gj < 8; gj++) for (gi = 0; gi < 16; gi++) {
+              var px = ((gi + 0.5) / 16) * w - cx0 - gx, py = ((gj + 0.5) / 8) * h - cy0 - gy;
+              if (!centered) { px = ((gi + 0.5) / 16) * w - cx0; py = ((gj + 0.5) / 8) * h - cy0; }
+              var uu = (px * By - py * Bx) / det, vv = (Ax * py - Ay * px) / det;
+              pts.push([Math.min(1, Math.hypot(uu, vv)), Math.hypot(px, py)]);
+            }
+            var best = rrad, bestErr = Infinity, R, k;
+            for (R = Math.min(rx, ry) * 0.5; R <= Math.max(rx, ry) * 1.2; R += Math.max(0.5, Math.min(rx, ry) / 60)) {
+              var err = 0; for (k = 0; k < pts.length; k++) { var d = pts[k][0] - Math.min(1, pts[k][1] / R); err += d * d; }
+              if (err < bestErr) { bestErr = err; best = R; }
+            }
+            rrad = best;
+          }
+        }
+        return '<RadialGradient startX="' + num(cx0) + '" startY="' + num(cy0) + '" endX="' + num(cx0 + rrad) + '" endY="' + num(cy0) +
           '" name="Gradient">' + rstops + '</RadialGradient>';
       }
       if (paint.type.indexOf('GRADIENT') === 0) {
@@ -131,40 +175,108 @@
       if (blur && o.hasChildren) warn(node, 'layer blur only blurs this box\'s own paint, not the things inside it');
 
       function featherFill(e, inner) {
-        if (e.spread) warn(node, 'shadow spread is ignored');
+        if (e.spread && !(o.splitShadow && !o.flowShadow && !inner)) warn(node, 'shadow spread is ignored');
         // An inner shadow cannot spread further than the shape is wide; huge blur values (Figma allows them) would just wash
         // everything out when drawn over the contents, so the strength is capped relative to the shape's smaller side.
         var strength = e.radius;
-        if (inner && o.splitInner) strength = Math.min(e.radius * (options.innerShadowScale || 1), (options.innerShadowCap || 0.35) * Math.min(w, h));
+        if (inner && o.splitInner) strength = Math.min(e.radius * (options.innerShadowScale || 1), (options.innerShadowCap || 0.7) * Math.min(w, h));
         return '<Fill fillRule="clockwise"' + (options.effectBlendModes === false ? '' : paintBlend(e, node)) + ' name="' + (inner ? 'Inner Shadow' : 'Shadow') + '"><SolidColor colorValue="' + colorHex(e.color) +
           '" name="Color"/><Feather strength="' + num(strength) + '" offsetX="' + num(e.offset ? e.offset.x : 0) + '" offsetY="' +
           num(e.offset ? e.offset.y : 0) + '"' + (inner ? ' inner="true"' : '') + ' name="Feather"/></Fill>';
       }
       var dashFx = '';
-      if (node.dashPattern && node.dashPattern.length) {
-        var dp = node.dashPattern.length % 2 ? node.dashPattern.concat(node.dashPattern) : node.dashPattern;
-        dashFx = '<DashPath name="Dashes">' + dp.map(function (d, i) { return '<Dash length="' + num(d) + '" name="' + (i % 2 ? 'Gap' : 'Dash') + '"/>'; }).join('') + '</DashPath>';
+      // Figma's dash lengths are the VISIBLE lengths, round ends included. Rive's round caps add half the stroke width to each end of a dash,
+      // so shorten the dashes and lengthen the gaps by the stroke width to look the same.
+      function buildDash(round) {
+        var dp = node.dashPattern.length % 2 ? node.dashPattern.concat(node.dashPattern) : node.dashPattern, sw0 = node.strokeWeight || 1;
+        return '<DashPath name="Dashes">' + dp.map(function (d, i) {
+          var v = round ? (i % 2 ? d + sw0 : Math.max(0.05, d - sw0)) : d;
+          return '<Dash length="' + num(v) + '" name="' + (i % 2 ? 'Gap' : 'Dash') + '"/>';
+        }).join('') + '</DashPath>';
       }
+      if (node.dashPattern && node.dashPattern.length) dashFx = buildDash(false);
       // Stroke ends and corners follow Figma. Old snapshots do not carry them: keep the previous round look, except for
       // dashed strokes where round ends would swallow the gaps.
       var CAP = { NONE: 'butt', ROUND: 'round', SQUARE: 'square' }, JOIN = { MITER: 'miter', ROUND: 'round', BEVEL: 'bevel' };
-      var capV = CAP[node.strokeCap] || (dashFx ? 'butt' : 'round'), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
-      if (node.strokeCap && !CAP[node.strokeCap]) warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
+      // A dashed line whose ends carry caps (dots, arrows) has round dash ends in Figma, like a line whose cap is Round.
+      var dashRound = dashFx && !node.strokeCap && node.endCaps && node.endCaps.length;
+      var capV = CAP[node.strokeCap] || (dashRound ? 'round' : (dashFx ? 'butt' : 'round')), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
+      if (dashFx && capV === 'round') dashFx = buildDash(true);
+      if (node.strokeCap && !CAP[node.strokeCap] && node.strokeCap !== 'ARROW_LINES') warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
+      // Rive has no angular (sweep) gradient. On a ring, draw it as many short arcs, each in the colour the sweep has there.
+      function angularStrokes(p, thickness) {
+        var inv = invert(p.gradientTransform), c0 = apply(inv, 0.5, 0.5), cx = apply(inv, 1, 0.5), cy = apply(inv, 0.5, 1);
+        var xd = [(cx[0] - c0[0]) * w, (cx[1] - c0[1]) * h], yd = [(cy[0] - c0[0]) * w, (cy[1] - c0[1]) * h];
+        var a0 = Math.atan2(xd[1], xd[0]), dir = (xd[0] * yd[1] - xd[1] * yd[0]) >= 0 ? 1 : -1;
+        var stops = p.gradientStops.slice().sort(function (a, b) { return a.position - b.position; });
+        function at(t) {
+          var lo = stops[0], hi = stops[stops.length - 1], i;
+          for (i = 0; i < stops.length - 1; i++) if (t >= stops[i].position && t <= stops[i + 1].position) { lo = stops[i]; hi = stops[i + 1]; break; }
+          var span = hi.position - lo.position, f = span > 1e-9 ? Math.min(1, Math.max(0, (t - lo.position) / span)) : 0;
+          if (t <= stops[0].position) return stops[0].color; if (t >= stops[stops.length - 1].position) return stops[stops.length - 1].color;
+          var m = function (k) { return (lo.color[k] === undefined ? 1 : lo.color[k]) * (1 - f) + (hi.color[k] === undefined ? 1 : hi.color[k]) * f; };
+          return { r: m('r'), g: m('g'), b: m('b'), a: m('a') };
+        }
+        var N = 48, out = '', op = p.opacity === undefined ? 1 : p.opacity;
+        for (var i = 0; i < N; i++) {
+          var t0 = i / N, t1 = (i + 1) / N, col = at((t0 + t1) / 2);
+          if ((col.a === undefined ? 1 : col.a) * op < 0.01) continue;
+          // where this slice sits on Rive's ring, which starts at the top and runs clockwise (0..1 of the way round)
+          var u = (((a0 + dir * 2 * Math.PI * (dir > 0 ? t0 : t1) + Math.PI / 2) / (2 * Math.PI)) % 1 + 1) % 1;
+          out += '<Stroke thickness="' + num(thickness) + '" cap="butt" join="' + (JOIN[node.strokeJoin] || 'miter') + '" name="Stroke">' +
+            '<SolidColor colorValue="' + colorHex(col, op) + '" name="Color"/>' + dashFx +
+            '<TrimPath start="0" end="' + num(1 / N + 0.0008) + '" offset="' + num(u) + '" modeValue="1" name="Arc"/></Stroke>';
+        }
+        return out;
+      }
+      // Frosted-glass cards: Figma draws their gradient border (one that fades to a transparent white) as a clear, near-white line all the way
+      // round, whatever the stop alphas and paint opacity say. Measured on two real designs: about 85% white. Match that.
+      var glassBlur = (node.effects || []).some(function (e) { return e.visible !== false && e.type === 'BACKGROUND_BLUR'; });
+      function glassBorder(p) {
+        if (!glassBlur || p.type !== 'GRADIENT_LINEAR' || !p.gradientStops || !p.gradientStops.some(function (g) { return (g.color.a === undefined ? 1 : g.color.a) < 0.05; })) return p;
+        return { type: 'SOLID', visible: true, opacity: 1, color: { r: 1, g: 1, b: 1, a: 0.85 } };
+      }
       function strokesAt(thickness) {
-        return strokes.map(function (p) {
+        return strokes.map(function (p0) {
+          var p = glassBorder(p0);
+          if (options.angularRings === 'strokes' && p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
           var body = paintBody(p, node, w, h, undefined, o.centered);
-          return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + '</Stroke>' : '';
+          return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + (node.__arc ? '<TrimPath start="0" end="' + num(node.__arc.len) + '" offset="' + num(node.__arc.offset) + '" modeValue="1" name="Arc"/>' : '') + '</Stroke>' : '';
         }).join('');
       }
 
-      var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', innerOut = '';
-      if (surface) drops.forEach(function (e) { var f = featherFill(e, false); if (o.splitShadow) shadowOut += f; else out += f; shadowed = true; });
+      var out = '', shadowed = false, clip = false, tail = '', shadowOut = '', shadowBoxes = '', innerOut = '';
+      if (surface) drops.forEach(function (e) {
+        var f = featherFill(e, false);
+        if (o.splitShadow && !o.flowShadow && e.spread && Math.abs(e.spread) > 0.01) {
+          // Spread grows or shrinks the shadow's shape. The wrapper does not clip, so cast the shadow from a box of that size.
+          var sp = e.spread, ssid = id(), bw = Math.max(1, w + 2 * sp), bh = Math.max(1, h + 2 * sp);
+          shadowBoxes += '<LayoutComponent width="' + num(bw) + '" height="' + num(bh) + '" styleId="' + ssid + '" clip="false" name="Shadow" id="' + id() + '">' +
+            '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sp) + '" positionLeftUnitsValue="points" positionTop="' + num(-sp) + '" positionTopUnitsValue="points"' +
+            radiusAttrs(radii(node).map(function (v) { return Math.max(0, v + sp); })) + ' name="Shadow Style" id="' + ssid + '"/>' + f + '</LayoutComponent>';
+        } else if (o.splitShadow) shadowOut += f; else out += f;
+        shadowed = true;
+      });
       var shadowBlocksClip = shadowed && !o.splitShadow;
       var align = o.forceCenter ? 'CENTER' : (node.strokeAlign || 'CENTER');
       if (hasStroke) {
-        var opaque = fills.some(function (p) { return p.type === 'SOLID' && (p.opacity === undefined || p.opacity >= 0.99) && (p.color.a === undefined || p.color.a >= 0.99); });
+        // An opaque fill (solid, or a gradient with no see-through stops) hides the inner half of a double-width stroke, leaving a true outside stroke.
+        var opaque = fills.some(function (p) {
+          if (p.opacity !== undefined && p.opacity < 0.99) return false;
+          if (p.type === 'SOLID') return p.color.a === undefined || p.color.a >= 0.99;
+          if (p.type.indexOf('GRADIENT') === 0 && p.gradientStops && p.gradientStops.length) return p.gradientStops.every(function (g) { return g.color.a === undefined || g.color.a >= 0.99; });
+          return false;
+        });
         if (align === 'INSIDE' && !shadowBlocksClip && !o.noClip) { tail += strokesAt(sw * 2); clip = true; }
-        else if (align === 'OUTSIDE' && opaque) { out += strokesAt(sw * 2); }
+        else if (align === 'OUTSIDE' && o.splitShadow && !o.flowShadow) {
+          // The wrapper does not clip, so an outline box slightly larger than the frame, stroked on its centre line, gives a true outside stroke
+          // whatever the fill is (a double-width stroke would show through a see-through fill).
+          var osid = id();
+          shadowBoxes += '<LayoutComponent width="' + num(w + sw) + '" height="' + num(h + sw) + '" styleId="' + osid + '" clip="false" name="Outside Stroke" id="' + id() + '">' +
+            '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sw / 2) + '" positionLeftUnitsValue="points" positionTop="' + num(-sw / 2) + '" positionTopUnitsValue="points"' +
+            radiusAttrs(radii(node).map(function (v) { return v > 0 ? v + sw / 2 : 0; })) + ' name="Outside Stroke Style" id="' + osid + '"/>' + strokesAt(sw) + '</LayoutComponent>';
+        }
+        else if (align === 'OUTSIDE' && opaque) { if (o.splitShadow) shadowOut += strokesAt(sw * 2); else out += strokesAt(sw * 2); } // with a shadow wrapper the stroke goes on the wrapper, which does not clip
         else {
           if (align !== 'CENTER') warn(node, 'stroke is ' + align + ' but ' + (align === 'INSIDE' ? 'it also has a shadow that cannot be separated here' : 'the fill is not opaque') + '; it is drawn centred instead');
           tail += strokesAt(sw);
@@ -175,7 +287,7 @@
         if (body) out += '<Fill' + (blur ? ' fillRule="clockwise"' : node.__evenOdd ? ' fillRule="evenOdd"' : '') + paintBlend(p, node) + ' name="Fill">' + body + blurFx + '</Fill>';
       });
       if (surface) inners.forEach(function (e) { var f = featherFill(e, true); if (o.splitInner) innerOut += f; else out += f; });
-      return { xml: out + tail, shadowXml: shadowOut, innerXml: innerOut, clip: clip, shadowed: shadowed };
+      return { xml: out + tail, shadowXml: shadowOut, shadowBoxXml: shadowBoxes, innerXml: innerOut, clip: clip, shadowed: shadowed };
     }
 
     // ---- blend modes --------------------------------------------------
@@ -207,12 +319,14 @@
         var cx = tx + a * w / 2 + c * h / 2, cy = ty + b * w / 2 + d * h / 2;
         var rot = Math.atan2(b, a);
         if (Math.abs(rot) < 1e-4) rot = 0;
-        return { cx: cx, cy: cy, x: cx - w / 2, y: cy - h / 2, rot: rot };
+        return { cx: cx, cy: cy, x: cx - w / 2, y: cy - h / 2, rot: rot, flip: a * d - c * b < 0 };
       }
       var r = node.rotation ? -node.rotation * Math.PI / 180 : 0;
       return { cx: node.x + w / 2, cy: node.y + h / 2, x: node.x, y: node.y, rot: r };
     }
     function rotAttr(p) { return p.rot ? ' rotation="' + num(p.rot) + '"' : ''; }
+    // A mirrored frame (negative determinant): rotate by atan2(b, a) as usual, and what is left is a top-to-bottom flip of its own contents.
+    function flipAttr(p) { return ''; } // a LayoutComponent cannot be mirrored directly; its contents are (see the wrapper Node)
 
     // ---- corner radius -----------------------------------------------
     function radii(node) {
@@ -394,6 +508,9 @@
       function line(px, py) { cur.pts.push({ x: px, y: py, inx: 0, iny: 0, outx: 0, outy: 0 }); }
       function cubic(c1x, c1y, c2x, c2y, px, py) {
         var p0 = cur.pts[cur.pts.length - 1];
+        // A curve whose handles lie on the straight line between its ends is just a line (lets corner radius apply).
+        var ex = px - p0.x, ey = py - p0.y, el = Math.hypot(ex, ey) || 1;
+        if (Math.abs((c1x - p0.x) * ey - (c1y - p0.y) * ex) / el < 1e-3 && Math.abs((c2x - p0.x) * ey - (c2y - p0.y) * ex) / el < 1e-3) { line(px, py); return; }
         p0.outx = c1x - p0.x; p0.outy = c1y - p0.y;
         cur.pts.push({ x: px, y: py, inx: c2x - px, iny: c2y - py, outx: 0, outy: 0 });
       }
@@ -417,10 +534,10 @@
       }
       return contours;
     }
-    function vertexXml(p, cx, cy) {
+    function vertexXml(p, cx, cy, radius) {
       var X = num(p.x - cx), Y = num(p.y - cy);
       var inD = Math.hypot(p.inx, p.iny), outD = Math.hypot(p.outx, p.outy);
-      if (inD < 1e-3 && outD < 1e-3) return '<StraightVertex x="' + X + '" y="' + Y + '"/>';
+      if (inD < 1e-3 && outD < 1e-3) return '<StraightVertex x="' + X + '" y="' + Y + '"' + (radius > 0 ? ' radius="' + num(radius) + '"' : '') + '/>';
       return '<CubicDetachedVertex x="' + X + '" y="' + Y + '" inRotation="' + num(Math.atan2(p.iny, p.inx)) + '" inDistance="' + num(inD) +
         '" outRotation="' + num(Math.atan2(p.outy, p.outx)) + '" outDistance="' + num(outD) + '"/>';
     }
@@ -430,10 +547,17 @@
         if (vp.windingRule === 'EVENODD') node.__evenOdd = true;
         parsePath(vp.data).forEach(function (c) {
           if (c.pts.length < 2) return;
+          // A mirrored layer (negative determinant) is its own shape mirrored top-to-bottom, about its centre, once the rotation is taken out.
+          var m = node.relativeTransform;
+          if (m && m[0][0] * m[1][1] - m[0][1] * m[1][0] < 0) {
+            c.pts.forEach(function (p) { p.y = node.height - p.y; p.iny = -p.iny; p.outy = -p.outy; });
+          }
+          // Figma's corner radius on a vector rounds its corner points (not the two ends of an open path).
+          var cr = (typeof node.cornerRadius === 'number' && node.cornerRadius > 0) ? node.cornerRadius : 0;
           var area = 0;
           c.pts.forEach(function (p, k) { var q = c.pts[(k + 1) % c.pts.length]; area += p.x * q.y - q.x * p.y; });
           out += '<PointsPath isClosed="' + (c.closed ? 'true' : 'false') + '" isClockwise="' + (area >= 0 ? 'true' : 'false') + '" name="Path">' +
-            c.pts.map(function (p) { return vertexXml(p, node.width / 2, node.height / 2); }).join('') + '</PointsPath>';
+            c.pts.map(function (p, k) { return vertexXml(p, node.width / 2, node.height / 2, cr && (c.closed || (k > 0 && k < c.pts.length - 1)) ? cr : 0); }).join('') + '</PointsPath>';
         });
       });
       return out;
@@ -493,9 +617,9 @@
         var plS = place(node), sidS = id(), sz0 = ctx.sizing;
         var inner = shapeXml(Object.assign({}, node, { relativeTransform: null, rotation: 0, x: 0, y: 0 }), { inLayout: false });
         inner = inner.replace(/ x="[^"]*" y="[^"]*"/, ' x="' + num(node.width / 2) + '" y="' + num(node.height / 2) + '"');
-        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(plS) + ' styleId="' + sidS + '" clip="false" name="' + esc(node.name) + ' Slot" id="' + id() + '">' +
+        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(plS) + flipAttr(plS) + ' styleId="' + sidS + '" clip="false" name="' + esc(node.name) + ' Slot" id="' + id() + '">' +
           '<LayoutComponentStyle layoutWidthScaleType="' + sz0.h + '" layoutHeightScaleType="' + sz0.v + '" name="' + esc(node.name) + ' Slot Style" id="' + sidS + '"/>' +
-          (plS.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') + '<Node name="Art">' + inner + '</Node></LayoutComponent>';
+          ((plS.rot || plS.flip) ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') + '<Node name="Art">' + inner + '</Node></LayoutComponent>';
       }
       var geo = geometryXml(tight ? adjustedGeometry(node, tight.d) : node);
       if (!geo) { warn(node, 'unsupported node type skipped'); return ''; }
@@ -554,25 +678,112 @@
         var plain = Object.assign({}, node, { relativeTransform: null, rotation: 0, x: 0, y: 0 });
         var inner = shapeXml(plain, { inLayout: false });
         inner = inner.replace(/ x="[^"]*" y="[^"]*"/, ' x="' + num(node.width / 2) + '" y="' + num(node.height / 2) + '"');
-        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(pl) + ' styleId="' + styleId + '" name="' + esc(node.name) + ' Pin" id="' + id() + '">' +
+        return '<LayoutComponent width="' + num(node.width) + '" height="' + num(node.height) + '"' + rotAttr(pl) + flipAttr(pl) + ' styleId="' + styleId + '" name="' + esc(node.name) + ' Pin" id="' + id() + '">' +
           styleXml({}, { styleId: styleId, name: node.name + ' Pin', sizing: { h: 'fixed', v: 'fixed' }, pinned: { x: pl.x, y: pl.y } }) +
-          (pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
+          ((pl.rot || pl.flip) ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '') +
           '<Node name="Art">' + inner + '</Node></LayoutComponent>';
       }
-      return shapeXml(node, { inLayout: inFlow, sizing: sz });
+      var ringArcs = angularRingShapes(node, inFlow, sz);
+      if (ringArcs) return ringArcs;
+      return endCapsXml(node, inFlow) + shapeXml(node, { inLayout: inFlow, sizing: sz });
+    }
+
+    // A ring with an angular (sweep) gradient stroke: Rive has no such gradient, so draw it as many short arcs, one shape each.
+    function angularRingShapes(node, inFlow, sz) {
+      if ((options.angularRings === undefined ? 'shapes' : options.angularRings) !== 'shapes' || node.type !== 'ELLIPSE' || inFlow) return null; // on by default: tested to survive a push and pull-back
+      var p = visiblePaints(node.strokes).filter(function (q) { return q.type === 'GRADIENT_ANGULAR' && q.gradientTransform && q.gradientStops && q.gradientStops.length; })[0];
+      if (!p || visiblePaints(node.strokes).length !== 1) return null;
+      var w = node.width, h = node.height, inv = invert(p.gradientTransform), c0 = apply(inv, 0.5, 0.5), cx = apply(inv, 1, 0.5), cy = apply(inv, 0.5, 1);
+      var xd = [(cx[0] - c0[0]) * w, (cx[1] - c0[1]) * h], yd = [(cy[0] - c0[0]) * w, (cy[1] - c0[1]) * h];
+      var a0 = Math.atan2(xd[1], xd[0]), dir = (xd[0] * yd[1] - xd[1] * yd[0]) >= 0 ? 1 : -1;
+      var stops = p.gradientStops.slice().sort(function (a, b) { return a.position - b.position; });
+      function at(t) {
+        if (t <= stops[0].position) return stops[0].color;
+        if (t >= stops[stops.length - 1].position) return stops[stops.length - 1].color;
+        for (var i = 0; i < stops.length - 1; i++) if (t >= stops[i].position && t <= stops[i + 1].position) {
+          var span = stops[i + 1].position - stops[i].position, f = span > 1e-9 ? (t - stops[i].position) / span : 0, lo = stops[i].color, hi = stops[i + 1].color;
+          var m = function (k) { return (lo[k] === undefined ? 1 : lo[k]) * (1 - f) + (hi[k] === undefined ? 1 : hi[k]) * f; };
+          return { r: m('r'), g: m('g'), b: m('b'), a: m('a') };
+        }
+        return stops[0].color;
+      }
+      var N = 36, out = '', op = p.opacity === undefined ? 1 : p.opacity;
+      for (var i = 0; i < N; i++) {
+        var t0 = i / N, t1 = (i + 1) / N, col = at((t0 + t1) / 2);
+        if ((col.a === undefined ? 1 : col.a) * op < 0.01) continue;
+        var u = (((a0 + dir * 2 * Math.PI * (dir > 0 ? t0 : t1) + Math.PI / 2) / (2 * Math.PI)) % 1 + 1) % 1;
+        out += shapeXml(Object.assign({}, node, { name: node.name + ' arc ' + (i + 1), strokes: [{ type: 'SOLID', visible: true, opacity: op, color: col }], fills: i === 0 ? node.fills : [], effects: i === 0 ? node.effects : [], __arc: { offset: u, len: 1 / N + 0.0008 } }), { inLayout: false, sizing: sz });
+      }
+      return out;
+    }
+
+    // Figma's "dot" stroke end (CIRCLE_FILLED) has no Rive equivalent: draw a small filled circle at that end, above the line.
+    // An open arrowhead (two short strokes meeting at the tip) at one end of a line. dirX/dirY point OUT of the line.
+    function arrowXml(node, m, tx, ty, dirX, dirY, stroke, sw) {
+      var len = Math.hypot(dirX, dirY); if (len < 1e-6) return '';
+      // direction into parent space (linear part only), tip into parent space (full transform)
+      var dx = m[0][0] * dirX + m[0][1] * dirY, dy = m[1][0] * dirX + m[1][1] * dirY, dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
+      var ax = m[0][2] + m[0][0] * tx + m[0][1] * ty, ay = m[1][2] + m[1][0] * tx + m[1][1] * ty;
+      var L = Math.max(3, 5 * sw), ang = Math.PI / 4, c = Math.cos(ang), s = Math.sin(ang);
+      // the two wings point back from the tip, 45 degrees either side of the line
+      var bx = -dx, by = -dy, w1 = [L * (bx * c - by * s), L * (bx * s + by * c)], w2 = [L * (bx * c + by * s), L * (-bx * s + by * c)];
+      var col = stroke.type === 'SOLID' ? stroke.color : ((stroke.gradientStops || [])[0] || {}).color;
+      if (!col) return '';
+      var op = (stroke.opacity === undefined ? 1 : stroke.opacity) * (node.opacity === undefined ? 1 : node.opacity);
+      return '<Shape x="' + num(ax) + '" y="' + num(ay) + '" name="' + esc(node.name) + ' arrow" id="' + id() + '"><PointsPath isClosed="false" name="Path">' +
+        '<StraightVertex x="' + num(w1[0]) + '" y="' + num(w1[1]) + '"/><StraightVertex x="0" y="0"/><StraightVertex x="' + num(w2[0]) + '" y="' + num(w2[1]) + '"/></PointsPath>' +
+        '<Stroke thickness="' + num(sw) + '" cap="round" join="round" name="Stroke"><SolidColor colorValue="' + colorHex(col, op) + '" name="Color"/></Stroke></Shape>';
+    }
+    function lineEnds(node) {
+      var cs = (node.vectorPaths && node.vectorPaths[0]) ? parsePath(node.vectorPaths[0].data) : [];
+      var c = cs[0]; if (!c || c.pts.length < 2 || c.closed) return null;
+      var a = c.pts[0], a1 = c.pts[1], z = c.pts[c.pts.length - 1], z1 = c.pts[c.pts.length - 2];
+      var out0 = Math.hypot(a.outx, a.outy) > 1e-3 ? [a.x - (a.x + a.outx), a.y - (a.y + a.outy)] : [a.x - a1.x, a.y - a1.y];
+      var out1 = Math.hypot(z.inx, z.iny) > 1e-3 ? [-z.inx, -z.iny] : [z.x - z1.x, z.y - z1.y];
+      return { start: { x: a.x, y: a.y, dx: out0[0], dy: out0[1] }, end: { x: z.x, y: z.y, dx: out1[0], dy: out1[1] } };
+    }
+    function endCapsXml(node, inFlow) {
+      if (inFlow || !node.relativeTransform) return '';
+      var stroke0 = visiblePaints(node.strokes)[0];
+      if (!stroke0) return '';
+      var arrows = '';
+      // Arrowheads: one cap for the whole line, or a different cap per end.
+      var ends = (node.type === 'VECTOR' && (node.strokeCap === 'ARROW_LINES' || (node.endCaps || []).some(function (c) { return c.cap === 'ARROW_LINES'; }))) ? lineEnds(node) : null;
+      if (ends) {
+        var sw0 = node.strokeWeight || 1;
+        if (node.strokeCap === 'ARROW_LINES') { arrows += arrowXml(node, node.relativeTransform, ends.start.x, ends.start.y, ends.start.dx, ends.start.dy, stroke0, sw0) + arrowXml(node, node.relativeTransform, ends.end.x, ends.end.y, ends.end.dx, ends.end.dy, stroke0, sw0); }
+        else (node.endCaps || []).forEach(function (c) {
+          if (c.cap !== 'ARROW_LINES') return;
+          var e = (Math.hypot(c.x - ends.start.x, c.y - ends.start.y) <= Math.hypot(c.x - ends.end.x, c.y - ends.end.y)) ? ends.start : ends.end;
+          arrows += arrowXml(node, node.relativeTransform, e.x, e.y, e.dx, e.dy, stroke0, sw0);
+        });
+      }
+      if (!node.endCaps || !node.endCaps.length) return arrows;
+      var stroke = stroke0;
+      var m = node.relativeTransform, sw = node.strokeWeight || 1, d = Math.max(3, 5.5 * sw), out = arrows;
+      node.endCaps.forEach(function (c) {
+        if (c.cap === 'ARROW_LINES') return;
+        if (c.cap !== 'CIRCLE_FILLED') { warn(node, 'stroke end "' + c.cap + '" is drawn as a plain end'); return; }
+        var ax = m[0][2] + m[0][0] * c.x + m[0][1] * c.y, ay = m[1][2] + m[1][0] * c.x + m[1][1] * c.y;
+        out += shapeXml({ id: node.id + ':cap', name: node.name + ' end dot', type: 'ELLIPSE', visible: true, x: ax - d / 2, y: ay - d / 2, width: d, height: d, opacity: node.opacity === undefined ? 1 : node.opacity,
+          rotation: 0, relativeTransform: null, fills: [stroke], strokes: [], effects: [] }, { inLayout: false });
+      });
+      return out;
     }
 
     function containerXml(node, parent, parentIsAL, inFlow, sz) {
       if (node.type === 'INSTANCE' && linkComponents && node.mainComponentId && compIds[node.mainComponentId]) {
         // A live link: the instance becomes a sized slot holding a nested artboard of its component.
+        // Only when it looks the same as its component; an instance with its own colours, text or size stays plain layout.
         var cmp = compById[node.mainComponentId];
-        linkedInst++;
-        var sig = function (n) { return [n.type, n.name, Math.round(n.width), Math.round(n.height), n.characters || '', JSON.stringify(n.fills || []), JSON.stringify(n.strokes || []), JSON.stringify(n.effects || []), n.visible !== false, n.opacity, (n.children || []).map(sig).join('|')].join('~'); };
+        var look = function (v) { return JSON.stringify(v, function (k, x) { return k === 'boundVariables' ? undefined : (typeof x === 'number' ? Math.round(x * 1000) / 1000 : x); }); };
+        var sig = function (n) { return [n.type, Math.round(n.width), Math.round(n.height), n.characters || '', look(n.fills || []), look(n.strokes || []), look(n.effects || []), n.visible !== false, n.opacity, (n.children || []).map(sig).join('|')].join('~'); };
         var kids = function (n) { return (n.children || []).map(sig).join('|'); };
-        if (kids(node) !== kids(cmp) || Math.abs(node.width - cmp.width) > 0.5 || Math.abs(node.height - cmp.height) > 0.5) {
-          warn(node, 'this instance differs from its component (text, colour or size changes). Rive shows the component as designed, scaled to fit');
-        }
-        node = Object.assign({}, node, { type: 'FRAME', fills: [], strokes: [], effects: [], children: [], layoutMode: 'NONE', clipsContent: false, cornerRadius: 0, topLeftRadius: undefined, topRightRadius: undefined, bottomLeftRadius: undefined, bottomRightRadius: undefined, __nested: compIds[node.mainComponentId], __nestedName: cmp.name });
+        var same = kids(node) === kids(cmp) && Math.abs(node.width - cmp.width) <= 0.5 && Math.abs(node.height - cmp.height) <= 0.5;
+        if (same) {
+          linkedInst++;
+          node = Object.assign({}, node, { type: 'FRAME', fills: [], strokes: [], effects: [], children: [], layoutMode: 'NONE', clipsContent: false, cornerRadius: 0, topLeftRadius: undefined, topRightRadius: undefined, bottomLeftRadius: undefined, bottomRightRadius: undefined, __nested: compIds[node.mainComponentId], __nestedName: cmp.name });
+        } else changedInst++;
       }
       if (node.type === 'INSTANCE') detached++;
       var al = hasAutoLayout(node);
@@ -584,7 +795,7 @@
       // A clipping box also clips its own shadow. So when a frame clips AND casts a shadow, the shadow is drawn by a
       // wrapper that does not clip, and the frame itself (clip on) sits inside it.
       var wrapShadow = hasDrop && (node.clipsContent || insideStroke) && !!(visiblePaints(node.fills).length || visiblePaints(node.strokes).length || img);
-      var paints = paintsXml(node, w, h, { hasImage: !!img, hasChildren: (node.children || []).length > 0, splitShadow: wrapShadow, splitInner: options.innerShadowOverChildren !== false && (node.children || []).some(function (c) { return c.visible !== false; }) });
+      var paints = paintsXml(node, w, h, { hasImage: !!img, hasChildren: (node.children || []).length > 0, splitShadow: wrapShadow, flowShadow: !!(parentIsAL && inFlow), splitInner: options.innerShadowOverChildren !== false && (node.children || []).some(function (c) { return c.visible !== false; }) });
       var o = { styleId: id(), name: node.name, sizing: parentIsAL && inFlow ? sz : { h: 'fixed', v: 'fixed' } };
       // A frame without auto layout has free-placed children that Rive cannot
       // measure, so "hug" would collapse it to nothing. Keep the drawn size.
@@ -596,7 +807,7 @@
       var clip = wrapShadow ? true : ((node.clipsContent && !paints.shadowed) || paints.clip);
       if (!wrapShadow && node.clipsContent && paints.shadowed) warn(node, 'clip content is turned off so its shadow can show');
       if (wrapShadow && !node.clipsContent) warn(node, 'clip content is on for this frame so its inside stroke can be drawn (its shadow still shows)');
-      var inner = node.__nested ? '<NestedArtboardLeaf artboardId="' + node.__nested + '" fit="contain" name="' + esc(String(node.__nestedName).trim()) + '"/>' : al ? childrenXml(node, true) : '<Node name="' + esc(String(node.name).trim()) + ' (Wrapper)">' + childrenXml(node, false) + '</Node>';
+      var inner = node.__nested ? '<NestedArtboardLeaf artboardId="' + node.__nested + '" fit="contain" name="' + esc(String(node.__nestedName).trim()) + '"/>' : al ? childrenXml(node, true) : '<Node' + (pl.flip ? ' y="' + num(h) + '" scaleY="-1"' : '') + ' name="' + esc(String(node.name).trim()) + ' (Wrapper)">' + childrenXml(node, false) + '</Node>';
       var imgXml = img ? imageWrapper(node, img, w, h) : '';
       // In Figma an inner shadow also shades the layers inside the frame, so it is drawn on an overlay ABOVE the contents
       // (first sibling = on top), clipped to the frame's rounded shape.
@@ -607,12 +818,12 @@
           '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="0" positionLeftUnitsValue="points" positionTop="0" positionTopUnitsValue="points"' +
           radiusAttrs(radii(node)) + ' name="Inner Shadow Style" id="' + osid + '"/>' + paints.innerXml + '</LayoutComponent>';
       }
-      var origin = pl.rot ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '';
+      var origin = (pl.rot || pl.flip) ? '<ComponentOrigin originX="0.5" originY="0.5" name="Origin"/>' : '';
       var opac = (node.opacity !== undefined && node.opacity < 1) ? ' opacity="' + num(node.opacity) + '"' : '';
 
       if (!wrapShadow) {
         o.pinned = pinned;
-        var attrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + blendAttr(node) + ' styleId="' + o.styleId + '" clip="' + (clip ? 'true' : 'false') + '"' + opac;
+        var attrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + flipAttr(pl) + blendAttr(node) + ' styleId="' + o.styleId + '" clip="' + (clip ? 'true' : 'false') + '"' + opac;
         return '<LayoutComponent' + attrs + ' name="' + esc(node.name) + '" id="' + id() + '">' +
           styleXml(node, o) + origin + paints.xml + overlay + inner + imgXml + '</LayoutComponent>';
       }
@@ -623,16 +834,18 @@
       var outer = { styleId: wrapStyleId, name: node.name + ' Shadow', sizing: o.sizing, pinned: pinned };
       var innerSizing = { h: o.sizing.h === 'hug' ? 'hug' : 'fill', v: o.sizing.v === 'hug' ? 'hug' : 'fill' };
       var innerO = { styleId: innerStyleId, name: node.name, sizing: innerSizing };
-      var wrapAttrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + blendAttr(node) + ' styleId="' + wrapStyleId + '" clip="false"' + opac;
+      var wrapAttrs = ' width="' + num(w) + '" height="' + num(h) + '"' + rotAttr(pl) + flipAttr(pl) + blendAttr(node) + ' styleId="' + wrapStyleId + '" clip="false"' + opac;
       var innerAttrs = ' width="' + num(w) + '" height="' + num(h) + '" styleId="' + innerStyleId + '" clip="true"';
       return '<LayoutComponent' + wrapAttrs + ' name="' + esc(node.name) + ' Shadow" id="' + id() + '">' +
         styleXml(radiusNode, outer) + origin + paints.shadowXml +
         '<LayoutComponent' + innerAttrs + ' name="' + esc(node.name) + '" id="' + id() + '">' +
-        styleXml(node, innerO) + paints.xml + overlay + inner + imgXml + '</LayoutComponent></LayoutComponent>';
+        styleXml(node, innerO) + paints.xml + overlay + inner + imgXml + '</LayoutComponent>' +
+        // Rive draws the first child on top, so the shadow and outside-stroke boxes go AFTER the frame to sit behind it.
+        paints.shadowBoxXml + '</LayoutComponent>';
     }
 
     var componentAssets = [];
-    var compIds = {}, compById = {}, linkedInst = 0;
+    var compIds = {}, compById = {}, linkedInst = 0, changedInst = 0;
     var linkComponents = options.linkComponents !== false && componentArtboards;
     function artboardXml(node, isComponent) {
       var styleId = id();
@@ -663,17 +876,30 @@
     // ---- assemble -----------------------------------------------------
     var frames = (snapshot.nodes || []).filter(function (n) { return CONTAINERS[n.type]; });
     if (!frames.length) warnings.push('Select at least one frame, component or group.');
+    // Variants of a component set are named like "Style=Stroke, Type=Standard". Import them as "<set>-Stroke-Standard".
+    var instName = {};
+    (function walkInst(list) { (list || []).forEach(function (n) { if (n.type === 'INSTANCE' && n.mainComponentId && !instName[n.mainComponentId]) instName[n.mainComponentId] = n.name; walkInst(n.children); }); })((snapshot.nodes || []).concat(snapshot.components || []));
+    var VARIANT = /^\s*[^=,]+=[^,]*(,\s*[^=,]+=[^,]*)*\s*$/;
+    function variantRename(c) {
+      if (!VARIANT.test(String(c.name))) return c;
+      var vals = String(c.name).split(',').map(function (p) { return p.slice(p.indexOf('=') + 1).trim(); });
+      // Every part starts with a capital: user + Stroke + Standard -> User-Stroke-Standard.
+      var nm = [c.setName || instName[c.id] || ''].concat(vals).filter(Boolean).map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join('-');
+      return Object.assign({}, c, { name: nm });
+    }
     var compNodes = componentArtboards ? (snapshot.components || []).filter(function (c) {
       return !frames.some(function (f) { return f.id === c.id; });
-    }) : [];
+    }).map(variantRename) : [];
     // Component artboards get their ids up front, so instances placed earlier in the file can point at them.
     frames.forEach(function (f) { if (f.type === 'COMPONENT' && componentArtboards) { compIds[f.id] = id(); compById[f.id] = f; } });
     compNodes.forEach(function (c) { compIds[c.id] = id(); compById[c.id] = c; });
     // Side by side on the editor's stage, so they do not overlap when opened.
     var stageX = 0;
+    // Main artboards sit in one row; component artboards get a row of their own below, so they never overlap.
+    var compX = 0, rowY = 200 + frames.filter(function (f) { return !(f.type === 'COMPONENT' && componentArtboards); }).reduce(function (m, f) { return Math.max(m, f.height); }, 0);
     function onStage(node, isComponent) {
-      var xml = artboardXml(node, isComponent).replace('<Artboard', '<Artboard x="' + stageX + '" y="0"');
-      stageX += node.width + 120;
+      var xml = artboardXml(node, isComponent).replace('<Artboard', '<Artboard x="' + (isComponent ? compX : stageX) + '" y="' + (isComponent ? rowY : 0) + '"');
+      if (isComponent) compX += node.width + 120; else stageX += node.width + 120;
       return xml;
     }
     var artboards = frames.map(function (f) { return onStage(f, f.type === 'COMPONENT' && componentArtboards); })
@@ -695,7 +921,7 @@
 
     var rml = '<Rive version="1" kind="fragment">\n    ' + artboards + '\n    ' + fontXml + '\n    ' + imageXml + '\n    ' + compXml + '\n</Rive>\n';
     var yaml = 'name: ' + (options.name || 'figma-import').replace(/[^A-Za-z0-9 _-]/g, '') + '\n';
-    return { rml: rml, yaml: yaml, fonts: fontList, images: imageList, warnings: warnings, notes: notes };
+    return { componentNames: compNodes.map(function (c) { return String(c.name).trim(); }), rml: rml, yaml: yaml, fonts: fontList, images: imageList, warnings: warnings, notes: notes };
   }
 
   return { convert: convert };

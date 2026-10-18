@@ -64,8 +64,14 @@
   details.opts .body { padding: 0 10px 6px; border-top: 1px solid var(--line); }
   .actions { display: flex; gap: 8px; margin-top: 16px; } .actions button { margin: 0; flex: 1; padding: 10px 14px; } .actions button.alt { flex: 0 0 auto; }
   input:disabled { opacity: .5; }
+  select { font: inherit; width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel2); color: var(--text); outline: none; }
+  select:focus { border-color: var(--accent); }
   .recent { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
   .recent .rtop { display: flex; justify-content: space-between; gap: 8px; } .recent .rtop b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rhead { display: flex; align-items: center; justify-content: space-between; }
+  .iconbtn { margin: 0; padding: 3px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; background: none; color: var(--muted); border-radius: 6px; }
+  .iconbtn:hover { color: var(--text); background: #333; filter: none; }
+  .iconbtn.spin svg { animation: spin .8s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
   .recent { position: relative; }
   .recent .trash { position: absolute; right: 6px; bottom: 6px; margin: 0; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: none; color: var(--muted); border-radius: 6px; opacity: 0; transition: opacity .12s, color .12s, background .12s; }
   .recent:hover .trash, .recent .trash:focus-visible { opacity: 1; } .recent .trash:hover { color: var(--err); background: #3a3a3a; filter: none; }
@@ -83,6 +89,7 @@
   .ihead:hover { background: #2f2f2f; filter: none; }
   .ihead .ititle { flex: 1; min-width: 0; }
   .ihead .chev { width: 7px; height: 7px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .12s; flex: none; margin-right: 2px; }
+  .cardbody { padding: 10px; }
   .issue.open .chev { transform: rotate(45deg); }
   .ibody { padding: 0 10px 10px; } .ibody[hidden] { display: none; }
   .issue .why { margin-top: 2px; }
@@ -94,6 +101,7 @@
 <div class="tabs">
   <button class="tab on" id="tabImport">Import</button>
   <button class="tab" id="tabAnalysis">Design analysis</button>
+  <button class="tab" id="tabClean">Clean</button>
   <span class="dot off" id="dot" title="Helper: checking"></span>
   <button class="gear" id="gear" title="Settings" aria-label="Settings">&#9881;</button>
 </div>
@@ -102,6 +110,33 @@
   <input id="token" placeholder="Paste, then press Enter" autocomplete="off" spellcheck="false">
   <div class="muted" id="tokenNote"></div>
   <div class="muted" id="helperState" style="margin-top:6px"></div>
+</div>
+<div id="paneClean" hidden>
+  <div class="muted" id="cleanSel" style="margin-bottom:8px">Select layers or frames to clean.</div>
+  <div class="issue info"><div class="cardbody">
+    <div class="sec" style="margin-top:0">Names</div>
+    <label class="chk"><input type="checkbox" id="cnSpaces" checked><span>Trim and collapse extra spaces</span></label>
+    <label class="chk"><input type="checkbox" id="cnSymbols" checked><span>Remove emoji and hidden characters</span></label>
+    <label class="chk" title='Turns names like "Frame 2147230678" or "Vector 9323" into "Frame" or "Vector".'><input type="checkbox" id="cnGeneric" checked><span>Simplify default names (Frame 123 &rarr; Frame)</span></label>
+    <div class="muted" id="cnInfo" style="margin:6px 0 8px"></div>
+    <button id="cnApply">Clean names</button>
+  </div></div>
+  <div class="issue info" style="margin-top:12px"><div class="cardbody">
+    <div class="sec" style="margin-top:0">Pixels</div>
+    <label class="chk" title="Rounds x and y to whole numbers. Skips rotated and flipped layers and layers placed by auto layout."><input type="checkbox" id="cpPos" checked><span>Snap positions to whole pixels</span></label>
+    <label class="chk" title="Rounds width and height. Skips text, lines, and sizes set to hug or fill."><input type="checkbox" id="cpSize" checked><span>Snap sizes to whole pixels</span></label>
+    <div class="muted" id="cpInfo" style="margin:6px 0 8px"></div>
+    <button id="cpApply">Snap to pixels</button>
+  </div></div>
+  <div class="issue info" style="margin-top:12px"><div class="cardbody">
+    <div class="sec" style="margin-top:0">Hidden</div>
+    <label class="chk" title="Deletes layers whose eye is switched off. They are not imported into Rive anyway. Layers inside instances are skipped."><input type="checkbox" id="chLayers" checked><span>Delete hidden layers</span></label>
+    <label class="chk" title="Removes fills, strokes, shadows and blurs that are switched off or at 0% opacity."><input type="checkbox" id="chPaints" checked><span>Remove hidden fills, strokes and effects</span></label>
+    <div class="muted" id="chInfo" style="margin:6px 0 8px"></div>
+    <button id="chApply">Remove hidden</button>
+  </div></div>
+  <label class="chk" style="margin-top:12px"><input type="checkbox" id="cDeep" checked><span>Include everything inside the selection</span></label>
+  <div id="cleanOut"></div>
 </div>
 <div id="paneAnalysis" hidden>
   <div class="head-actions"><button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, previews and design data in the helper's claude-inbox folder">Send to Claude</button>
@@ -119,6 +154,7 @@
 <div class="field" id="linkWrap" hidden style="margin-top:8px">
   <input id="filelink" placeholder="Paste the file's link or id" aria-label="Open Rive file link">
 </div>
+<div class="field" id="addWrap" hidden style="margin-top:8px"><select id="addTo" aria-label="Add to project"></select></div>
 <div class="hint" id="destHint"></div>
 
 <details class="opts">
@@ -197,37 +233,88 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
-var recentTab = 'projects', delAsk = null, delMsg = {};
+var liveErr = {}, liveCache = {}, liveTried = {}, addTo = '', artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
+var REFRESH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg>';
+var refreshing = false;
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
 var TRASH_TIP = 'Click: remove from this list. Cmd+Click: also delete from Rive.';
 function trashBtn(attr, val) { return '<button class="trash" ' + attr + '="' + val + '" title="' + TRASH_TIP + '" aria-label="' + TRASH_TIP + '">' + TRASH + '</button>'; }
+function resolveNames() {
+  var ids = []; recents.forEach(function (x) { if (!x.fb) (x.ids || []).forEach(function (id) { if (id && ids.indexOf(id) < 0) ids.push(id); }); });
+  if (ids.length) parent.postMessage({ pluginMessage: { type: 'resolveNames', ids: ids } }, '*');
+}
+var accountFiles = null;
+function slug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function fileUrl(f) { return 'https://editor.rive.app/file/' + slug(f.name) + '/' + f.id; }
+function syncAccount() {
+  call('/files').then(function (r) { if (r && r.ok && r.files) { accountFiles = r.files; applyAccount(); } }).catch(function () {});
+}
+// Make the list match your Rive account: one entry per file with its real name, files that were deleted disappear, files you never sent from here appear.
+function applyAccount() {
+  var byId = {}; accountFiles.forEach(function (f) { byId[String(f.id)] = f; });
+  var seen = {}, out = [];
+  recents.slice().sort(function (a, b) { return (b.time || 0) - (a.time || 0); }).forEach(function (x) {
+    var fid = projFileId(x);
+    if (!fid) { out.push(x); return; }
+    if (!byId[fid] || seen[fid]) return;
+    seen[fid] = true; x.title = byId[fid].name; x.url = fileUrl(byId[fid]); out.push(x);
+  });
+  accountFiles.forEach(function (f) {
+    var fid = String(f.id); if (seen[fid]) return;
+    out.push({ name: 'file-' + fid, title: f.name, time: 0, ids: [], frames: [], link: fid, mode: 'existing', url: fileUrl(f), pushed: true });
+  });
+  recents = out; saveSettings(); renderRecents();
+}
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
-  var head = '<div class="sec">Recent exports</div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
+  var head = '<div class="sec rhead"><span>Recent exports</span><button class="iconbtn" id="rrefresh" title="Refresh" aria-label="Refresh">' + REFRESH + '</button></div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
   var body = '', items = [];
   if (recentTab === 'projects') {
     body = recents.map(function (x, i) {
       var ask = delAsk === 'p' + i ? '<div class="box warn" style="margin:8px 0 0">Whole files can only be deleted in Rive.<p style="margin:8px 0 0">' + (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm">Open in Rive</button></a>' : '') + '<button class="sm alt" data-del="' + i + '">Remove from list</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
-      return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
+      return '<div class="recent"><div class="rtop"><b>' + esc(x.title || x.name) + '</b><span class="muted">' + (x.time ? ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') : 'in your account') + '</span></div><div class="rbtns">' +
         (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
         (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') +
         '</div>' + ask + (delAsk === 'p' + i ? '' : trashBtn('data-ptrash', i)) + '</div>';
     }).join('');
   } else {
-    recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { var key = (x.ids || [])[k] || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: (x.ids || [])[k], project: x.name, time: x.time, url: x.url }); }); });
+    recents.forEach(function (x) {
+      if ((x.frames && x.frames.length) || tried[x.name]) return;
+      tried[x.name] = true;
+      call('/artboards?name=' + encodeURIComponent(x.name)).then(function (r) { if (r.names && r.names.length) { delete artErr[x.name]; x.frames = r.names; x.fb = true; saveSettings(); } else artErr[x.name] = 'no artboards found in its export'; if (recentTab === 'artboards') renderRecents(); }).catch(function (er) { artErr[x.name] = String(er.message || er); if (recentTab === 'artboards') renderRecents(); });
+    });
+    var hiddenCount = 0; recents.forEach(function (x) { hiddenCount += Object.keys(x.hidden || {}).length; });
+    recents.forEach(function (x) {
+      var fid = projFileId(x); if (!fid || liveTried[fid]) return; liveTried[fid] = true;
+      call('/artboards?fileId=' + fid).then(function (r) { if (r.ok) { delete liveErr[fid]; liveCache[fid] = r.artboards; } else { liveErr[fid] = r.error === 'not found' ? 'restart the helper to read Rive' : (r.error || 'could not read the file'); } renderRecents(); }).catch(function (er) { liveErr[fid] = 'helper not reachable'; renderRecents(); });
+    });
+    recents.forEach(function (x, i) {
+      x.__live = false;
+      var fid = projFileId(x), live = fid && liveCache[fid];
+      if (fid && !live) { x.__live = true; return; } // has a Rive file: show only what is really in it (or why we can't read it)
+      if (!live) return;
+      var byName = {}; (x.frames || []).forEach(function (f, k) { byName[String(f).trim()] = x.fb ? undefined : (x.ids || [])[k]; });
+      var seen = {};
+      live.forEach(function (a) { seen[a.name.trim()] = true; var id = byName[a.name.trim()], key = id || a.name; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: a.name, id: id, comp: a.component, project: x.name, projectTitle: x.title, time: x.time, url: x.url, live: true }); });
+      x.__live = true;
+    });
+    recents.forEach(function (x, i) { if (x.__live) return; (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, projectTitle: x.title, time: x.time, url: x.url }); }); });
     body = items.length ? items.map(function (it, j) {
       var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from Rive?</b><br><span class="muted">A backup is saved.</span><p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
-      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
+      return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + (it.missing ? 'not in Rive' : it.comp ? 'component' : it.live ? 'in Rive' : ago(it.time)) + '</span></div><div class="muted">in ' + esc(it.projectTitle || it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
         (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
         (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
-    }).join('') : '<p class="muted">No artboards yet.</p>';
+    }).join('') : '<p class="muted">No artboards yet.</p>' + Object.keys(liveErr).map(function (k) { return '<p class="muted">Rive file ' + esc(k) + ': ' + esc(liveErr[k]) + '</p>'; }).join('') + Object.keys(artErr).map(function (k) { return '<p class="muted">' + esc(k) + ': ' + esc(artErr[k]) + '</p>'; }).join('') + (hiddenCount ? '<p><button class="sm alt" id="showHidden">Show ' + hiddenCount + ' hidden</button></p>' : '');
   }
   el.innerHTML = head + body;
+  refreshAddTo();
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
-  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; renderRecents(); }; });
+  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; liveTried = {}; syncAccount(); b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
+  on('#showHidden', function (b) { b.onclick = function () { recents.forEach(function (x) { x.hidden = {}; }); saveSettings(); renderRecents(); }; });
+  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; syncAccount(); if (recentTab === 'artboards') { liveTried = {}; tried = {}; resolveNames(); } renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
   on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
   on('button[data-del]', function (b) { b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); delAsk = null; saveSettings(); renderRecents(); }; });
@@ -319,13 +406,49 @@ function applyDest(mode) {
   Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) { b.classList.toggle('on', b.getAttribute('data-dest') === mode); });
   document.getElementById('linkWrap').hidden = mode !== 'open';
   document.getElementById('destHint').textContent = DEST_HINT[mode];
+  refreshAddTo();
   linkEl.value = mode === 'open' ? (links[curFile] || '') : '';
 }
 Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) {
   b.onclick = function () { applyDest(b.getAttribute('data-dest')); if (curFile) { dests[curFile] = curDest; saveSettings(); } if (curDest === 'open') linkEl.focus(); };
 });
+function projFileId(x) { return ((String(x.url || '').match(/\/(\d+)\s*$/) || [])[1]) || ''; }
+function refreshAddTo() {
+  var sel = document.getElementById('addTo'), wrap = document.getElementById('addWrap');
+  var opts = recents.filter(function (x) { return projFileId(x); });
+  if (!opts.some(function (x) { return x.name === addTo; })) addTo = '';
+  sel.innerHTML = '<option value="">New project</option>' + opts.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x.name === addTo ? ' selected' : '') + '>Add to: ' + esc(x.title || x.name) + '</option>'; }).join('');
+  wrap.hidden = !(curDest === 'account' && opts.length);
+}
+document.getElementById('addTo').onchange = function () { addTo = this.value; };
+function prepAddTo() {
+  if (curDest !== 'account' || !addTo || artTarget) return;
+  var x = recents.filter(function (r) { return r.name === addTo; })[0], fid = x && projFileId(x);
+  if (!fid) return;
+  artTarget = { name: addTo }; forceReplace = true; resendPrev = linkEl.value; linkEl.value = fid;
+}
+function mergeFrames(name, ids, names) {
+  recents.forEach(function (x) {
+    if (x.name !== name) return;
+    x.frames = x.frames || []; x.ids = x.ids || [];
+    ids.forEach(function (id, i) {
+      if (x.fb) { if (x.frames.indexOf(names[i]) < 0) x.frames.push(names[i]); return; }
+      var k = x.ids.indexOf(id);
+      if (k < 0) { x.ids.push(id); x.frames.push(names[i]); } else x.frames[k] = names[i];
+    });
+  });
+}
+// ---- Clean tab: tidy names and snap pixels on the selected Figma layers ----------------------------
+function cleanOptsUi() { return { deep: document.getElementById('cDeep').checked, spaces: document.getElementById('cnSpaces').checked, symbols: document.getElementById('cnSymbols').checked, generic: document.getElementById('cnGeneric').checked, pos: document.getElementById('cpPos').checked, size: document.getElementById('cpSize').checked, hl: document.getElementById('chLayers').checked, hp: document.getElementById('chPaints').checked }; }
+var cleanTimer = null;
+function scanClean() { clearTimeout(cleanTimer); cleanTimer = setTimeout(function () { parent.postMessage({ pluginMessage: { type: 'cleanScan', o: cleanOptsUi() } }, '*'); }, 150); }
+function cleanApply(which) { parent.postMessage({ pluginMessage: { type: 'cleanApply', which: which, o: cleanOptsUi() } }, '*'); }
+Array.prototype.forEach.call(document.querySelectorAll('#paneClean input'), function (i) { i.onchange = scanClean; });
+document.getElementById('cnApply').onclick = function () { cleanApply('names'); };
+document.getElementById('cpApply').onclick = function () { cleanApply('pixels'); };
+document.getElementById('chApply').onclick = function () { cleanApply('hidden'); };
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
-document.getElementById('send').onclick = function () { ask('send'); };
+document.getElementById('send').onclick = function () { prepAddTo(); ask('send'); };
 var settingsEl = document.getElementById('settings'), gearEl = document.getElementById('gear'), tokenNote = document.getElementById('tokenNote');
 function toggleSettings(open) { settingsEl.hidden = !open; gearEl.classList.toggle('on', open); if (open) tokenEl.focus(); }
 function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents, snaps: snaps, dests: dests } }, '*'); }
@@ -372,12 +495,14 @@ var paneImport = document.getElementById('paneImport'), paneAnalysis = document.
 var tabImport = document.getElementById('tabImport'), tabAnalysis = document.getElementById('tabAnalysis');
 var analysisOut = document.getElementById('analysisOut'), selInfo = document.getElementById('selInfo'), analysisTimer = null;
 function showTab(which) {
-  var a = which === 'analysis';
-  paneAnalysis.hidden = !a; paneImport.hidden = a;
-  tabAnalysis.classList.toggle('on', a); tabImport.classList.toggle('on', !a);
+  var a = which === 'analysis', cl = which === 'clean';
+  paneAnalysis.hidden = !a; paneImport.hidden = a || cl; document.getElementById('paneClean').hidden = !cl;
+  tabAnalysis.classList.toggle('on', a); tabImport.classList.toggle('on', which === 'import'); document.getElementById('tabClean').classList.toggle('on', cl);
   if (a) runAnalysis();
+  if (cl) scanClean();
 }
 tabImport.onclick = function () { showTab('import'); };
+document.getElementById('tabClean').onclick = function () { showTab('clean'); };
 tabAnalysis.onclick = function () { showTab('analysis'); };
 document.getElementById('runAnalysis').onclick = function () { runAnalysis(); };
 document.getElementById('sendClaude').onclick = function () {
@@ -465,14 +590,38 @@ onmessage = function (e) {
   var m = e.data.pluginMessage; if (!m) return;
   if (m.type === 'analysisSnapshot') { renderAnalysis(m); return; }
   if (m.type === 'claudePayload') { sendToInbox(m); return; }
+  if (m.type === 'cleanScanResult') {
+    var any = !m.empty, ex = function (l) { return l && l.length ? '<br>' + l.map(esc).join('<br>') : ''; };
+    document.getElementById('cleanSel').textContent = m.empty ? 'Select layers or frames to clean.' : 'Cleaning the current selection.';
+    document.getElementById('cnInfo').innerHTML = m.empty ? '' : (m.names.count ? '<b>' + m.names.count + '</b> layer name' + (m.names.count === 1 ? '' : 's') + ' to tidy' + ex(m.names.examples) : 'Names are already clean.');
+    document.getElementById('cpInfo').innerHTML = m.empty ? '' : (m.pixels.count ? '<b>' + m.pixels.count + '</b> layer' + (m.pixels.count === 1 ? ' is' : 's are') + ' off the pixel grid' + ex(m.pixels.examples) : 'Everything is on the pixel grid.');
+    var hc = m.empty ? 0 : m.hidden.layers + m.hidden.paints;
+    document.getElementById('chInfo').innerHTML = m.empty ? '' : (hc ? '<b>' + m.hidden.layers + '</b> hidden layer' + (m.hidden.layers === 1 ? '' : 's') + ', <b>' + m.hidden.paints + '</b> hidden fill/stroke/effect' + (m.hidden.paints === 1 ? '' : 's') + ex(m.hidden.examples) : 'Nothing hidden to remove.');
+    document.getElementById('chApply').disabled = m.empty || !hc;
+    document.getElementById('cnApply').disabled = m.empty || !m.names.count; document.getElementById('cpApply').disabled = m.empty || !m.pixels.count;
+    return;
+  }
+  if (m.type === 'cleanDone') {
+    document.getElementById('cleanOut').innerHTML = '<div class="box ok"><b>' + (m.which === 'names' ? 'Renamed ' : m.which === 'hidden' ? 'Removed ' : 'Snapped ') + m.done + (m.which === 'hidden' ? ' hidden item' : ' layer') + (m.done === 1 ? '' : 's') + '.</b><br><span class="muted">Press Cmd+Z in Figma to undo.</span></div>';
+    return;
+  }
   if (m.type === 'selection') {
+    if (!document.getElementById('paneClean').hidden) scanClean();
     showSelection(m);
     selInfo.textContent = m.count ? m.count + ' selected' : 'nothing selected';
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
     return;
   }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
-  if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
+  if (m.type === 'names') {
+    var changed = false;
+    recents.forEach(function (x) { if (x.fb) return; (x.ids || []).forEach(function (id, k) { var nm = m.map[id]; if (nm != null && x.frames && x.frames[k] !== nm) { x.frames[k] = nm; changed = true; } }); });
+    if (changed) { saveSettings(); renderRecents(); }
+    return;
+  }
+  if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(function () { renderRecents(); resolveNames(); syncAccount(); }, wait); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); syncAccount(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
+  if (m.type === 'error') { artTarget = null; forceReplace = false; viaUpdate = false; if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; }
+    out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');
   var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, linkComponents: optLink.checked, innerShadowOverChildren: optInner.checked });
@@ -490,7 +639,7 @@ onmessage = function (e) {
     var pmapOf = function (key) { return (snaps[key] || {}).map || {}; };
     var pmap = {}; [snaps['file-' + fileId] && 'file-' + fileId, target && target.name].forEach(function (k) { if (k) { var mp = pmapOf(k); for (var id in mp) if (!pmap[id]) pmap[id] = mp[id]; } });
     (m.nodes || []).forEach(function (n) { var nw = String(n.name).trim(); replacePairs.push({ old: pmap[n.id] ? String(pmap[n.id][0]).trim() : nw, new: nw }); });
-    (m.components || []).forEach(function (c) { var nm = String(c.name).trim(); replacePairs.push({ old: nm, new: nm }); });
+    (res.componentNames || []).forEach(function (nm) { replacePairs.push({ old: nm, new: nm }); });
   }
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
@@ -506,7 +655,7 @@ onmessage = function (e) {
     out.innerHTML = banner + changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
-    if (target) patchRecent(target.name, { time: Date.now() }); else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
+    if (target) { mergeFrames(target.name, selIds, frameNames); patchRecent(target.name, { time: Date.now() }); } else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
     var pb = document.getElementById('push');
     if (pb) pb.onclick = function () {
       pb.disabled = true; pb.textContent = 'Pushing…';

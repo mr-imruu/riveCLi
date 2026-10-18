@@ -53,6 +53,29 @@ function standInFont() {
 // ---- add the import to an existing Rive file ------------------------------
 // Pull the live file, append the imported artboards (ids moved to a free namespace so
 // nothing collides), keep what is already there. Nothing is removed from the file.
+// Rive can leave pieces of a deleted artboard (dashes, state machine states) loose at the top level of the file. They are not part of
+// anything, and a loose dash stops the file from building. Remove them.
+function sweepOrphans(text) {
+  let out = text;
+  out = out.replace(/\n {4}<DashPath\b[\s\S]*?<\/DashPath>/g, '');
+  out = out.replace(/\n {4}<(EntryState|ExitState|AnyState)\b[^>]*\/>/g, '');
+  return out;
+}
+// Keep component artboards in a row of their own below the main artboards. Only moves them when one is not in that row yet.
+function tidyStage(text) {
+  const tags = [...text.matchAll(/<Artboard\s[^>]*>/g)].map(m => m[0]);
+  const num = (t, k) => +((t.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0), isC = t => /\sisComponent="true"/.test(t);
+  const mains = tags.filter(t => !isC(t)), comps = tags.filter(isC);
+  const rowY = mains.reduce((m, t) => Math.max(m, num(t, 'height')), 0) + 200;
+  const overlap = comps.some((a, i) => comps.slice(i + 1).some(b => num(a, 'x') < num(b, 'x') + num(b, 'width') && num(b, 'x') < num(a, 'x') + num(a, 'width') && num(a, 'y') < num(b, 'y') + num(b, 'height') && num(b, 'y') < num(a, 'y') + num(a, 'height')));
+  if (!comps.length || (!overlap && comps.every(t => num(t, 'y') >= rowY))) return text;
+  const order = comps.slice().sort((a, b) => num(a, 'x') - num(b, 'x'));
+  let x = 0; const where = new Map();
+  for (const t of order) { where.set(t, x); x += num(t, 'width') + 120; }
+  let out = text;
+  for (const t of comps) out = out.replace(t, t.replace(/\s(x|y)="[^"]*"/g, '').replace(/<Artboard /, '<Artboard x="' + where.get(t) + '" y="' + rowY + '" '));
+  return out;
+}
 // Cut one artboard (and its component entry) out of a scene by name. Returns its old stage position too.
 function cutArtboard(text, name) {
   const re = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -61,19 +84,20 @@ function cutArtboard(text, name) {
   const tag = hit[0].match(/^<Artboard\s[^>]*>/)[0], aid = (tag.match(/\sid="([^"]+)"/) || [])[1];
   let out = text.replace(hit[0], '');
   if (aid) out = out.replace(new RegExp('<ComponentAsset [^>]*artboardId="' + re(aid) + '"[^>]*/>\\s*'), '');
-  return { found: true, text: out, x: (tag.match(/\sx="(-?[\d.]+)"/) || [])[1] || '0', y: (tag.match(/\sy="(-?[\d.]+)"/) || [])[1] || '0' };
+  const n = k => +((tag.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0);
+  return { found: true, aid, text: out, x: String(n('x')), y: String(n('y')), w: n('width'), h: n('height'), comp: /\sisComponent="true"/.test(tag) };
 }
 const xmlAttr = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 function mergeIntoExisting(existing, incoming, replace) {
   const escRe = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   // "Replace" mode: swap an artboard that is already in the file for its new version (even if the frame was renamed),
   // in the same spot on the stage. Its component entry goes too. Only artboards named in `replace` are touched.
-  const replaced = [], slots = {};
+  const replaced = [], slots = {}, cutIds = {};
   for (const pr of replace || []) {
     const cut = cutArtboard(existing, pr.old);
     if (!cut.found) continue;
-    slots[xmlAttr(pr.new)] = { x: cut.x, y: cut.y };
-    existing = cut.text;
+    slots[xmlAttr(pr.new)] = { x: cut.x, y: cut.y, w: cut.w, h: cut.h, comp: cut.comp };
+    existing = cut.text; if (cut.aid) cutIds[pr.old] = cut.aid;
     replaced.push(pr.old);
   }
   const used = [...existing.matchAll(/"(\d+):\d+"/g)].map(m => +m[1]);
@@ -94,20 +118,27 @@ function mergeIntoExisting(existing, incoming, replace) {
   }
   let compAssets = body.match(/<ComponentAsset [^>]*\/>/g) || [];
   const names = new Set([...existing.matchAll(/<Artboard [^>]*name="([^"]*)"/g)].map(m => m[1]));
-  // Put new artboards to the right of everything already on the editor's stage.
-  let edge = 0;
-  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) {
-    const x = +((m[0].match(/\sx="(-?[\d.]+)"/) || [])[1] || 0), w = +((m[0].match(/\swidth="([\d.]+)"/) || [])[1] || 0);
-    edge = Math.max(edge, x + w);
-  }
-  let cursor = existing.match(/<Artboard\s/) ? edge + 120 : 0;
+  // Main artboards go in one row at the top of the stage; component artboards in a row of their own below, so they never overlap.
+  const num = (t, k) => +((t.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0), isCompTag = t => /\sisComponent="true"/.test(t);
+  let maxH = 0, mainEdge = -120;
+  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) if (!isCompTag(m[0])) { maxH = Math.max(maxH, num(m[0], 'height')); mainEdge = Math.max(mainEdge, num(m[0], 'x') + num(m[0], 'width')); }
+  for (const a of artboards) { const t = (a.match(/<Artboard\s[^>]*>/) || [''])[0]; if (!isCompTag(t)) maxH = Math.max(maxH, num(t, 'height')); }
+  for (const k of Object.keys(slots)) if (!slots[k].comp) { maxH = Math.max(maxH, slots[k].h); mainEdge = Math.max(mainEdge, +slots[k].x + slots[k].w); }
+  const rowY = maxH + 200;
+  let compEdge = -120;
+  for (const k of Object.keys(slots)) if (slots[k].comp && +slots[k].y >= rowY) compEdge = Math.max(compEdge, +slots[k].x + slots[k].w);
+  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) if (isCompTag(m[0]) && num(m[0], 'y') >= rowY) compEdge = Math.max(compEdge, num(m[0], 'x') + num(m[0], 'width'));
+  let cursor = mainEdge + 120, compCursor = compEdge + 120;
   const added = [];
   artboards = artboards.map(a => {
     const w = +((a.match(/<Artboard\s[^>]*?\swidth="([\d.]+)"/) || [])[1] || 0);
     // Drop the converter's own stage position; place it after what is already in the file.
-    const nm0 = (a.match(/<Artboard [^>]*?name="([^"]*)"/) || [])[1], slot = slots[nm0];
-    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + (slot ? slot.x : cursor) + '" y="' + (slot ? slot.y : 0) + '" ');
-    if (!slot) cursor += w + 120;
+    const nm0 = (a.match(/<Artboard [^>]*?name="([^"]*)"/) || [])[1], isC = isCompTag((a.match(/<Artboard\s[^>]*>/) || [''])[0]);
+    let slot = slots[nm0];
+    if (slot && isC && +slot.y < rowY) slot = null; // an old component sitting among the main artboards moves down to the component row
+    const px = slot ? slot.x : (isC ? compCursor : cursor), py = slot ? slot.y : (isC ? rowY : 0);
+    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + px + '" y="' + py + '" ');
+    if (!slot) { if (isC) compCursor += w + 120; else cursor += w + 120; }
     remap.forEach(([ref, from, to]) => { a = a.split(ref + '="' + from + '"').join(ref + '="' + to + '"'); });
     a = a.replace(/(<Artboard [^>]*?name=")([^"]*)(")/, (m, pre, nm, post) => {
       // Re-importing the same frame: the new artboard is called "<name> - updated" (then "- updated 2" ...) and the old one is kept.
@@ -119,8 +150,13 @@ function mergeIntoExisting(existing, incoming, replace) {
     });
     return a;
   });
+  // A component artboard that was swapped for a new one has a new id: point every nested instance still in the file at it.
+  for (const nm of Object.keys(cutIds)) {
+    const ca = compAssets.find(c => c.includes(' name="' + xmlAttr(nm) + '"')), newId = ca && (ca.match(/artboardId="([^"]+)"/) || [])[1];
+    if (newId) existing = existing.split('artboardId="' + cutIds[nm] + '"').join('artboardId="' + newId + '"');
+  }
   const merged = existing.replace(/<\/Rive>\s*$/, artboards.join('\n    ') + '\n    ' + keepAssets.join('\n    ') + '\n    ' + compAssets.join('\n    ') + '\n</Rive>\n');
-  return { merged, added, replaced, namespace: ns };
+  return { merged: tidyStage(merged), added, replaced, namespace: ns };
 }
 
 // ---- inbox: a design report Claude can read ---------------------------------
@@ -211,6 +247,7 @@ async function doExportExisting(body) {
   const dl = linked ? await run(['pull', dir, '--yes'], ROOT) : await run(['create', dir, '--from-remote-file=' + fileId], ROOT);
   if (!dl.ok) return { dir, name: 'file-' + fileId, mode: 'existing', verify: { ok: false, output: 'Could not download your Rive file ' + fileId + ':\n' + dl.output }, fonts: { real: [], standIn: [], missing: [] }, added: [] };
   const scenePath = path.join(dir, 'scene.rml');
+  { const raw = fs.readFileSync(scenePath, 'utf8'), swept = sweepOrphans(raw); if (swept !== raw) fs.writeFileSync(scenePath, swept); } // loose leftovers from deleted artboards
   const before = await run([dir, '--verify'], dir);
   if (!before.ok) return { dir, name: 'file-' + fileId, mode: 'existing', verify: { ok: false, output: 'Your file does not verify on its own, so I did not touch it:\n' + before.output }, fonts: { real: [], standIn: [], missing: [] }, added: [] };
   const existing = fs.readFileSync(scenePath, 'utf8');
@@ -244,7 +281,7 @@ async function doDeleteArtboard(body) {
   if (!fs.existsSync(yamlPath) || !/^push:/m.test(fs.readFileSync(yamlPath, 'utf8'))) return { ok: false, output: 'This export is not linked to a Rive file, so there is nothing in Rive to delete.' };
   const dl = await run(['pull', dir, '--yes'], ROOT);
   if (!dl.ok) return { ok: false, output: 'Could not download your Rive file:\n' + dl.output };
-  const scenePath = path.join(dir, 'scene.rml'), existing = fs.readFileSync(scenePath, 'utf8');
+  const scenePath = path.join(dir, 'scene.rml'), existing = sweepOrphans(fs.readFileSync(scenePath, 'utf8'));
   if ((existing.match(/<Artboard(?=\s)/g) || []).length <= 1) return { ok: false, output: 'That is the only artboard in the file, so I did not delete it.' };
   const cut = cutArtboard(existing, ab);
   if (!cut.found) return { ok: false, gone: true, output: 'There is no artboard called "' + ab + '" in the Rive file (already deleted or renamed).' };
@@ -285,6 +322,37 @@ function handler(req, res) {
       if (req.method === 'GET' && req.url === '/status') {
         const v = await run(['--version'], ROOT);
         return send(200, { ok: v.ok, rive: v.output, projectId: cfg.projectId || null, realFonts: fs.readdirSync(FONTS).filter(f => /\.(ttf|otf)$/i.test(f)) });
+      }
+      if (req.method === 'GET' && req.url === '/files') {
+        // Every file in your Rive account's projects right now, so the plugin always matches the account.
+        const pid = (fs.existsSync(CONFIG) ? JSON.parse(fs.readFileSync(CONFIG, 'utf8')) : {}).projectId;
+        const rows = o => o.split('\n').filter(l => l.startsWith('{')).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean);
+        let ws = [];
+        if (pid) { const probe = await run(['ls', String(pid), '--json'], ROOT), m = probe.output.match(/workspace [^(]*\((\d+)\)/); if (m) ws = ['--workspace=' + m[1]]; }
+        const plist = await run(['ls', '--json'].concat(ws), ROOT);
+        const projects = rows(plist.output).filter(r => r.kind === 'project').map(r => r.projectId);
+        if (pid && projects.indexOf(+pid) < 0) projects.push(+pid);
+        const files = [];
+        for (const prj of projects) for (const r of rows((await run(['ls', String(prj), '--all', '--json'].concat(ws), ROOT)).output)) if (r.kind === 'file') files.push({ id: r.fileId, name: r.name, projectId: prj });
+        return send(200, { ok: plist.ok || files.length > 0, files });
+      }
+      if (req.method === 'GET' && req.url.startsWith('/artboards?fileId=')) {
+        // The artboards that are in a Rive file right now (pulled fresh), so the plugin can list them project by project.
+        const fid = (req.url.split('fileId=')[1] || '').split('&')[0].replace(/\D/g, ''), dir = path.join(EXPORTS, 'file-' + fid);
+        if (!fid) return send(400, { error: 'bad file id' });
+        const linked = fs.existsSync(path.join(dir, 'rive.yaml'));
+        const dl = linked ? await run(['pull', dir, '--yes'], ROOT) : await run(['create', dir, '--from-remote-file=' + fid], ROOT);
+        if (!dl.ok) return send(200, { ok: false, error: dl.output.slice(-300), artboards: [] });
+        const text = fs.readFileSync(path.join(dir, 'scene.rml'), 'utf8');
+        const dec = s => s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+        const artboards = [...text.matchAll(/<Artboard\s[^>]*>/g)].map(m => ({ name: dec((m[0].match(/\sname="([^"]*)"/) || [])[1] || ''), component: /\sisComponent="true"/.test(m[0]) }));
+        return send(200, { ok: true, artboards });
+      }
+      if (req.method === 'GET' && req.url.startsWith('/artboards')) {
+        // Artboard names in an export's scene, so older Recent entries can fill their Artboards tab.
+        const nm = safeName(decodeURIComponent((req.url.split('name=')[1] || '').split('&')[0])), f = path.join(EXPORTS, nm, 'scene.rml');
+        const names = fs.existsSync(f) ? [...fs.readFileSync(f, 'utf8').matchAll(/<Artboard\s[^>]*?name="([^"]*)"/g)].map(m => m[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')) : [];
+        return send(200, { names });
       }
       if (req.method === 'POST' && req.url === '/frame') return send(200, doFrame(body));
       if (req.method === 'POST' && req.url === '/inbox') return send(200, doInbox(body));
