@@ -203,7 +203,7 @@ function renderRecents() {
   Array.prototype.forEach.call(el.querySelectorAll('button[data-resend]'), function (b) {
     b.onclick = function () {
       var x = recents[+b.getAttribute('data-resend')];
-      projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = x.link || '';
+      projEl.value = x.name; nameEdited = true; resendPrev = linkEl.value; linkEl.value = (x.mode ? x.mode === 'existing' : /^\d+$/.test(x.link || '')) ? x.link : ''; // old entries: only a plain file id means an open-file send
       parent.postMessage({ pluginMessage: { type: 'select', ids: x.ids } }, '*');
       setTimeout(function () { ask('send'); }, 450);
     };
@@ -378,7 +378,7 @@ onmessage = function (e) {
     out.innerHTML = html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
-    addRecent({ name: r.name, time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
+    addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
     var pb = document.getElementById('push');
     if (pb) pb.onclick = function () {
       pb.disabled = true; pb.textContent = 'Pushing…';
