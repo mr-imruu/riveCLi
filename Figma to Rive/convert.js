@@ -173,7 +173,7 @@
       // dashed strokes where round ends would swallow the gaps.
       var CAP = { NONE: 'butt', ROUND: 'round', SQUARE: 'square' }, JOIN = { MITER: 'miter', ROUND: 'round', BEVEL: 'bevel' };
       var capV = CAP[node.strokeCap] || (dashFx ? 'butt' : 'round'), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
-      if (node.strokeCap && !CAP[node.strokeCap]) warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
+      if (node.strokeCap && !CAP[node.strokeCap] && node.strokeCap !== 'ARROW_LINES') warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
       // Rive has no angular (sweep) gradient. On a ring, draw it as many short arcs, each in the colour the sweep has there.
       function angularStrokes(p, thickness) {
         var inv = invert(p.gradientTransform), c0 = apply(inv, 0.5, 0.5), cx = apply(inv, 1, 0.5), cy = apply(inv, 0.5, 1);
@@ -655,12 +655,51 @@
     }
 
     // Figma's "dot" stroke end (CIRCLE_FILLED) has no Rive equivalent: draw a small filled circle at that end, above the line.
+    // An open arrowhead (two short strokes meeting at the tip) at one end of a line. dirX/dirY point OUT of the line.
+    function arrowXml(node, m, tx, ty, dirX, dirY, stroke, sw) {
+      var len = Math.hypot(dirX, dirY); if (len < 1e-6) return '';
+      // direction into parent space (linear part only), tip into parent space (full transform)
+      var dx = m[0][0] * dirX + m[0][1] * dirY, dy = m[1][0] * dirX + m[1][1] * dirY, dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
+      var ax = m[0][2] + m[0][0] * tx + m[0][1] * ty, ay = m[1][2] + m[1][0] * tx + m[1][1] * ty;
+      var L = Math.max(3, 5 * sw), ang = Math.PI / 4, c = Math.cos(ang), s = Math.sin(ang);
+      // the two wings point back from the tip, 45 degrees either side of the line
+      var bx = -dx, by = -dy, w1 = [L * (bx * c - by * s), L * (bx * s + by * c)], w2 = [L * (bx * c + by * s), L * (-bx * s + by * c)];
+      var col = stroke.type === 'SOLID' ? stroke.color : ((stroke.gradientStops || [])[0] || {}).color;
+      if (!col) return '';
+      var op = (stroke.opacity === undefined ? 1 : stroke.opacity) * (node.opacity === undefined ? 1 : node.opacity);
+      return '<Shape x="' + num(ax) + '" y="' + num(ay) + '" name="' + esc(node.name) + ' arrow" id="' + id() + '"><PointsPath isClosed="false" name="Path">' +
+        '<StraightVertex x="' + num(w1[0]) + '" y="' + num(w1[1]) + '"/><StraightVertex x="0" y="0"/><StraightVertex x="' + num(w2[0]) + '" y="' + num(w2[1]) + '"/></PointsPath>' +
+        '<Stroke thickness="' + num(sw) + '" cap="round" join="round" name="Stroke"><SolidColor colorValue="' + colorHex(col, op) + '" name="Color"/></Stroke></Shape>';
+    }
+    function lineEnds(node) {
+      var cs = (node.vectorPaths && node.vectorPaths[0]) ? parsePath(node.vectorPaths[0].data) : [];
+      var c = cs[0]; if (!c || c.pts.length < 2 || c.closed) return null;
+      var a = c.pts[0], a1 = c.pts[1], z = c.pts[c.pts.length - 1], z1 = c.pts[c.pts.length - 2];
+      var out0 = Math.hypot(a.outx, a.outy) > 1e-3 ? [a.x - (a.x + a.outx), a.y - (a.y + a.outy)] : [a.x - a1.x, a.y - a1.y];
+      var out1 = Math.hypot(z.inx, z.iny) > 1e-3 ? [-z.inx, -z.iny] : [z.x - z1.x, z.y - z1.y];
+      return { start: { x: a.x, y: a.y, dx: out0[0], dy: out0[1] }, end: { x: z.x, y: z.y, dx: out1[0], dy: out1[1] } };
+    }
     function endCapsXml(node, inFlow) {
-      if (!node.endCaps || !node.endCaps.length || inFlow || !node.relativeTransform) return '';
-      var stroke = visiblePaints(node.strokes)[0];
-      if (!stroke) return '';
-      var m = node.relativeTransform, sw = node.strokeWeight || 1, d = Math.max(3, 5.5 * sw), out = '';
+      if (inFlow || !node.relativeTransform) return '';
+      var stroke0 = visiblePaints(node.strokes)[0];
+      if (!stroke0) return '';
+      var arrows = '';
+      // Arrowheads: one cap for the whole line, or a different cap per end.
+      var ends = (node.type === 'VECTOR' && (node.strokeCap === 'ARROW_LINES' || (node.endCaps || []).some(function (c) { return c.cap === 'ARROW_LINES'; }))) ? lineEnds(node) : null;
+      if (ends) {
+        var sw0 = node.strokeWeight || 1;
+        if (node.strokeCap === 'ARROW_LINES') { arrows += arrowXml(node, node.relativeTransform, ends.start.x, ends.start.y, ends.start.dx, ends.start.dy, stroke0, sw0) + arrowXml(node, node.relativeTransform, ends.end.x, ends.end.y, ends.end.dx, ends.end.dy, stroke0, sw0); }
+        else (node.endCaps || []).forEach(function (c) {
+          if (c.cap !== 'ARROW_LINES') return;
+          var e = (Math.hypot(c.x - ends.start.x, c.y - ends.start.y) <= Math.hypot(c.x - ends.end.x, c.y - ends.end.y)) ? ends.start : ends.end;
+          arrows += arrowXml(node, node.relativeTransform, e.x, e.y, e.dx, e.dy, stroke0, sw0);
+        });
+      }
+      if (!node.endCaps || !node.endCaps.length) return arrows;
+      var stroke = stroke0;
+      var m = node.relativeTransform, sw = node.strokeWeight || 1, d = Math.max(3, 5.5 * sw), out = arrows;
       node.endCaps.forEach(function (c) {
+        if (c.cap === 'ARROW_LINES') return;
         if (c.cap !== 'CIRCLE_FILLED') { warn(node, 'stroke end "' + c.cap + '" is drawn as a plain end'); return; }
         var ax = m[0][2] + m[0][0] * c.x + m[0][1] * c.y, ay = m[1][2] + m[1][0] * c.x + m[1][1] * c.y;
         out += shapeXml({ id: node.id + ':cap', name: node.name + ' end dot', type: 'ELLIPSE', visible: true, x: ax - d / 2, y: ay - d / 2, width: d, height: d, opacity: node.opacity === undefined ? 1 : node.opacity,
