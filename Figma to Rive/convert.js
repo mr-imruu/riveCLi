@@ -174,8 +174,35 @@
       var CAP = { NONE: 'butt', ROUND: 'round', SQUARE: 'square' }, JOIN = { MITER: 'miter', ROUND: 'round', BEVEL: 'bevel' };
       var capV = CAP[node.strokeCap] || (dashFx ? 'butt' : 'round'), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
       if (node.strokeCap && !CAP[node.strokeCap]) warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
+      // Rive has no angular (sweep) gradient. On a ring, draw it as many short arcs, each in the colour the sweep has there.
+      function angularStrokes(p, thickness) {
+        var inv = invert(p.gradientTransform), c0 = apply(inv, 0.5, 0.5), cx = apply(inv, 1, 0.5), cy = apply(inv, 0.5, 1);
+        var xd = [(cx[0] - c0[0]) * w, (cx[1] - c0[1]) * h], yd = [(cy[0] - c0[0]) * w, (cy[1] - c0[1]) * h];
+        var a0 = Math.atan2(xd[1], xd[0]), dir = (xd[0] * yd[1] - xd[1] * yd[0]) >= 0 ? 1 : -1;
+        var stops = p.gradientStops.slice().sort(function (a, b) { return a.position - b.position; });
+        function at(t) {
+          var lo = stops[0], hi = stops[stops.length - 1], i;
+          for (i = 0; i < stops.length - 1; i++) if (t >= stops[i].position && t <= stops[i + 1].position) { lo = stops[i]; hi = stops[i + 1]; break; }
+          var span = hi.position - lo.position, f = span > 1e-9 ? Math.min(1, Math.max(0, (t - lo.position) / span)) : 0;
+          if (t <= stops[0].position) return stops[0].color; if (t >= stops[stops.length - 1].position) return stops[stops.length - 1].color;
+          var m = function (k) { return (lo.color[k] === undefined ? 1 : lo.color[k]) * (1 - f) + (hi.color[k] === undefined ? 1 : hi.color[k]) * f; };
+          return { r: m('r'), g: m('g'), b: m('b'), a: m('a') };
+        }
+        var N = 48, out = '', op = p.opacity === undefined ? 1 : p.opacity;
+        for (var i = 0; i < N; i++) {
+          var t0 = i / N, t1 = (i + 1) / N, col = at((t0 + t1) / 2);
+          if ((col.a === undefined ? 1 : col.a) * op < 0.01) continue;
+          // where this slice sits on Rive's ring, which starts at the top and runs clockwise (0..1 of the way round)
+          var u = (((a0 + dir * 2 * Math.PI * (dir > 0 ? t0 : t1) + Math.PI / 2) / (2 * Math.PI)) % 1 + 1) % 1;
+          out += '<Stroke thickness="' + num(thickness) + '" cap="butt" join="' + (JOIN[node.strokeJoin] || 'miter') + '" name="Stroke">' +
+            '<SolidColor colorValue="' + colorHex(col, op) + '" name="Color"/>' + dashFx +
+            '<TrimPath start="0" end="' + num(1 / N + 0.0008) + '" offset="' + num(u) + '" modeValue="1" name="Arc"/></Stroke>';
+        }
+        return out;
+      }
       function strokesAt(thickness) {
         return strokes.map(function (p) {
+          if (p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
           var body = paintBody(p, node, w, h, undefined, o.centered);
           return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + '</Stroke>' : '';
         }).join('');
