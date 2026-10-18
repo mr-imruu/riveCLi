@@ -882,9 +882,11 @@
     compNodes.forEach(function (c) { compIds[c.id] = id(); compById[c.id] = c; });
     // Side by side on the editor's stage, so they do not overlap when opened.
     var stageX = 0;
+    // Main artboards sit in one row; component artboards get a row of their own below, so they never overlap.
+    var compX = 0, rowY = 200 + frames.filter(function (f) { return !(f.type === 'COMPONENT' && componentArtboards); }).reduce(function (m, f) { return Math.max(m, f.height); }, 0);
     function onStage(node, isComponent) {
-      var xml = artboardXml(node, isComponent).replace('<Artboard', '<Artboard x="' + stageX + '" y="0"');
-      stageX += node.width + 120;
+      var xml = artboardXml(node, isComponent).replace('<Artboard', '<Artboard x="' + (isComponent ? compX : stageX) + '" y="' + (isComponent ? rowY : 0) + '"');
+      if (isComponent) compX += node.width + 120; else stageX += node.width + 120;
       return xml;
     }
     var artboards = frames.map(function (f) { return onStage(f, f.type === 'COMPONENT' && componentArtboards); })

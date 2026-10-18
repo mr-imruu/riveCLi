@@ -53,6 +53,20 @@ function standInFont() {
 // ---- add the import to an existing Rive file ------------------------------
 // Pull the live file, append the imported artboards (ids moved to a free namespace so
 // nothing collides), keep what is already there. Nothing is removed from the file.
+// Keep component artboards in a row of their own below the main artboards. Only moves them when one is not in that row yet.
+function tidyStage(text) {
+  const tags = [...text.matchAll(/<Artboard\s[^>]*>/g)].map(m => m[0]);
+  const num = (t, k) => +((t.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0), isC = t => /\sisComponent="true"/.test(t);
+  const mains = tags.filter(t => !isC(t)), comps = tags.filter(isC);
+  const rowY = mains.reduce((m, t) => Math.max(m, num(t, 'height')), 0) + 200;
+  if (!comps.length || comps.every(t => num(t, 'y') >= rowY)) return text;
+  const order = comps.slice().sort((a, b) => num(a, 'x') - num(b, 'x'));
+  let x = 0; const where = new Map();
+  for (const t of order) { where.set(t, x); x += num(t, 'width') + 120; }
+  let out = text;
+  for (const t of comps) out = out.replace(t, t.replace(/\s(x|y)="[^"]*"/g, '').replace(/<Artboard /, '<Artboard x="' + where.get(t) + '" y="' + rowY + '" '));
+  return out;
+}
 // Cut one artboard (and its component entry) out of a scene by name. Returns its old stage position too.
 function cutArtboard(text, name) {
   const re = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -94,20 +108,25 @@ function mergeIntoExisting(existing, incoming, replace) {
   }
   let compAssets = body.match(/<ComponentAsset [^>]*\/>/g) || [];
   const names = new Set([...existing.matchAll(/<Artboard [^>]*name="([^"]*)"/g)].map(m => m[1]));
-  // Put new artboards to the right of everything already on the editor's stage.
-  let edge = 0;
-  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) {
-    const x = +((m[0].match(/\sx="(-?[\d.]+)"/) || [])[1] || 0), w = +((m[0].match(/\swidth="([\d.]+)"/) || [])[1] || 0);
-    edge = Math.max(edge, x + w);
-  }
-  let cursor = existing.match(/<Artboard\s/) ? edge + 120 : 0;
+  // Main artboards go in one row at the top of the stage; component artboards in a row of their own below, so they never overlap.
+  const num = (t, k) => +((t.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0), isCompTag = t => /\sisComponent="true"/.test(t);
+  let maxH = 0, mainEdge = -120;
+  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) if (!isCompTag(m[0])) { maxH = Math.max(maxH, num(m[0], 'height')); mainEdge = Math.max(mainEdge, num(m[0], 'x') + num(m[0], 'width')); }
+  for (const a of artboards) { const t = (a.match(/<Artboard\s[^>]*>/) || [''])[0]; if (!isCompTag(t)) maxH = Math.max(maxH, num(t, 'height')); }
+  const rowY = maxH + 200;
+  let compEdge = -120;
+  for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) if (isCompTag(m[0]) && num(m[0], 'y') >= rowY) compEdge = Math.max(compEdge, num(m[0], 'x') + num(m[0], 'width'));
+  let cursor = mainEdge + 120, compCursor = compEdge + 120;
   const added = [];
   artboards = artboards.map(a => {
     const w = +((a.match(/<Artboard\s[^>]*?\swidth="([\d.]+)"/) || [])[1] || 0);
     // Drop the converter's own stage position; place it after what is already in the file.
-    const nm0 = (a.match(/<Artboard [^>]*?name="([^"]*)"/) || [])[1], slot = slots[nm0];
-    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + (slot ? slot.x : cursor) + '" y="' + (slot ? slot.y : 0) + '" ');
-    if (!slot) cursor += w + 120;
+    const nm0 = (a.match(/<Artboard [^>]*?name="([^"]*)"/) || [])[1], isC = isCompTag((a.match(/<Artboard\s[^>]*>/) || [''])[0]);
+    let slot = slots[nm0];
+    if (slot && isC && +slot.y < rowY) slot = null; // an old component sitting among the main artboards moves down to the component row
+    const px = slot ? slot.x : (isC ? compCursor : cursor), py = slot ? slot.y : (isC ? rowY : 0);
+    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + px + '" y="' + py + '" ');
+    if (!slot) { if (isC) compCursor += w + 120; else cursor += w + 120; }
     remap.forEach(([ref, from, to]) => { a = a.split(ref + '="' + from + '"').join(ref + '="' + to + '"'); });
     a = a.replace(/(<Artboard [^>]*?name=")([^"]*)(")/, (m, pre, nm, post) => {
       // Re-importing the same frame: the new artboard is called "<name> - updated" (then "- updated 2" ...) and the old one is kept.
@@ -125,7 +144,7 @@ function mergeIntoExisting(existing, incoming, replace) {
     if (newId) existing = existing.split('artboardId="' + cutIds[nm] + '"').join('artboardId="' + newId + '"');
   }
   const merged = existing.replace(/<\/Rive>\s*$/, artboards.join('\n    ') + '\n    ' + keepAssets.join('\n    ') + '\n    ' + compAssets.join('\n    ') + '\n</Rive>\n');
-  return { merged, added, replaced, namespace: ns };
+  return { merged: tidyStage(merged), added, replaced, namespace: ns };
 }
 
 // ---- inbox: a design report Claude can read ---------------------------------
