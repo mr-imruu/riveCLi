@@ -224,7 +224,7 @@ function renderRecents() {
     recents.forEach(function (x) {
       if ((x.frames && x.frames.length) || tried[x.name]) return;
       tried[x.name] = true;
-      call('/artboards?name=' + encodeURIComponent(x.name)).then(function (r) { if (r.names && r.names.length) { x.frames = r.names; x.fb = true; saveSettings(); if (recentTab === 'artboards') renderRecents(); } }).catch(function () {});
+      call('/artboards?name=' + encodeURIComponent(x.name)).then(function (r) { if (r.names && r.names.length) { x.frames = r.names; x.fb = true; saveSettings(); if (recentTab === 'artboards') renderRecents(); } }).catch(function () { delete tried[x.name]; });
     });
     recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { var fid = x.fb ? undefined : (x.ids || [])[k], key = fid || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: fid, project: x.name, time: x.time, url: x.url }); }); });
     body = items.length ? items.map(function (it, j) {
@@ -238,7 +238,7 @@ function renderRecents() {
   el.innerHTML = head + body;
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
-  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
+  on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
   on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
   on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
