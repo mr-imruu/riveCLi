@@ -59,7 +59,8 @@ function tidyStage(text) {
   const num = (t, k) => +((t.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0), isC = t => /\sisComponent="true"/.test(t);
   const mains = tags.filter(t => !isC(t)), comps = tags.filter(isC);
   const rowY = mains.reduce((m, t) => Math.max(m, num(t, 'height')), 0) + 200;
-  if (!comps.length || comps.every(t => num(t, 'y') >= rowY)) return text;
+  const overlap = comps.some((a, i) => comps.slice(i + 1).some(b => num(a, 'x') < num(b, 'x') + num(b, 'width') && num(b, 'x') < num(a, 'x') + num(a, 'width') && num(a, 'y') < num(b, 'y') + num(b, 'height') && num(b, 'y') < num(a, 'y') + num(a, 'height')));
+  if (!comps.length || (!overlap && comps.every(t => num(t, 'y') >= rowY))) return text;
   const order = comps.slice().sort((a, b) => num(a, 'x') - num(b, 'x'));
   let x = 0; const where = new Map();
   for (const t of order) { where.set(t, x); x += num(t, 'width') + 120; }
@@ -75,7 +76,8 @@ function cutArtboard(text, name) {
   const tag = hit[0].match(/^<Artboard\s[^>]*>/)[0], aid = (tag.match(/\sid="([^"]+)"/) || [])[1];
   let out = text.replace(hit[0], '');
   if (aid) out = out.replace(new RegExp('<ComponentAsset [^>]*artboardId="' + re(aid) + '"[^>]*/>\\s*'), '');
-  return { found: true, aid, text: out, x: (tag.match(/\sx="(-?[\d.]+)"/) || [])[1] || '0', y: (tag.match(/\sy="(-?[\d.]+)"/) || [])[1] || '0' };
+  const n = k => +((tag.match(new RegExp('\\s' + k + '="(-?[\\d.]+)"')) || [])[1] || 0);
+  return { found: true, aid, text: out, x: String(n('x')), y: String(n('y')), w: n('width'), h: n('height'), comp: /\sisComponent="true"/.test(tag) };
 }
 const xmlAttr = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 function mergeIntoExisting(existing, incoming, replace) {
@@ -86,7 +88,7 @@ function mergeIntoExisting(existing, incoming, replace) {
   for (const pr of replace || []) {
     const cut = cutArtboard(existing, pr.old);
     if (!cut.found) continue;
-    slots[xmlAttr(pr.new)] = { x: cut.x, y: cut.y };
+    slots[xmlAttr(pr.new)] = { x: cut.x, y: cut.y, w: cut.w, h: cut.h, comp: cut.comp };
     existing = cut.text; if (cut.aid) cutIds[pr.old] = cut.aid;
     replaced.push(pr.old);
   }
@@ -113,8 +115,10 @@ function mergeIntoExisting(existing, incoming, replace) {
   let maxH = 0, mainEdge = -120;
   for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) if (!isCompTag(m[0])) { maxH = Math.max(maxH, num(m[0], 'height')); mainEdge = Math.max(mainEdge, num(m[0], 'x') + num(m[0], 'width')); }
   for (const a of artboards) { const t = (a.match(/<Artboard\s[^>]*>/) || [''])[0]; if (!isCompTag(t)) maxH = Math.max(maxH, num(t, 'height')); }
+  for (const k of Object.keys(slots)) if (!slots[k].comp) { maxH = Math.max(maxH, slots[k].h); mainEdge = Math.max(mainEdge, +slots[k].x + slots[k].w); }
   const rowY = maxH + 200;
   let compEdge = -120;
+  for (const k of Object.keys(slots)) if (slots[k].comp && +slots[k].y >= rowY) compEdge = Math.max(compEdge, +slots[k].x + slots[k].w);
   for (const m of existing.matchAll(/<Artboard\s[^>]*>/g)) if (isCompTag(m[0]) && num(m[0], 'y') >= rowY) compEdge = Math.max(compEdge, num(m[0], 'x') + num(m[0], 'width'));
   let cursor = mainEdge + 120, compCursor = compEdge + 120;
   const added = [];
