@@ -714,7 +714,10 @@
     // ---- assemble -----------------------------------------------------
     var frames = (snapshot.nodes || []).filter(function (n) { return CONTAINERS[n.type]; });
     if (!frames.length) warnings.push('Select at least one frame, component or group.');
+    // Variants of a component set are named like "Style=Stroke, Type=Standard". They are not reusable parts, so they are not imported.
+    var skippedVariants = 0;
     var compNodes = componentArtboards ? (snapshot.components || []).filter(function (c) {
+      if (/^\s*[^=,]+=[^,]*(,\s*[^=,]+=[^,]*)*\s*$/.test(String(c.name))) { skippedVariants++; return false; }
       return !frames.some(function (f) { return f.id === c.id; });
     }) : [];
     // Component artboards get their ids up front, so instances placed earlier in the file can point at them.
@@ -729,6 +732,7 @@
     }
     var artboards = frames.map(function (f) { return onStage(f, f.type === 'COMPONENT' && componentArtboards); })
       .concat(compNodes.map(function (c) { return onStage(c, true); })).join('\n    ');
+    if (skippedVariants) notes.push(skippedVariants + ' variant component(s) (named like Style=Stroke, Type=Standard) were not imported.');
     if (linkedInst) notes.push(linkedInst + ' component instance(s) are live links to their component artboard.');
     if (detached) notes.push(detached + ' component instance(s) were detached and imported as plain layout.');
     if (compNodes.length) notes.push(compNodes.length + ' main component(s) added as Rive component artboards: ' + compNodes.map(function (c) { return c.name; }).join(', '));

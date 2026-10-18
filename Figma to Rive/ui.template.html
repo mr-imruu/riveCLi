@@ -547,7 +547,7 @@ onmessage = function (e) {
     var pmapOf = function (key) { return (snaps[key] || {}).map || {}; };
     var pmap = {}; [snaps['file-' + fileId] && 'file-' + fileId, target && target.name].forEach(function (k) { if (k) { var mp = pmapOf(k); for (var id in mp) if (!pmap[id]) pmap[id] = mp[id]; } });
     (m.nodes || []).forEach(function (n) { var nw = String(n.name).trim(); replacePairs.push({ old: pmap[n.id] ? String(pmap[n.id][0]).trim() : nw, new: nw }); });
-    (m.components || []).forEach(function (c) { var nm = String(c.name).trim(); replacePairs.push({ old: nm, new: nm }); });
+    (m.components || []).forEach(function (c) { var nm = String(c.name).trim(); if (/^[^=,]+=[^,]*(,\s*[^=,]+=[^,]*)*$/.test(nm)) return; replacePairs.push({ old: nm, new: nm }); });
   }
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
