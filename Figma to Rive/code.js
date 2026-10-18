@@ -108,8 +108,8 @@ function sendSelection() { var i = selectionInfo(); i.type = 'selection'; figma.
 
 figma.ui.onmessage = function (msg) {
   if (msg.type === 'loadSettings') {
-    Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts'), figma.clientStorage.getAsync('links'), figma.clientStorage.getAsync('recents'), figma.clientStorage.getAsync('snaps')]).then(function (v) {
-      figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, links: v[3] || {}, recents: v[4] || [], snaps: v[5] || {}, selection: selectionInfo() });
+    Promise.all([figma.clientStorage.getAsync('token'), figma.clientStorage.getAsync('fileLink'), figma.clientStorage.getAsync('opts'), figma.clientStorage.getAsync('links'), figma.clientStorage.getAsync('recents'), figma.clientStorage.getAsync('snaps'), figma.clientStorage.getAsync('dests')]).then(function (v) {
+      figma.ui.postMessage({ type: 'settings', token: v[0] || '', fileLink: v[1] || '', opts: v[2] || null, links: v[3] || {}, recents: v[4] || [], snaps: v[5] || {}, dests: v[6] || {}, selection: selectionInfo() });
     });
     return;
   }
@@ -118,6 +118,7 @@ figma.ui.onmessage = function (msg) {
     if (msg.links) figma.clientStorage.setAsync('links', msg.links);
     if (msg.recents) figma.clientStorage.setAsync('recents', msg.recents);
     if (msg.snaps) figma.clientStorage.setAsync('snaps', msg.snaps);
+    if (msg.dests) figma.clientStorage.setAsync('dests', msg.dests);
     return;
   }
   if (msg.type === 'convert') {

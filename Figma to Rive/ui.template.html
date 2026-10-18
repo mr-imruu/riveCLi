@@ -114,10 +114,12 @@
 </div>
 
 <div class="sec">Destination</div>
-<div class="field">
-  <label for="filelink">Add to an open Rive file <span class="muted">(optional)</span></label>
-  <input id="filelink" placeholder="Paste its link or id, or leave empty for a new file">
+<div class="rtabs" id="destTabs"><button class="rtab on" data-dest="account">New file in my account</button><button class="rtab" data-dest="open">Open Rive file</button></div>
+<div class="field" id="linkWrap" hidden style="margin-top:8px">
+  <label for="filelink">Link or id of the file open in Rive</label>
+  <input id="filelink" placeholder="https://editor.rive.app/file/name/1234567">
 </div>
+<div class="hint" id="destHint"></div>
 
 <details class="opts">
   <summary>Import options</summary>
@@ -172,7 +174,7 @@ function keepFrameName(sel) {
 function showSelection(sel) {
   var key = sel && sel.ids ? sel.ids.join(',') : '';
   if (key !== selKey) { if (selKey !== null) out.innerHTML = ''; selKey = key; } // a different selection means the last result no longer applies
-  if (sel && sel.file && sel.file !== curFile) { curFile = sel.file; linkEl.value = links[curFile] || ''; }
+  if (sel && sel.file && sel.file !== curFile) { curFile = sel.file; applyDest(dests[curFile] || (links[curFile] ? 'open' : 'account')); }
   var has = !!(sel && sel.count);
   document.getElementById('send').disabled = !has; document.getElementById('zip').disabled = !has;
   if (!sel || !sel.count) { detectedEl.className = 'box'; detectedEl.innerHTML = 'Select a frame in Figma to begin.'; if (!nameEdited) projEl.value = ''; return; }
@@ -185,8 +187,8 @@ function showSelection(sel) {
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
 function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked, replace: optReplace.checked, link: optLink.checked }; }
-var artTarget = null, forceReplace = false, viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
-function linkChanged() { if (!curFile) return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
+var dests = {}, curDest = 'account', artTarget = null, forceReplace = false, viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
+function linkChanged() { if (!curFile || curDest !== 'open') return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
 function copyText(t) {
   var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
@@ -306,11 +308,22 @@ function changesHtml(d, when, all, plain) {
   var inner = '<b>What changed since the last export' + (when ? ' (' + ago(when) + ')' : '') + '</b>' + (total ? h : '<br><span class="muted">No changes. This is identical to the last export.</span>');
   return plain ? inner : '<div class="box info">' + inner + '</div>';
 }
+var DEST_HINT = { account: 'Pushes a file to your Rive account and keeps updating that same file. Each Update rebuilds it from Figma.', open: 'Adds artboards to a file you already have open in Rive. With \u201CUpdate replaces the same artboard\u201D on, matching artboards are swapped; the rest of the file is kept.' };
+function applyDest(mode) {
+  curDest = mode;
+  Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) { b.classList.toggle('on', b.getAttribute('data-dest') === mode); });
+  document.getElementById('linkWrap').hidden = mode !== 'open';
+  document.getElementById('destHint').textContent = DEST_HINT[mode];
+  linkEl.value = mode === 'open' ? (links[curFile] || '') : '';
+}
+Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) {
+  b.onclick = function () { applyDest(b.getAttribute('data-dest')); if (curFile) { dests[curFile] = curDest; saveSettings(); } if (curDest === 'open') linkEl.focus(); };
+});
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
 document.getElementById('send').onclick = function () { ask('send'); };
 var settingsEl = document.getElementById('settings'), gearEl = document.getElementById('gear'), tokenNote = document.getElementById('tokenNote');
 function toggleSettings(open) { settingsEl.hidden = !open; gearEl.classList.toggle('on', open); if (open) tokenEl.focus(); }
-function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents, snaps: snaps } }, '*'); }
+function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents, snaps: snaps, dests: dests } }, '*'); }
 var dotEl = document.getElementById('dot'), stateEl = document.getElementById('helperState');
 function setHelper(cls, text) { dotEl.className = 'dot ' + cls; dotEl.title = 'Helper: ' + text; stateEl.textContent = 'Helper: ' + text; }
 function checkHelper() {
@@ -451,7 +464,7 @@ onmessage = function (e) {
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
     return;
   }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
   if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');
