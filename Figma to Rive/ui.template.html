@@ -92,51 +92,44 @@
   <button class="gear" id="gear" title="Settings" aria-label="Settings">&#9881;</button>
 </div>
 <div id="settings" hidden>
-  <label for="token">Helper token <span class="muted">(printed by the helper window). Press Enter to save.</span></label>
-  <input id="token" placeholder="paste token, then press Enter" autocomplete="off" spellcheck="false">
+  <label for="token">Helper token</label>
+  <input id="token" placeholder="Paste, then press Enter" autocomplete="off" spellcheck="false">
   <div class="muted" id="tokenNote"></div>
-  <div class="muted" id="helperState" style="margin-top:8px"></div>
+  <div class="muted" id="helperState" style="margin-top:6px"></div>
 </div>
 <div id="paneAnalysis" hidden>
-  <p>Check the selected frames <b>before</b> importing. See what will break or look different in Rive, and how to fix it in Figma.</p>
-  <div class="head-actions"><button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, frame previews and design data in the helper's claude-inbox folder">Send to Claude</button>
+  <div class="head-actions"><button id="runAnalysis">Analyse selection</button><button id="sendClaude" class="alt" title="Saves the report, previews and design data in the helper's claude-inbox folder">Send to Claude</button>
   <span class="muted" id="selInfo"></span></div>
   <div id="analysisOut"></div>
 </div>
 <div id="paneImport">
-<div class="box" id="detected" style="margin-top:0">Select a frame in Figma to begin.</div>
+<div class="box" id="detected" style="margin-top:0">Select a frame to begin.</div>
 
-<div class="sec">Name</div>
-<div class="field">
-  <label for="projname">File name in Rive</label>
-  <input id="projname" placeholder="detected from the selected frame">
-  <div class="hint">The artboard keeps the frame name.</div>
-</div>
+<div class="sec">File name</div>
+<input id="projname" placeholder="From the selected frame">
 
 <div class="sec">Destination</div>
-<div class="rtabs" id="destTabs"><button class="rtab on" data-dest="account">New file in my account</button><button class="rtab" data-dest="open">Open Rive file</button></div>
+<div class="rtabs" id="destTabs"><button class="rtab on" data-dest="account">My account</button><button class="rtab" data-dest="open">Open Rive file</button></div>
 <div class="field" id="linkWrap" hidden style="margin-top:8px">
-  <label for="filelink">Link or id of the file open in Rive</label>
-  <input id="filelink" placeholder="https://editor.rive.app/file/name/1234567">
+  <input id="filelink" placeholder="Paste the file's link or id" aria-label="Open Rive file link">
 </div>
 <div class="hint" id="destHint"></div>
 
 <details class="opts">
-  <summary>Import options</summary>
+  <summary>Options</summary>
   <div class="body">
-    <label class="chk"><input type="checkbox" id="optArtboard" checked><span><b>Frame properties become the artboard's</b><br><span class="muted">Size, fill and layout. Uncheck to import the frame as a layout box inside a plain artboard.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optComp" checked><span><b>Components</b><br><span class="muted">Each main component becomes a Rive component artboard. Its instances link to it (see the next option).</span></span></label>
-    <label class="chk"><input type="checkbox" id="optLink" checked><span><b>Link instances to their component</b><br><span class="muted">Each instance becomes a live nested artboard of its component, so editing the component in Rive updates every instance. Needs Components on. Uncheck to import instances as plain layout.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optInner" checked><span><b>Inner shadows cover inner layers</b><br><span class="muted">Like Figma. Uncheck to keep them under the contents.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optReplace" checked><span><b>Update replaces the same artboard</b><br><span class="muted">Only when you paste an open Rive file's link. The old artboard is swapped for the new one, even after a rename. Anything you added to it in Rive is lost (a backup is saved). Uncheck to always save a new artboard instead.</span></span></label>
-    <label class="chk"><input type="checkbox" id="optAuto"><span><b>Push automatically after it verifies</b><br><span class="muted">Skips the extra click. This changes your Rive file straight away.</span></span></label>
+    <label class="chk" title="Size, fill and layout of the frame become the artboard's. Off: the frame is a layout box inside a plain artboard."><input type="checkbox" id="optArtboard" checked><span>Frame becomes the artboard</span></label>
+    <label class="chk" title="Each main component becomes its own Rive component artboard."><input type="checkbox" id="optComp" checked><span>Components as artboards</span></label>
+    <label class="chk" title="Instances become live nested artboards of their component. Needs Components on. Off: plain layout."><input type="checkbox" id="optLink" checked><span>Link instances to components</span></label>
+    <label class="chk" title="Inner shadows also cover the layers inside, like Figma."><input type="checkbox" id="optInner" checked><span>Inner shadows over contents</span></label>
+    <label class="chk" title="Open Rive file only. The old artboard is swapped for the new one, even after a rename. Edits you made to it in Rive are lost (a backup is saved). Off: saves a new artboard."><input type="checkbox" id="optReplace" checked><span>Update replaces the artboard</span></label>
+    <label class="chk" title="Pushes as soon as the export verifies. Updates still wait for you."><input type="checkbox" id="optAuto"><span>Push automatically</span></label>
   </div>
 </details>
 
 <div class="actions">
-  <button id="send">Send to Rive</button><button id="zip" class="alt" title="Download the converted files without using the helper">Zip only</button>
+  <button id="send">Send to Rive</button><button id="zip" class="alt" title="Download the converted files without the helper">Zip</button>
 </div>
-<div class="hint" style="margin-top:8px">Auto layout becomes Rive layout. Text stays live text.</div>
 
 <div id="out"></div>
 <div id="recents"></div>
@@ -167,8 +160,8 @@ function keepFrameName(sel) {
   if (!sel || !sel.count || !tokenEl.value.trim()) return;
   frameTimer = setTimeout(function () {
     call('/frame', { name: cleanName(sel.names[0]), names: sel.names, types: sel.types, ids: sel.ids, sizes: sel.sizes, page: sel.page, file: sel.file })
-      .then(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Name saved for Claude.'; })
-      .catch(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = 'Helper is off, so the name was not saved (start node serve.js).'; });
+      .then(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = ''; })
+      .catch(function () { var s = document.getElementById('keptNote'); if (s) s.textContent = ''; });
   }, 500);
 }
 function showSelection(sel) {
@@ -177,11 +170,10 @@ function showSelection(sel) {
   if (sel && sel.file && sel.file !== curFile) { curFile = sel.file; applyDest(dests[curFile] || (links[curFile] ? 'open' : 'account')); }
   var has = !!(sel && sel.count);
   document.getElementById('send').disabled = !has; document.getElementById('zip').disabled = !has;
-  if (!sel || !sel.count) { detectedEl.className = 'box'; detectedEl.innerHTML = 'Select a frame in Figma to begin.'; if (!nameEdited) projEl.value = ''; return; }
+  if (!sel || !sel.count) { detectedEl.className = 'box'; detectedEl.innerHTML = 'Select a frame to begin.'; if (!nameEdited) projEl.value = ''; return; }
   var first = sel.names[0], isFrame = FRAMEISH[sel.types[0]];
   detectedEl.className = 'box ' + (isFrame ? 'ok' : 'warn');
-  detectedEl.innerHTML = '<b>Detected frame:</b> ' + esc(first) + (sel.count > 1 ? ' <span class="muted">+' + (sel.count - 1) + ' more</span>' : '') +
-    '<br><span class="muted" id="keptNote"></span><br><span class="muted">' + (isFrame ? 'Its name is saved for Claude and is used as the artboard and Rive file name.' : 'This is not a frame. Select a frame, component or group.') + '</span>';
+  detectedEl.innerHTML = '<b>' + esc(first) + '</b>' + (sel.count > 1 ? ' <span class="muted">+' + (sel.count - 1) + '</span>' : '') + '<span class="muted" id="keptNote"></span>' + (isFrame ? '' : '<br><span class="muted">Not a frame. Select a frame, component or group.</span>');
   if (!nameEdited) projEl.value = cleanName(first);
   if (isFrame) keepFrameName(sel);
 }
@@ -210,7 +202,7 @@ function renderRecents() {
   var body = '', items = [];
   if (recentTab === 'projects') {
     body = recents.map(function (x, i) {
-      var ask = delAsk === 'p' + i ? '<div class="box warn" style="margin:8px 0 0"><b>Rive’s command-line tool cannot delete a whole file.</b> Open it in Rive to delete it there, or just remove it from this list.<p style="margin:8px 0 0">' + (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm">Open in Rive</button></a>' : '') + '<button class="sm alt" data-del="' + i + '">Remove from list</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
+      var ask = delAsk === 'p' + i ? '<div class="box warn" style="margin:8px 0 0">Whole files can only be deleted in Rive.<p style="margin:8px 0 0">' + (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm">Open in Rive</button></a>' : '') + '<button class="sm alt" data-del="' + i + '">Remove from list</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
       return '<div class="recent"><div class="rtop"><b>' + esc(x.name) + '</b><span class="muted">' + ago(x.time) + (x.pushed ? ' · pushed' : ' · not pushed') + '</span></div><div class="rbtns">' +
         (x.url ? '<a href="' + esc(x.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a><button class="sm alt" data-copy="' + i + '">Copy link</button>' : '') +
         (x.ids && x.ids.length ? '<button class="sm alt" data-resend="' + i + '" title="Select the same frames again and update the same Rive file. Renamed frames and layers are updated too.">Update</button>' : '') +
@@ -219,12 +211,12 @@ function renderRecents() {
   } else {
     recents.forEach(function (x, i) { (x.frames || []).forEach(function (f, k) { var key = (x.ids || [])[k] || f; if (!(x.hidden || {})[key]) items.push({ i: i, key: key, frame: String(f).trim(), id: (x.ids || [])[k], project: x.name, time: x.time, url: x.url }); }); });
     body = items.length ? items.map(function (it, j) {
-      var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from the Rive file?</b><br>It is removed from the file in your account. A backup is saved, and the old version stays in Rive’s revision history.<p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
+      var ask = delAsk === 'a' + j ? '<div class="box bad" style="margin:8px 0 0"><b>Delete “' + esc(it.frame) + '” from Rive?</b><br><span class="muted">A backup is saved.</span><p style="margin:8px 0 0"><button class="sm" data-adelok="' + j + '">Delete from Rive</button><button class="sm alt" data-cancel="1">Cancel</button></p></div>' : '';
       return '<div class="recent"><div class="rtop"><b>' + esc(it.frame) + '</b><span class="muted">' + ago(it.time) + '</span></div><div class="muted">in ' + esc(it.project) + '</div>' + (delMsg[it.key + '|' + it.project] ? '<div class="muted" style="margin-top:4px">' + esc(delMsg[it.key + '|' + it.project]) + '</div>' : '') + '<div class="rbtns">' +
         (it.id ? '<button class="sm alt" data-pick="' + j + '" title="Select this frame in Figma">Select in Figma</button>' : '') +
         (it.url ? '<a href="' + esc(it.url) + '" target="_blank"><button class="sm alt">Open in Rive</button></a>' : '') +
         (it.id && /\/\d+\s*$/.test(it.url || '') ? '<button class="sm alt" data-aupdate="' + j + '" title="Update only this artboard in the Rive file. The other artboards are not touched.">Update</button>' : (it.id ? '<button class="sm alt" disabled title="Push this project to Rive first, then you can update single artboards.">Update</button>' : '')) + '</div>' + ask + (delAsk === 'a' + j ? '' : trashBtn('data-atrash', j)) + '</div>';
-    }).join('') : '<p class="muted">No artboards recorded yet. They appear after your next send.</p>';
+    }).join('') : '<p class="muted">No artboards yet.</p>';
   }
   el.innerHTML = head + body;
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
@@ -300,15 +292,15 @@ function diffSnaps(prev, cur) {
   return d;
 }
 function changesHtml(d, when, all, plain) {
-  var rows = [['added', 'New layers'], ['removed', 'Removed layers'], ['renamed', 'Renamed'], ['text', 'Text changed'], ['moved', 'Resized or moved'], ['style', 'Look changed (fill, stroke, shadow, layout...)']], total = 0, h = '';
+  var rows = [['added', 'New layers'], ['removed', 'Removed layers'], ['renamed', 'Renamed'], ['text', 'Text changed'], ['moved', 'Resized or moved'], ['style', 'Look changed']], total = 0, h = '';
   rows.forEach(function (r) {
     var list = d[r[0]]; if (!list.length) return; total += list.length;
     h += '<div style="margin-top:8px"><b>' + r[1] + '</b> <span class="muted">' + list.length + '</span><ul>' + list.slice(0, all ? list.length : 8).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + (!all && list.length > 8 ? '<li class="muted">+' + (list.length - 8) + ' more</li>' : '') + '</ul></div>';
   });
-  var inner = '<b>What changed since the last export' + (when ? ' (' + ago(when) + ')' : '') + '</b>' + (total ? h : '<br><span class="muted">No changes. This is identical to the last export.</span>');
+  var inner = '<b>Changes' + (when ? ' since ' + ago(when) : '') + '</b>' + (total ? h : '<br><span class="muted">No changes.</span>');
   return plain ? inner : '<div class="box info">' + inner + '</div>';
 }
-var DEST_HINT = { account: 'Pushes a file to your Rive account and keeps updating that same file. Each Update rebuilds it from Figma.', open: 'Adds artboards to a file you already have open in Rive. With \u201CUpdate replaces the same artboard\u201D on, matching artboards are swapped; the rest of the file is kept.' };
+var DEST_HINT = { account: 'Creates a file in your account and keeps updating it.', open: 'Adds to a file you already have open in Rive.' };
 function applyDest(mode) {
   curDest = mode;
   Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) { b.classList.toggle('on', b.getAttribute('data-dest') === mode); });
@@ -488,15 +480,14 @@ onmessage = function (e) {
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
   return call('/export', { name: name, rml: res.rml, yaml: res.yaml, fonts: res.fonts, fileId: fileId, replace: replacePairs, images: res.images.map(function (im) { return { file: im.file, base64: toB64(last.bytes[im.hash]) }; }) }).then(function (r) {
-    var ok = r.verify.ok, f = r.fonts, html = '<div class="box ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Built and verified with rive' : 'rive found errors') + '</b>' +
-      '<br>' + (r.mode === 'existing' ? (r.replaced && r.replaced.length ? 'Replaced in your open file: <b>' + r.replaced.map(esc).join(', ') + '</b>. Now in the file: <b>' : 'Added to your open file (nothing else in it removed): <b>') + (r.added || []).map(esc).join(', ') + '</b>. A copy of the file as it is now is saved in <code>Exports/backups/</code>.' : 'Saved in <code>Exports/' + esc(r.name) + '</code>') + (ok ? '' : '<pre>' + esc(r.verify.output) + '</pre>') + '</div>';
-    if (f.standIn.length) html += '<div class="box warn"><b>Stand-in fonts used</b> (add real files to <code>Fonts Library/</code> and send again):<ul>' + f.standIn.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+    var ok = r.verify.ok, f = r.fonts, html = '<div class="box ' + (ok ? 'ok' : 'bad') + '"><b>' + (ok ? 'Built and verified' : 'rive found errors') + '</b>' +
+      (r.mode === 'existing' ? '<br>' + (r.replaced && r.replaced.length ? 'Replaced: <b>' + r.replaced.map(esc).join(', ') + '</b><br>' : '') + 'Now in the file: <b>' + (r.added || []).map(esc).join(', ') + '</b>' : '') + (ok ? '' : '<pre>' + esc(r.verify.output) + '</pre>') + '</div>';
+    if (f.standIn.length) html += '<div class="box warn"><b>Stand-in fonts used</b><ul>' + f.standIn.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>Add them to <code>Fonts Library/</code> and send again.</div>';
     if (f.missing.length) html += '<div class="box bad"><b>Missing fonts</b>: ' + f.missing.map(esc).join(', ') + '</div>';
     html += notesHtml(res) + warningsHtml(res);
-    if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
-    var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : (ok && wasUpdate ? '<div class="box info"><b>No change report this time.</b><br><span class="muted">There is no earlier record of this file to compare with. From the next Update on, you will see what changed here before you push.</span></div>' : '');
+    var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : (ok && wasUpdate ? '<div class="box info">No earlier record to compare. Changes show from the next update.</div>' : '');
     if (ok) { snaps[r.name] = { time: Date.now(), map: curSnap }; var keep = Object.keys(snaps).sort(function (a, b) { return snaps[b].time - snaps[a].time; }); keep.slice(5).forEach(function (k) { delete snaps[k]; }); }
-    var banner = ok ? '<div class="box warn" id="notPushed"><b>Not pushed to Rive yet.</b><br>Nothing has changed in Rive so far. Scroll down and click <b>' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</b> to finish.</div>' : '';
+    var banner = ok ? '<div class="box warn" id="notPushed"><b>Not pushed yet</b><p style="margin:8px 0 0"><button id="push">' + (r.mode === 'existing' ? 'Add to my Rive file' : 'Push to Rive') + '</button></p></div>' : '';
     out.innerHTML = banner + changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
@@ -514,7 +505,7 @@ onmessage = function (e) {
     };
     if (pb && optAuto.checked && !prevSnap && !wasUpdate) pb.click(); // an update always waits, so you can read the change report first
   }).catch(function (er) {
-    out.innerHTML = '<div class="box bad"><b>Could not reach the helper.</b> ' + esc(er.message) + '<br>Run <code>node serve.js</code> in the plugin folder and paste its token. You can still use “Zip only”.</div>' + warningsHtml(res) + zipHtml(res, name);
+    out.innerHTML = '<div class="box bad"><b>Helper not reachable.</b> Start it with <code>Start Helper.command</code>. Zip still works.</div>' + warningsHtml(res) + zipHtml(res, name);
   });
   }
   // Before sending: warn about fonts that are not in the library, and about updating a file that was already pushed.
@@ -522,12 +513,12 @@ onmessage = function (e) {
   var again = !fileId && recents.filter(function (x) { return x.name === name && x.pushed; })[0];
   call('/status').then(function (st) { return st.realFonts || []; }, function () { return null; }).then(function (real) {
     var miss = real ? wanted.filter(function (f) { return real.indexOf(f) < 0; }) : [], msgs = [];
-    if (miss.length) msgs.push('<b>These fonts are not in your Fonts Library</b>, so a stand-in font will be used: <ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>');
+    if (miss.length) msgs.push('<b>Fonts missing from Fonts Library</b> (a stand-in is used): <ul>' + miss.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>');
     var gateKey = fileId ? 'file-' + fileId : name, before = snaps[gateKey];
     if (before) msgs.unshift(changesHtml(diffSnaps(before.map, curSnap), before.time, true, true));
     var renamedAb = replacePairs.filter(function (x) { return x.old !== x.new; });
-    if (renamedAb.length) msgs.push('<b>The main frame name changed, so the artboard name in Rive changes too.</b> This artboard in your Rive file is replaced by the renamed one (same spot): <ul>' + renamedAb.map(function (x) { return '<li>' + esc(x.old) + ' \u2192 <b>' + esc(x.new) + '</b></li>'; }).join('') + '</ul>Anything you added to it in Rive (animations, state machines) is lost. A backup is saved first. Turn off \u201CUpdate replaces the same artboard\u201D in Import options to save a new artboard instead.');
-    if (again) msgs.push('<b>“' + esc(name) + '” was already pushed.</b> Sending again updates that same Rive file (the old version stays in its revision history).');
+    if (renamedAb.length) msgs.push('<b>Artboard renamed in Rive</b><ul>' + renamedAb.map(function (x) { return '<li>' + esc(x.old) + ' \u2192 <b>' + esc(x.new) + '</b></li>'; }).join('') + '</ul><span class="muted">Replaces the old artboard. Edits you made to it in Rive are lost (backup saved).</span>');
+    if (again) msgs.push('<b>Already pushed.</b> This updates the same Rive file.');
     if (!msgs.length) { runExport(); return; }
     out.innerHTML = '<div class="box warn">' + msgs.join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">') + '<p style="margin:10px 0 0"><button id="goOn">Send anyway</button><button id="goStop" class="alt">Cancel</button></p></div>';
     document.getElementById('goOn').onclick = runExport;
