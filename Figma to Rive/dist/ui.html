@@ -1165,6 +1165,10 @@ var refreshing = false;
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
 var TRASH_TIP = 'Click: remove from this list. Cmd+Click: also delete from Rive.';
 function trashBtn(attr, val) { return '<button class="trash" ' + attr + '="' + val + '" title="' + TRASH_TIP + '" aria-label="' + TRASH_TIP + '">' + TRASH + '</button>'; }
+function resolveNames() {
+  var ids = []; recents.forEach(function (x) { if (!x.fb) (x.ids || []).forEach(function (id) { if (id && ids.indexOf(id) < 0) ids.push(id); }); });
+  if (ids.length) parent.postMessage({ pluginMessage: { type: 'resolveNames', ids: ids } }, '*');
+}
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
@@ -1199,7 +1203,7 @@ function renderRecents() {
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
   on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
   on('#showHidden', function (b) { b.onclick = function () { recents.forEach(function (x) { x.hidden = {}; }); saveSettings(); renderRecents(); }; });
-  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; renderRecents(); }; });
+  on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; if (recentTab === 'artboards') resolveNames(); renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
   on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
   on('button[data-del]', function (b) { b.onclick = function () { recents.splice(+b.getAttribute('data-del'), 1); delAsk = null; saveSettings(); renderRecents(); }; });
@@ -1443,8 +1447,14 @@ onmessage = function (e) {
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
     return;
   }
-  if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(renderRecents, wait); return; }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
+  if (m.type === 'names') {
+    var changed = false;
+    recents.forEach(function (x) { if (x.fb) return; (x.ids || []).forEach(function (id, k) { var nm = m.map[id]; if (nm != null && x.frames && x.frames[k] !== nm) { x.frames[k] = nm; changed = true; } }); });
+    if (changed) { saveSettings(); renderRecents(); }
+    return;
+  }
+  if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(function () { renderRecents(); resolveNames(); }, wait); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
   if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');

@@ -155,6 +155,14 @@ figma.ui.onmessage = function (msg) {
       figma.ui.postMessage(snap);
     })().catch(function (e) { figma.ui.postMessage({ type: 'error', message: 'Could not read the selection: ' + e.message }); });
   }
+  if (msg.type === 'resolveNames') {
+    // Current Figma names for saved frame ids, so Recent exports never shows a stale name after a rename.
+    Promise.all((msg.ids || []).slice(0, 200).map(function (id) { return figma.getNodeByIdAsync(id).then(function (n) { return [id, n ? n.name : null]; }, function () { return [id, null]; }); })).then(function (pairs) {
+      var map = {}; pairs.forEach(function (p) { if (p[1] != null) map[p[0]] = p[1]; });
+      figma.ui.postMessage({ type: 'names', map: map });
+    });
+    return;
+  }
   if (msg.type === 'select') {
     Promise.all((msg.ids || []).map(function (id) { return figma.getNodeByIdAsync(id); })).then(function (nodes) {
       nodes = nodes.filter(Boolean);
