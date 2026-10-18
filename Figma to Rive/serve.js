@@ -53,7 +53,21 @@ function standInFont() {
 // ---- add the import to an existing Rive file ------------------------------
 // Pull the live file, append the imported artboards (ids moved to a free namespace so
 // nothing collides), keep what is already there. Nothing is removed from the file.
-function mergeIntoExisting(existing, incoming) {
+const xmlAttr = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function mergeIntoExisting(existing, incoming, replace) {
+  const escRe = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // "Replace" mode: swap an artboard that is already in the file for its new version (even if the frame was renamed),
+  // in the same spot on the stage. Its component entry goes too. Only artboards named in `replace` are touched.
+  const replaced = [], slots = {};
+  for (const pr of replace || []) {
+    const hit = existing.match(new RegExp('<Artboard(?=\\s)[^>]*?\\sname="' + escRe(xmlAttr(pr.old)) + '"[^>]*>[\\s\\S]*?</Artboard>'));
+    if (!hit) continue;
+    const tag = hit[0].match(/^<Artboard\s[^>]*>/)[0], aid = (tag.match(/\sid="([^"]+)"/) || [])[1];
+    slots[xmlAttr(pr.new)] = { x: (tag.match(/\sx="(-?[\d.]+)"/) || [])[1] || '0', y: (tag.match(/\sy="(-?[\d.]+)"/) || [])[1] || '0' };
+    existing = existing.replace(hit[0], '');
+    if (aid) existing = existing.replace(new RegExp('<ComponentAsset [^>]*artboardId="' + escRe(aid) + '"[^>]*/>\\s*'), '');
+    replaced.push(pr.old);
+  }
   const used = [...existing.matchAll(/"(\d+):\d+"/g)].map(m => +m[1]);
   const ns = (used.length ? Math.max(...used) : 0) + 1;
   const inc = incoming.replace(/((?:id|Id|Ids)=")0:(\d+)"/g, (_, a, n) => a + ns + ':' + n + '"');
@@ -83,8 +97,9 @@ function mergeIntoExisting(existing, incoming) {
   artboards = artboards.map(a => {
     const w = +((a.match(/<Artboard\s[^>]*?\swidth="([\d.]+)"/) || [])[1] || 0);
     // Drop the converter's own stage position; place it after what is already in the file.
-    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + cursor + '" y="0" ');
-    cursor += w + 120;
+    const nm0 = (a.match(/<Artboard [^>]*?name="([^"]*)"/) || [])[1], slot = slots[nm0];
+    a = a.replace(/<Artboard\s[^>]*>/, tag => tag.replace(/\s(x|y)="[^"]*"/g, '')).replace(/<Artboard /, '<Artboard x="' + (slot ? slot.x : cursor) + '" y="' + (slot ? slot.y : 0) + '" ');
+    if (!slot) cursor += w + 120;
     remap.forEach(([ref, from, to]) => { a = a.split(ref + '="' + from + '"').join(ref + '="' + to + '"'); });
     a = a.replace(/(<Artboard [^>]*?name=")([^"]*)(")/, (m, pre, nm, post) => {
       // Re-importing the same frame: the new artboard is called "<name> - updated" (then "- updated 2" ...) and the old one is kept.
@@ -97,7 +112,7 @@ function mergeIntoExisting(existing, incoming) {
     return a;
   });
   const merged = existing.replace(/<\/Rive>\s*$/, artboards.join('\n    ') + '\n    ' + keepAssets.join('\n    ') + '\n    ' + compAssets.join('\n    ') + '\n</Rive>\n');
-  return { merged, added, namespace: ns };
+  return { merged, added, replaced, namespace: ns };
 }
 
 // ---- inbox: a design report Claude can read ---------------------------------
@@ -195,7 +210,8 @@ async function doExportExisting(body) {
   // it finds in there, and ships any other file type as an asset.
   fs.mkdirSync(path.join(EXPORTS, 'backups'), { recursive: true });
   fs.writeFileSync(path.join(EXPORTS, 'backups', 'file-' + fileId + '-' + new Date().toISOString().replace(/[:.]/g, '-') + '.rml'), existing);
-  const m = mergeIntoExisting(existing, String(body.rml));
+  const rep = (Array.isArray(body.replace) ? body.replace : []).slice(0, 200).filter(p => p && typeof p.old === 'string' && typeof p.new === 'string');
+  const m = mergeIntoExisting(existing, String(body.rml), rep);
   fs.writeFileSync(scenePath, m.merged);
   fs.mkdirSync(path.join(dir, 'fonts'), { recursive: true });
   writeImages(dir, body.images);
@@ -209,7 +225,7 @@ async function doExportExisting(body) {
   }
   const verify = await run([dir, '--verify'], dir);
   if (!verify.ok) fs.writeFileSync(scenePath, existing); // never leave a broken merge behind
-  return { dir, name: 'file-' + fileId, mode: 'existing', fileId, added: m.added, verify, fonts: { real, standIn, missing }, linked: true };
+  return { dir, name: 'file-' + fileId, mode: 'existing', fileId, added: m.added, replaced: m.replaced, verify, fonts: { real, standIn, missing }, linked: true };
 }
 
 async function doPush(body) {
