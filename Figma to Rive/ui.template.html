@@ -66,6 +66,10 @@
   input:disabled { opacity: .5; }
   .recent { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
   .recent .rtop { display: flex; justify-content: space-between; gap: 8px; } .recent .rtop b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rhead { display: flex; align-items: center; justify-content: space-between; }
+  .iconbtn { margin: 0; padding: 3px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; background: none; color: var(--muted); border-radius: 6px; }
+  .iconbtn:hover { color: var(--text); background: #333; filter: none; }
+  .iconbtn.spin svg { animation: spin .6s linear; } @keyframes spin { to { transform: rotate(360deg); } }
   .recent { position: relative; }
   .recent .trash { position: absolute; right: 6px; bottom: 6px; margin: 0; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: none; color: var(--muted); border-radius: 6px; opacity: 0; transition: opacity .12s, color .12s, background .12s; }
   .recent:hover .trash, .recent .trash:focus-visible { opacity: 1; } .recent .trash:hover { color: var(--err); background: #3a3a3a; filter: none; }
@@ -198,13 +202,15 @@ function addRecent(e) {
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
 var recentTab = 'projects', delAsk = null, delMsg = {};
+var REFRESH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg>';
+var refreshing = false;
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
 var TRASH_TIP = 'Click: remove from this list. Cmd+Click: also delete from Rive.';
 function trashBtn(attr, val) { return '<button class="trash" ' + attr + '="' + val + '" title="' + TRASH_TIP + '" aria-label="' + TRASH_TIP + '">' + TRASH + '</button>'; }
 function renderRecents() {
   var el = document.getElementById('recents');
   if (!recents.length) { el.innerHTML = ''; return; }
-  var head = '<div class="sec">Recent exports</div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
+  var head = '<div class="sec rhead"><span>Recent exports</span><button class="iconbtn" id="rrefresh" title="Refresh" aria-label="Refresh">' + REFRESH + '</button></div><div class="rtabs"><button class="rtab' + (recentTab === 'projects' ? ' on' : '') + '" data-rt="projects">Projects</button><button class="rtab' + (recentTab === 'artboards' ? ' on' : '') + '" data-rt="artboards">Artboards</button></div>';
   var body = '', items = [];
   if (recentTab === 'projects') {
     body = recents.map(function (x, i) {
@@ -227,6 +233,7 @@ function renderRecents() {
   el.innerHTML = head + body;
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
+  on('#rrefresh', function (b) { b.onclick = function () { refreshing = true; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { refreshing = false; renderRecents(); }, 1500); }; });
   on('button[data-rt]', function (b) { b.onclick = function () { recentTab = b.getAttribute('data-rt'); delAsk = null; renderRecents(); }; });
   on('button[data-cancel]', function (b) { b.onclick = function () { delAsk = null; renderRecents(); }; });
   on('button[data-ptrash]', function (b) { b.onclick = function (e) { var i = +b.getAttribute('data-ptrash'); if (e.metaKey || e.ctrlKey) { delAsk = 'p' + i; renderRecents(); } else { recents.splice(i, 1); saveSettings(); renderRecents(); } }; });
@@ -471,6 +478,7 @@ onmessage = function (e) {
     if (!paneAnalysis.hidden) { clearTimeout(analysisTimer); analysisTimer = setTimeout(runAnalysis, 400); }
     return;
   }
+  if (m.type === 'settings' && refreshing) { refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; renderRecents(); return; }
   if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
   if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
