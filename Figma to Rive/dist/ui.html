@@ -1441,7 +1441,8 @@ onmessage = function (e) {
     if (ok) html += '<p style="margin-top:12px"><button id="push">' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</button></p><p>' + (r.mode === 'existing' ? 'Updates file ' + r.fileId + ' with your current content plus the new artboard(s). Rive also keeps the previous version in the file\'s revision history.' : r.linked ? 'This updates the Rive file this export is already linked to (old versions stay in its revision history).' : 'This creates a new file in your Rive project.') + '</p>';
     var prevSnap = snaps[r.name], changes = ok && prevSnap ? changesHtml(diffSnaps(prevSnap.map, curSnap), prevSnap.time) : (ok && wasUpdate ? '<div class="box info"><b>No change report this time.</b><br><span class="muted">There is no earlier record of this file to compare with. From the next Update on, you will see what changed here before you push.</span></div>' : '');
     if (ok) { snaps[r.name] = { time: Date.now(), map: curSnap }; var keep = Object.keys(snaps).sort(function (a, b) { return snaps[b].time - snaps[a].time; }); keep.slice(5).forEach(function (k) { delete snaps[k]; }); }
-    out.innerHTML = changes + html + zipHtml(res, name);
+    var banner = ok ? '<div class="box warn" id="notPushed"><b>Not pushed to Rive yet.</b><br>Nothing has changed in Rive so far. Scroll down and click <b>' + (r.mode === 'existing' ? 'Add to my open Rive file' : 'Push to my Rive account') + '</b> to finish.</div>' : '';
+    out.innerHTML = banner + changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
     if (target) patchRecent(target.name, { time: Date.now() }); else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
@@ -1451,6 +1452,7 @@ onmessage = function (e) {
       call('/push', { name: r.name, label: 'Figma import' }).then(function (p) {
         var h = '<div class="box ' + (p.ok ? 'ok' : 'bad') + '"><b>' + (p.ok ? 'Pushed to Rive' : 'Push failed') + '</b>' +
           (p.url ? '<br><a href="' + p.url + '" target="_blank">' + p.url + '</a>' : '') + (p.ok ? '' : '<pre>' + esc(p.output) + '</pre>') + '</div>';
+        var np = document.getElementById('notPushed'); if (np && p.ok) np.parentNode.removeChild(np);
         out.insertAdjacentHTML('afterbegin', h); pb.textContent = 'Pushed';
         if (p.ok) patchRecent(target ? target.name : r.name, target ? { pushed: true, time: Date.now() } : { pushed: true, time: Date.now(), url: p.url || fileUrl, link: r.mode === 'existing' ? String(r.fileId || '') : '' });
       }).catch(function (er) { out.insertAdjacentHTML('afterbegin', '<div class="box bad">' + esc(er.message) + '</div>'); pb.disabled = false; pb.textContent = 'Try again'; });
