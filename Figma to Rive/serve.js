@@ -61,19 +61,19 @@ function cutArtboard(text, name) {
   const tag = hit[0].match(/^<Artboard\s[^>]*>/)[0], aid = (tag.match(/\sid="([^"]+)"/) || [])[1];
   let out = text.replace(hit[0], '');
   if (aid) out = out.replace(new RegExp('<ComponentAsset [^>]*artboardId="' + re(aid) + '"[^>]*/>\\s*'), '');
-  return { found: true, text: out, x: (tag.match(/\sx="(-?[\d.]+)"/) || [])[1] || '0', y: (tag.match(/\sy="(-?[\d.]+)"/) || [])[1] || '0' };
+  return { found: true, aid, text: out, x: (tag.match(/\sx="(-?[\d.]+)"/) || [])[1] || '0', y: (tag.match(/\sy="(-?[\d.]+)"/) || [])[1] || '0' };
 }
 const xmlAttr = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 function mergeIntoExisting(existing, incoming, replace) {
   const escRe = f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   // "Replace" mode: swap an artboard that is already in the file for its new version (even if the frame was renamed),
   // in the same spot on the stage. Its component entry goes too. Only artboards named in `replace` are touched.
-  const replaced = [], slots = {};
+  const replaced = [], slots = {}, cutIds = {};
   for (const pr of replace || []) {
     const cut = cutArtboard(existing, pr.old);
     if (!cut.found) continue;
     slots[xmlAttr(pr.new)] = { x: cut.x, y: cut.y };
-    existing = cut.text;
+    existing = cut.text; if (cut.aid) cutIds[pr.old] = cut.aid;
     replaced.push(pr.old);
   }
   const used = [...existing.matchAll(/"(\d+):\d+"/g)].map(m => +m[1]);
@@ -119,6 +119,11 @@ function mergeIntoExisting(existing, incoming, replace) {
     });
     return a;
   });
+  // A component artboard that was swapped for a new one has a new id: point every nested instance still in the file at it.
+  for (const nm of Object.keys(cutIds)) {
+    const ca = compAssets.find(c => c.includes(' name="' + xmlAttr(nm) + '"')), newId = ca && (ca.match(/artboardId="([^"]+)"/) || [])[1];
+    if (newId) existing = existing.split('artboardId="' + cutIds[nm] + '"').join('artboardId="' + newId + '"');
+  }
   const merged = existing.replace(/<\/Rive>\s*$/, artboards.join('\n    ') + '\n    ' + keepAssets.join('\n    ') + '\n    ' + compAssets.join('\n    ') + '\n</Rive>\n');
   return { merged, added, replaced, namespace: ns };
 }
