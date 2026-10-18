@@ -64,6 +64,8 @@
   details.opts .body { padding: 0 10px 6px; border-top: 1px solid var(--line); }
   .actions { display: flex; gap: 8px; margin-top: 16px; } .actions button { margin: 0; flex: 1; padding: 10px 14px; } .actions button.alt { flex: 0 0 auto; }
   input:disabled { opacity: .5; }
+  select { font: inherit; width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel2); color: var(--text); outline: none; }
+  select:focus { border-color: var(--accent); }
   .recent { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
   .recent .rtop { display: flex; justify-content: space-between; gap: 8px; } .recent .rtop b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rhead { display: flex; align-items: center; justify-content: space-between; }
@@ -123,6 +125,7 @@
 <div class="field" id="linkWrap" hidden style="margin-top:8px">
   <input id="filelink" placeholder="Paste the file's link or id" aria-label="Open Rive file link">
 </div>
+<div class="field" id="addWrap" hidden style="margin-top:8px"><select id="addTo" aria-label="Add to project"></select></div>
 <div class="hint" id="destHint"></div>
 
 <details class="opts">
@@ -1159,7 +1162,7 @@ function addRecent(e) {
   recents.unshift(e); recents = recents.slice(0, 5); saveSettings(); renderRecents();
 }
 function patchRecent(name, patch) { recents.forEach(function (x) { if (x.name === name) for (var k in patch) x[k] = patch[k]; }); saveSettings(); renderRecents(); }
-var artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
+var addTo = '', artErr = {}, tried = {}, recentTab = 'projects', delAsk = null, delMsg = {};
 var REFRESH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg>';
 var refreshing = false;
 var TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.6 9h6.8L12 4M6.5 7v3.5M9.5 7v3.5"/></svg>';
@@ -1199,6 +1202,7 @@ function renderRecents() {
     }).join('') : '<p class="muted">No artboards yet.</p>' + Object.keys(artErr).map(function (k) { return '<p class="muted">' + esc(k) + ': ' + esc(artErr[k]) + '</p>'; }).join('') + (hiddenCount ? '<p><button class="sm alt" id="showHidden">Show ' + hiddenCount + ' hidden</button></p>' : '');
   }
   el.innerHTML = head + body;
+  refreshAddTo();
   function on(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
   function hide(it) { var x = recents[it.i]; x.hidden = x.hidden || {}; x.hidden[it.key] = true; saveSettings(); }
   on('#rrefresh', function (b) { b.onclick = function () { if (refreshing) return; refreshing = Date.now(); tried = {}; b.classList.add('spin'); parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*'); setTimeout(function () { if (refreshing) { refreshing = false; renderRecents(); } }, 2500); }; });
@@ -1295,13 +1299,40 @@ function applyDest(mode) {
   Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) { b.classList.toggle('on', b.getAttribute('data-dest') === mode); });
   document.getElementById('linkWrap').hidden = mode !== 'open';
   document.getElementById('destHint').textContent = DEST_HINT[mode];
+  refreshAddTo();
   linkEl.value = mode === 'open' ? (links[curFile] || '') : '';
 }
 Array.prototype.forEach.call(document.querySelectorAll('#destTabs .rtab'), function (b) {
   b.onclick = function () { applyDest(b.getAttribute('data-dest')); if (curFile) { dests[curFile] = curDest; saveSettings(); } if (curDest === 'open') linkEl.focus(); };
 });
+function projFileId(x) { return ((String(x.url || '').match(/\/(\d+)\s*$/) || [])[1]) || ''; }
+function refreshAddTo() {
+  var sel = document.getElementById('addTo'), wrap = document.getElementById('addWrap');
+  var opts = recents.filter(function (x) { return projFileId(x); });
+  if (!opts.some(function (x) { return x.name === addTo; })) addTo = '';
+  sel.innerHTML = '<option value="">New project</option>' + opts.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x.name === addTo ? ' selected' : '') + '>Add to: ' + esc(x.name) + '</option>'; }).join('');
+  wrap.hidden = !(curDest === 'account' && opts.length);
+}
+document.getElementById('addTo').onchange = function () { addTo = this.value; };
+function prepAddTo() {
+  if (curDest !== 'account' || !addTo || artTarget) return;
+  var x = recents.filter(function (r) { return r.name === addTo; })[0], fid = x && projFileId(x);
+  if (!fid) return;
+  artTarget = { name: addTo }; forceReplace = true; resendPrev = linkEl.value; linkEl.value = fid;
+}
+function mergeFrames(name, ids, names) {
+  recents.forEach(function (x) {
+    if (x.name !== name) return;
+    x.frames = x.frames || []; x.ids = x.ids || [];
+    ids.forEach(function (id, i) {
+      if (x.fb) { if (x.frames.indexOf(names[i]) < 0) x.frames.push(names[i]); return; }
+      var k = x.ids.indexOf(id);
+      if (k < 0) { x.ids.push(id); x.frames.push(names[i]); } else x.frames[k] = names[i];
+    });
+  });
+}
 function trySend() { var b = document.getElementById('send'); if (!b.disabled) b.click(); }
-document.getElementById('send').onclick = function () { ask('send'); };
+document.getElementById('send').onclick = function () { prepAddTo(); ask('send'); };
 var settingsEl = document.getElementById('settings'), gearEl = document.getElementById('gear'), tokenNote = document.getElementById('tokenNote');
 function toggleSettings(open) { settingsEl.hidden = !open; gearEl.classList.toggle('on', open); if (open) tokenEl.focus(); }
 function saveSettings() { parent.postMessage({ pluginMessage: { type: 'saveSettings', token: tokenEl.value.trim(), fileLink: linkEl.value.trim(), opts: opts(), links: links, recents: recents, snaps: snaps, dests: dests } }, '*'); }
@@ -1455,7 +1486,8 @@ onmessage = function (e) {
   }
   if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(function () { renderRecents(); resolveNames(); }, wait); return; }
   if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
-  if (m.type === 'error') { out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
+  if (m.type === 'error') { artTarget = null; forceReplace = false; viaUpdate = false; if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; }
+    out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');
   var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, linkComponents: optLink.checked, innerShadowOverChildren: optInner.checked });
@@ -1489,7 +1521,7 @@ onmessage = function (e) {
     out.innerHTML = banner + changes + html + zipHtml(res, name);
     var fileUrl = r.mode === 'existing' ? 'https://editor.rive.app/file/' + r.fileId : '';
     var prev = recents.filter(function (x) { return x.name === r.name; })[0];
-    if (target) patchRecent(target.name, { time: Date.now() }); else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
+    if (target) { mergeFrames(target.name, selIds, frameNames); patchRecent(target.name, { time: Date.now() }); } else addRecent({ name: r.name, mode: r.mode === 'existing' ? 'existing' : 'new', time: Date.now(), ids: selIds, frames: frameNames, link: r.mode === 'existing' ? String(r.fileId) : '', url: fileUrl || (prev && prev.url) || '', pushed: !!(prev && prev.pushed && r.mode !== 'existing') });
     var pb = document.getElementById('push');
     if (pb) pb.onclick = function () {
       pb.disabled = true; pb.textContent = 'Pushing…';
