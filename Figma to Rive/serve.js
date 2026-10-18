@@ -53,6 +53,14 @@ function standInFont() {
 // ---- add the import to an existing Rive file ------------------------------
 // Pull the live file, append the imported artboards (ids moved to a free namespace so
 // nothing collides), keep what is already there. Nothing is removed from the file.
+// Rive can leave pieces of a deleted artboard (dashes, state machine states) loose at the top level of the file. They are not part of
+// anything, and a loose dash stops the file from building. Remove them.
+function sweepOrphans(text) {
+  let out = text;
+  out = out.replace(/\n {4}<DashPath\b[\s\S]*?<\/DashPath>/g, '');
+  out = out.replace(/\n {4}<(EntryState|ExitState|AnyState)\b[^>]*\/>/g, '');
+  return out;
+}
 // Keep component artboards in a row of their own below the main artboards. Only moves them when one is not in that row yet.
 function tidyStage(text) {
   const tags = [...text.matchAll(/<Artboard\s[^>]*>/g)].map(m => m[0]);
@@ -239,6 +247,7 @@ async function doExportExisting(body) {
   const dl = linked ? await run(['pull', dir, '--yes'], ROOT) : await run(['create', dir, '--from-remote-file=' + fileId], ROOT);
   if (!dl.ok) return { dir, name: 'file-' + fileId, mode: 'existing', verify: { ok: false, output: 'Could not download your Rive file ' + fileId + ':\n' + dl.output }, fonts: { real: [], standIn: [], missing: [] }, added: [] };
   const scenePath = path.join(dir, 'scene.rml');
+  { const raw = fs.readFileSync(scenePath, 'utf8'), swept = sweepOrphans(raw); if (swept !== raw) fs.writeFileSync(scenePath, swept); } // loose leftovers from deleted artboards
   const before = await run([dir, '--verify'], dir);
   if (!before.ok) return { dir, name: 'file-' + fileId, mode: 'existing', verify: { ok: false, output: 'Your file does not verify on its own, so I did not touch it:\n' + before.output }, fonts: { real: [], standIn: [], missing: [] }, added: [] };
   const existing = fs.readFileSync(scenePath, 'utf8');
@@ -272,7 +281,7 @@ async function doDeleteArtboard(body) {
   if (!fs.existsSync(yamlPath) || !/^push:/m.test(fs.readFileSync(yamlPath, 'utf8'))) return { ok: false, output: 'This export is not linked to a Rive file, so there is nothing in Rive to delete.' };
   const dl = await run(['pull', dir, '--yes'], ROOT);
   if (!dl.ok) return { ok: false, output: 'Could not download your Rive file:\n' + dl.output };
-  const scenePath = path.join(dir, 'scene.rml'), existing = fs.readFileSync(scenePath, 'utf8');
+  const scenePath = path.join(dir, 'scene.rml'), existing = sweepOrphans(fs.readFileSync(scenePath, 'utf8'));
   if ((existing.match(/<Artboard(?=\s)/g) || []).length <= 1) return { ok: false, output: 'That is the only artboard in the file, so I did not delete it.' };
   const cut = cutArtboard(existing, ab);
   if (!cut.found) return { ok: false, gone: true, output: 'There is no artboard called "' + ab + '" in the Rive file (already deleted or renamed).' };
