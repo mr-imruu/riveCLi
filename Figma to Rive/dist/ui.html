@@ -378,19 +378,16 @@
         }
         return out;
       }
-      // Figma draws a gradient border that fades to a transparent white as a soft white highlight line all the way round, not a line that vanishes.
-      // Measured against Figma's own render: the line stays about as strong as its first stop and turns white by the middle. Match that.
-      function whiteFadeBorder(p) {
-        var st = p.type === 'GRADIENT_LINEAR' && p.gradientStops && p.gradientStops.length === 2 ? p.gradientStops.slice().sort(function (x, y) { return x.position - y.position; }) : null;
-        if (!st) return p;
-        var a0 = st[0].color.a === undefined ? 1 : st[0].color.a, a1 = st[1].color.a === undefined ? 1 : st[1].color.a, c1 = st[1].color;
-        if (!(a1 < 0.05 && a0 > 0.2 && c1.r > 0.95 && c1.g > 0.95 && c1.b > 0.95)) return p;
-        var white = { r: 1, g: 1, b: 1, a: Math.min(1, a0 * 1.05) };
-        return Object.assign({}, p, { gradientStops: [st[0], { position: 0.5, color: white }, { position: 1, color: white }] });
+      // Frosted-glass cards: Figma draws their gradient border (one that fades to a transparent white) as a clear, near-white line all the way
+      // round, whatever the stop alphas and paint opacity say. Measured on two real designs: about 85% white. Match that.
+      var glassBlur = (node.effects || []).some(function (e) { return e.visible !== false && e.type === 'BACKGROUND_BLUR'; });
+      function glassBorder(p) {
+        if (!glassBlur || p.type !== 'GRADIENT_LINEAR' || !p.gradientStops || !p.gradientStops.some(function (g) { return (g.color.a === undefined ? 1 : g.color.a) < 0.05; })) return p;
+        return { type: 'SOLID', visible: true, opacity: 1, color: { r: 1, g: 1, b: 1, a: 0.85 } };
       }
       function strokesAt(thickness) {
         return strokes.map(function (p0) {
-          var p = whiteFadeBorder(p0);
+          var p = glassBorder(p0);
           if (options.angularRings === 'strokes' && p.type === 'GRADIENT_ANGULAR' && node.type === 'ELLIPSE' && p.gradientTransform && p.gradientStops && p.gradientStops.length) return angularStrokes(p, thickness);
           var body = paintBody(p, node, w, h, undefined, o.centered);
           return body ? '<Stroke thickness="' + num(thickness) + '" cap="' + capV + '" join="' + joinV + '"' + paintBlend(p, node) + ' name="Stroke">' + body + dashFx + blurFx + (node.__arc ? '<TrimPath start="0" end="' + num(node.__arc.len) + '" offset="' + num(node.__arc.offset) + '" modeValue="1" name="Arc"/>' : '') + '</Stroke>' : '';
@@ -410,7 +407,15 @@
           return false;
         });
         if (align === 'INSIDE' && !shadowBlocksClip && !o.noClip) { tail += strokesAt(sw * 2); clip = true; }
-        else if (align === 'OUTSIDE' && opaque) { if (o.splitShadow) shadowOut += strokesAt(sw * 2); else out += strokesAt(sw * 2); } // with a shadow wrapper the stroke goes on the wrapper, which does not clip
+        else if (align === 'OUTSIDE' && o.splitShadow) {
+          // The wrapper does not clip, so an outline box slightly larger than the frame, stroked on its centre line, gives a true outside stroke
+          // whatever the fill is (a double-width stroke would show through a see-through fill).
+          var osid = id();
+          shadowOut += '<LayoutComponent width="' + num(w + sw) + '" height="' + num(h + sw) + '" styleId="' + osid + '" clip="false" name="Outside Stroke" id="' + id() + '">' +
+            '<LayoutComponentStyle layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" positionTypeValue="absolute" positionLeft="' + num(-sw / 2) + '" positionLeftUnitsValue="points" positionTop="' + num(-sw / 2) + '" positionTopUnitsValue="points"' +
+            radiusAttrs(radii(node).map(function (v) { return v > 0 ? v + sw / 2 : 0; })) + ' name="Outside Stroke Style" id="' + osid + '"/>' + strokesAt(sw) + '</LayoutComponent>';
+        }
+        else if (align === 'OUTSIDE' && opaque) { out += strokesAt(sw * 2); } // with a shadow wrapper the stroke goes on the wrapper, which does not clip
         else {
           if (align !== 'CENTER') warn(node, 'stroke is ' + align + ' but ' + (align === 'INSIDE' ? 'it also has a shadow that cannot be separated here' : 'the fill is not opaque') + '; it is drawn centred instead');
           tail += strokesAt(sw);
