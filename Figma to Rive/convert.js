@@ -111,7 +111,27 @@
           return '<GradientStop colorValue="' + colorHex(st.color, op) + '" position="' + num(st.position) + '"/>';
         }).join('');
         var cx0 = c0[0] * w - gx, cy0 = c0[1] * h - gy;
-        return '<RadialGradient startX="' + num(cx0) + '" startY="' + num(cy0) + '" endX="' + num(cx0 + (rx + ry) / 2) + '" endY="' + num(cy0) +
+        // Rive's radial gradient is a circle. For an elliptical one, pick the circle that best matches the ellipse over the area the shape covers.
+        var rrad = (rx + ry) / 2;
+        if (options.ellipseRadial !== 'average' && Math.abs(rx - ry) > Math.max(rx, ry) * 0.12) {
+          var Ax = (c1[0] - c0[0]) * w, Ay = (c1[1] - c0[1]) * h, Bx = (c2[0] - c0[0]) * w, By = (c2[1] - c0[1]) * h, det = Ax * By - Ay * Bx;
+          if (Math.abs(det) > 1e-6) {
+            var pts = [], gi, gj;
+            for (gj = 0; gj < 8; gj++) for (gi = 0; gi < 16; gi++) {
+              var px = ((gi + 0.5) / 16) * w - cx0 - gx, py = ((gj + 0.5) / 8) * h - cy0 - gy;
+              if (!centered) { px = ((gi + 0.5) / 16) * w - cx0; py = ((gj + 0.5) / 8) * h - cy0; }
+              var uu = (px * By - py * Bx) / det, vv = (Ax * py - Ay * px) / det;
+              pts.push([Math.min(1, Math.hypot(uu, vv)), Math.hypot(px, py)]);
+            }
+            var best = rrad, bestErr = Infinity, R, k;
+            for (R = Math.min(rx, ry) * 0.5; R <= Math.max(rx, ry) * 1.2; R += Math.max(0.5, Math.min(rx, ry) / 60)) {
+              var err = 0; for (k = 0; k < pts.length; k++) { var d = pts[k][0] - Math.min(1, pts[k][1] / R); err += d * d; }
+              if (err < bestErr) { bestErr = err; best = R; }
+            }
+            rrad = best;
+          }
+        }
+        return '<RadialGradient startX="' + num(cx0) + '" startY="' + num(cy0) + '" endX="' + num(cx0 + rrad) + '" endY="' + num(cy0) +
           '" name="Gradient">' + rstops + '</RadialGradient>';
       }
       if (paint.type.indexOf('GRADIENT') === 0) {
