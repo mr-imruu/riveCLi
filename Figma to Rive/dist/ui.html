@@ -343,14 +343,23 @@
           num(e.offset ? e.offset.y : 0) + '"' + (inner ? ' inner="true"' : '') + ' name="Feather"/></Fill>';
       }
       var dashFx = '';
-      if (node.dashPattern && node.dashPattern.length) {
-        var dp = node.dashPattern.length % 2 ? node.dashPattern.concat(node.dashPattern) : node.dashPattern;
-        dashFx = '<DashPath name="Dashes">' + dp.map(function (d, i) { return '<Dash length="' + num(d) + '" name="' + (i % 2 ? 'Gap' : 'Dash') + '"/>'; }).join('') + '</DashPath>';
+      // Figma's dash lengths are the VISIBLE lengths, round ends included. Rive's round caps add half the stroke width to each end of a dash,
+      // so shorten the dashes and lengthen the gaps by the stroke width to look the same.
+      function buildDash(round) {
+        var dp = node.dashPattern.length % 2 ? node.dashPattern.concat(node.dashPattern) : node.dashPattern, sw0 = node.strokeWeight || 1;
+        return '<DashPath name="Dashes">' + dp.map(function (d, i) {
+          var v = round ? (i % 2 ? d + sw0 : Math.max(0.05, d - sw0)) : d;
+          return '<Dash length="' + num(v) + '" name="' + (i % 2 ? 'Gap' : 'Dash') + '"/>';
+        }).join('') + '</DashPath>';
       }
+      if (node.dashPattern && node.dashPattern.length) dashFx = buildDash(false);
       // Stroke ends and corners follow Figma. Old snapshots do not carry them: keep the previous round look, except for
       // dashed strokes where round ends would swallow the gaps.
       var CAP = { NONE: 'butt', ROUND: 'round', SQUARE: 'square' }, JOIN = { MITER: 'miter', ROUND: 'round', BEVEL: 'bevel' };
-      var capV = CAP[node.strokeCap] || (dashFx ? 'butt' : 'round'), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
+      // A dashed line whose ends carry caps (dots, arrows) has round dash ends in Figma, like a line whose cap is Round.
+      var dashRound = dashFx && !node.strokeCap && node.endCaps && node.endCaps.length;
+      var capV = CAP[node.strokeCap] || (dashRound ? 'round' : (dashFx ? 'butt' : 'round')), joinV = JOIN[node.strokeJoin] || (o.forceCenter ? 'miter' : 'round');
+      if (dashFx && capV === 'round') dashFx = buildDash(true);
       if (node.strokeCap && !CAP[node.strokeCap] && node.strokeCap !== 'ARROW_LINES') warn(node, 'stroke end "' + node.strokeCap + '" (arrows) is drawn as a plain end');
       // Rive has no angular (sweep) gradient. On a ring, draw it as many short arcs, each in the colour the sweep has there.
       function angularStrokes(p, thickness) {
