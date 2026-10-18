@@ -714,12 +714,19 @@
     // ---- assemble -----------------------------------------------------
     var frames = (snapshot.nodes || []).filter(function (n) { return CONTAINERS[n.type]; });
     if (!frames.length) warnings.push('Select at least one frame, component or group.');
-    // Variants of a component set are named like "Style=Stroke, Type=Standard". They are not reusable parts, so they are not imported.
-    var skippedVariants = 0;
+    // Variants of a component set are named like "Style=Stroke, Type=Standard". Import them as "<set>-Stroke-Standard".
+    var instName = {};
+    (function walkInst(list) { (list || []).forEach(function (n) { if (n.type === 'INSTANCE' && n.mainComponentId && !instName[n.mainComponentId]) instName[n.mainComponentId] = n.name; walkInst(n.children); }); })((snapshot.nodes || []).concat(snapshot.components || []));
+    var VARIANT = /^\s*[^=,]+=[^,]*(,\s*[^=,]+=[^,]*)*\s*$/;
+    function variantRename(c) {
+      if (!VARIANT.test(String(c.name))) return c;
+      var vals = String(c.name).split(',').map(function (p) { return p.slice(p.indexOf('=') + 1).trim(); });
+      var nm = [c.setName || instName[c.id] || ''].concat(vals).filter(Boolean).join('-');
+      return Object.assign({}, c, { name: nm });
+    }
     var compNodes = componentArtboards ? (snapshot.components || []).filter(function (c) {
-      if (/^\s*[^=,]+=[^,]*(,\s*[^=,]+=[^,]*)*\s*$/.test(String(c.name))) { skippedVariants++; return false; }
       return !frames.some(function (f) { return f.id === c.id; });
-    }) : [];
+    }).map(variantRename) : [];
     // Component artboards get their ids up front, so instances placed earlier in the file can point at them.
     frames.forEach(function (f) { if (f.type === 'COMPONENT' && componentArtboards) { compIds[f.id] = id(); compById[f.id] = f; } });
     compNodes.forEach(function (c) { compIds[c.id] = id(); compById[c.id] = c; });
@@ -732,7 +739,6 @@
     }
     var artboards = frames.map(function (f) { return onStage(f, f.type === 'COMPONENT' && componentArtboards); })
       .concat(compNodes.map(function (c) { return onStage(c, true); })).join('\n    ');
-    if (skippedVariants) notes.push(skippedVariants + ' variant component(s) (named like Style=Stroke, Type=Standard) were not imported.');
     if (linkedInst) notes.push(linkedInst + ' component instance(s) are live links to their component artboard.');
     if (detached) notes.push(detached + ' component instance(s) were detached and imported as plain layout.');
     if (compNodes.length) notes.push(compNodes.length + ' main component(s) added as Rive component artboards: ' + compNodes.map(function (c) { return c.name; }).join(', '));
@@ -750,7 +756,7 @@
 
     var rml = '<Rive version="1" kind="fragment">\n    ' + artboards + '\n    ' + fontXml + '\n    ' + imageXml + '\n    ' + compXml + '\n</Rive>\n';
     var yaml = 'name: ' + (options.name || 'figma-import').replace(/[^A-Za-z0-9 _-]/g, '') + '\n';
-    return { rml: rml, yaml: yaml, fonts: fontList, images: imageList, warnings: warnings, notes: notes };
+    return { componentNames: compNodes.map(function (c) { return String(c.name).trim(); }), rml: rml, yaml: yaml, fonts: fontList, images: imageList, warnings: warnings, notes: notes };
   }
 
   return { convert: convert };

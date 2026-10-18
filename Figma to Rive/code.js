@@ -86,7 +86,7 @@ async function build(sel, wantComponents, forAnalysis) {
     for (var i = 0; i < ctx.instances.length; i++) {
       var main = await ctx.instances[i].getMainComponentAsync();
       if (main) ctx.instanceSnaps[i].mainComponentId = main.id; // lets the converter link the instance to its component artboard
-      if (main && !seen[main.id]) { seen[main.id] = true; components.push(snapshot(main, ctx)); }
+      if (main && !seen[main.id]) { seen[main.id] = true; var cs = snapshot(main, ctx); if (main.parent && main.parent.type === 'COMPONENT_SET') cs.setName = main.parent.name; components.push(cs); }
     }
   }
   var images = {}, bytes = {};
