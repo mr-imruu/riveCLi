@@ -1304,8 +1304,9 @@ onmessage = function (e) {
   if (mode === 'zip') { out.innerHTML = '<div class="box ok">Converted ' + m.nodes.length + ' frame(s).</div>' + notesHtml(res) + warningsHtml(res) + zipHtml(res, name); return; }
   if (m.fileName) curFile = curFile || m.fileName;
   var fileId = ((linkEl.value.match(/file\/[^\/]+\/(\d+)/) || linkEl.value.match(/^\s*(\d+)\s*$/) || [])[1]) || '';
+  var linkUsed = linkEl.value; // what this send really uses (Update may differ from the field)
   if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; } else linkChanged(); // Update must not change the remembered link
-  if (linkEl.value.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
+  if (linkUsed.trim() && !fileId) { out.innerHTML = '<div class="box bad">I could not find a file id in that link. It should look like https://editor.rive.app/file/name/1234567</div>'; return; }
   var selIds = (m.nodes || []).map(function (n) { return n.id; }), frameNames = (m.nodes || []).map(function (n) { return n.name; });
   function runExport() {
   out.innerHTML = '<div class="box">Sending to the helper…</div>';
