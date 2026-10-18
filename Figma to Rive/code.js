@@ -58,7 +58,7 @@ function snapshot(node, ctx) {
     o.segments.forEach(function (s) { (s.fills || []).forEach(function (p) { if (p.type === 'IMAGE' && p.imageHash) ctx.hashes[p.imageHash] = true; }); });
   }
   if ('vectorPaths' in node) o.vectorPaths = node.vectorPaths;
-  if (node.type === 'INSTANCE') ctx.instances.push(node);
+  if (node.type === 'INSTANCE') { ctx.instances.push(node); ctx.instanceSnaps.push(o); }
   if ('children' in node) o.children = node.children.map(function (c) { return snapshot(c, ctx); });
   return o;
 }
@@ -72,13 +72,14 @@ function imageExt(b) {
 }
 
 async function build(sel, wantComponents, forAnalysis) {
-  var ctx = { hashes: {}, instances: [] };
+  var ctx = { hashes: {}, instances: [], instanceSnaps: [] };
   var nodes = sel.map(function (n) { return snapshot(n, ctx); });
   // Detached instances: collect their main components so they can also become component artboards.
   var components = [], seen = {};
   if (wantComponents) {
     for (var i = 0; i < ctx.instances.length; i++) {
       var main = await ctx.instances[i].getMainComponentAsync();
+      if (main) ctx.instanceSnaps[i].mainComponentId = main.id; // lets the converter link the instance to its component artboard
       if (main && !seen[main.id]) { seen[main.id] = true; components.push(snapshot(main, ctx)); }
     }
   }

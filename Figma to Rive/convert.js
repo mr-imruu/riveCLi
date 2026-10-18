@@ -563,6 +563,17 @@
     }
 
     function containerXml(node, parent, parentIsAL, inFlow, sz) {
+      if (node.type === 'INSTANCE' && linkComponents && node.mainComponentId && compIds[node.mainComponentId]) {
+        // A live link: the instance becomes a sized slot holding a nested artboard of its component.
+        var cmp = compById[node.mainComponentId];
+        linkedInst++;
+        var sig = function (n) { return [n.type, n.name, Math.round(n.width), Math.round(n.height), n.characters || '', JSON.stringify(n.fills || []), JSON.stringify(n.strokes || []), JSON.stringify(n.effects || []), n.visible !== false, n.opacity, (n.children || []).map(sig).join('|')].join('~'); };
+        var kids = function (n) { return (n.children || []).map(sig).join('|'); };
+        if (kids(node) !== kids(cmp) || Math.abs(node.width - cmp.width) > 0.5 || Math.abs(node.height - cmp.height) > 0.5) {
+          warn(node, 'this instance differs from its component (text, colour or size changes). Rive shows the component as designed, scaled to fit');
+        }
+        node = Object.assign({}, node, { type: 'FRAME', fills: [], strokes: [], effects: [], children: [], layoutMode: 'NONE', clipsContent: false, cornerRadius: 0, topLeftRadius: undefined, topRightRadius: undefined, bottomLeftRadius: undefined, bottomRightRadius: undefined, __nested: compIds[node.mainComponentId], __nestedName: cmp.name });
+      }
       if (node.type === 'INSTANCE') detached++;
       var al = hasAutoLayout(node);
       var w = node.width, h = node.height;
@@ -585,7 +596,7 @@
       var clip = wrapShadow ? true : ((node.clipsContent && !paints.shadowed) || paints.clip);
       if (!wrapShadow && node.clipsContent && paints.shadowed) warn(node, 'clip content is turned off so its shadow can show');
       if (wrapShadow && !node.clipsContent) warn(node, 'clip content is on for this frame so its inside stroke can be drawn (its shadow still shows)');
-      var inner = al ? childrenXml(node, true) : '<Node name="' + esc(String(node.name).trim()) + ' (Wrapper)">' + childrenXml(node, false) + '</Node>';
+      var inner = node.__nested ? '<NestedArtboardLeaf artboardId="' + node.__nested + '" fit="contain" name="' + esc(String(node.__nestedName).trim()) + '"/>' : al ? childrenXml(node, true) : '<Node name="' + esc(String(node.name).trim()) + ' (Wrapper)">' + childrenXml(node, false) + '</Node>';
       var imgXml = img ? imageWrapper(node, img, w, h) : '';
       // In Figma an inner shadow also shades the layers inside the frame, so it is drawn on an overlay ABOVE the contents
       // (first sibling = on top), clipped to the frame's rounded shape.
@@ -621,6 +632,8 @@
     }
 
     var componentAssets = [];
+    var compIds = {}, compById = {}, linkedInst = 0;
+    var linkComponents = options.linkComponents !== false && componentArtboards;
     function artboardXml(node, isComponent) {
       var styleId = id();
       var smId = id(), layerId = id();
@@ -640,7 +653,7 @@
       }
       var sm = '<StateMachine name="State Machine 1" id="' + smId + '"><StateMachineLayer name="Layer 1" id="' + layerId + '">' +
         '<AnyState x="200" y="-120"/><ExitState x="400" y="-120"/><EntryState/></StateMachineLayer></StateMachine>';
-      var abId = id();
+      var abId = compIds[node.id] || id();
       if (isComponent) componentAssets.push({ artboardId: abId, name: String(node.name).trim() });
       return '<Artboard' + (isComponent ? ' isComponent="true"' : '') + ' defaultStateMachineId="' + smId + '" width="' + num(node.width) + '" height="' + num(node.height) +
         '" styleId="' + styleId + '" clip="' + (node.clipsContent === false ? 'false' : 'true') + '" name="' + esc(String(node.name).trim()) + '" id="' + abId + '">' +
@@ -653,6 +666,9 @@
     var compNodes = componentArtboards ? (snapshot.components || []).filter(function (c) {
       return !frames.some(function (f) { return f.id === c.id; });
     }) : [];
+    // Component artboards get their ids up front, so instances placed earlier in the file can point at them.
+    frames.forEach(function (f) { if (f.type === 'COMPONENT' && componentArtboards) { compIds[f.id] = id(); compById[f.id] = f; } });
+    compNodes.forEach(function (c) { compIds[c.id] = id(); compById[c.id] = c; });
     // Side by side on the editor's stage, so they do not overlap when opened.
     var stageX = 0;
     function onStage(node, isComponent) {
@@ -662,6 +678,7 @@
     }
     var artboards = frames.map(function (f) { return onStage(f, f.type === 'COMPONENT' && componentArtboards); })
       .concat(compNodes.map(function (c) { return onStage(c, true); })).join('\n    ');
+    if (linkedInst) notes.push(linkedInst + ' component instance(s) are live links to their component artboard.');
     if (detached) notes.push(detached + ' component instance(s) were detached and imported as plain layout.');
     if (compNodes.length) notes.push(compNodes.length + ' main component(s) added as Rive component artboards: ' + compNodes.map(function (c) { return c.name; }).join(', '));
     var fontList = Object.keys(fonts).map(function (k) { return fonts[k]; });
