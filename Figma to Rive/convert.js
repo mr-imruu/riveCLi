@@ -721,8 +721,8 @@
     function variantRename(c) {
       if (!VARIANT.test(String(c.name))) return c;
       var vals = String(c.name).split(',').map(function (p) { return p.slice(p.indexOf('=') + 1).trim(); });
-      if (vals[0]) vals[0] = vals[0].charAt(0).toUpperCase() + vals[0].slice(1); // the first value always starts with a capital
-      var nm = [c.setName || instName[c.id] || ''].concat(vals).filter(Boolean).join('-');
+      // Every part starts with a capital: user + Stroke + Standard -> User-Stroke-Standard.
+      var nm = [c.setName || instName[c.id] || ''].concat(vals).filter(Boolean).map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join('-');
       return Object.assign({}, c, { name: nm });
     }
     var compNodes = componentArtboards ? (snapshot.components || []).filter(function (c) {
