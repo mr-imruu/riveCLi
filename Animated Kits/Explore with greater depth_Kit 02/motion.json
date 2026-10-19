@@ -1,0 +1,262 @@
+{
+ "artboard": "Explore with greater depth_Kit 02",
+ "viewModelName": "Kit 02 hover",
+ "items": [
+  {
+   "id": "0:222",
+   "role": "fade",
+   "name": "AI glow",
+   "delay": 0,
+   "dur": 50
+  },
+  {
+   "id": "0:116",
+   "styleId": "0:115",
+   "top": 224,
+   "role": "hero",
+   "name": "AI",
+   "hover": true,
+   "hoverScale": 1.05,
+   "unlock": 16
+  },
+  {
+   "id": "0:106",
+   "role": "connector",
+   "name": "Connector 1",
+   "delay": 26,
+   "dur": 72,
+   "dashId": "9:900",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30,
+   "group": "dash"
+  },
+  {
+   "id": "0:112",
+   "role": "connector",
+   "name": "Connector 2",
+   "delay": 30,
+   "dur": 72,
+   "dashId": "9:901",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30,
+   "group": "dash"
+  },
+  {
+   "id": "0:114",
+   "role": "connector",
+   "name": "Connector 3",
+   "delay": 34,
+   "dur": 72,
+   "dashId": "9:902",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30,
+   "group": "dash"
+  },
+  {
+   "id": "0:110",
+   "role": "connector",
+   "name": "Connector 4",
+   "delay": 38,
+   "dur": 72,
+   "dashId": "9:903",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30,
+   "group": "dash"
+  },
+  {
+   "id": "0:108",
+   "role": "connector",
+   "name": "Connector 5",
+   "delay": 42,
+   "dur": 72,
+   "dashId": "9:904",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30,
+   "group": "dash"
+  },
+  {
+   "id": "0:105",
+   "role": "dot",
+   "name": "End dot Green",
+   "delay": 68,
+   "group": "dash"
+  },
+  {
+   "id": "0:217",
+   "role": "fade",
+   "name": "Glow Green",
+   "delay": 58,
+   "dur": 40
+  },
+  {
+   "id": "0:215",
+   "styleId": "0:214",
+   "top": 89,
+   "role": "card",
+   "name": "Green",
+   "hover": true,
+   "hoverScale": 1.03,
+   "delay": 58,
+   "phase": 0.0,
+   "glow": {
+    "x": 445.5,
+    "y": 119,
+    "w": 200,
+    "h": 96,
+    "color": "502ABD76",
+    "blur": 36
+   }
+  },
+  {
+   "id": "0:111",
+   "role": "dot",
+   "name": "End dot Blue",
+   "delay": 76,
+   "group": "dash"
+  },
+  {
+   "id": "0:218",
+   "role": "fade",
+   "name": "Glow Blue",
+   "delay": 66,
+   "dur": 40
+  },
+  {
+   "id": "0:195",
+   "styleId": "0:194",
+   "top": 171.6,
+   "role": "card",
+   "name": "Blue",
+   "hover": true,
+   "hoverScale": 1.03,
+   "delay": 66,
+   "phase": 0.2,
+   "glow": {
+    "x": 504.5,
+    "y": 201.6,
+    "w": 200,
+    "h": 96,
+    "color": "504D75E2",
+    "blur": 36
+   }
+  },
+  {
+   "id": "0:113",
+   "role": "dot",
+   "name": "End dot Orange",
+   "delay": 84,
+   "group": "dash"
+  },
+  {
+   "id": "0:219",
+   "role": "fade",
+   "name": "Glow Orange",
+   "delay": 74,
+   "dur": 40
+  },
+  {
+   "id": "0:175",
+   "styleId": "0:174",
+   "top": 254,
+   "role": "card",
+   "name": "Orange",
+   "hover": true,
+   "hoverScale": 1.03,
+   "delay": 74,
+   "phase": 0.4,
+   "glow": {
+    "x": 573.5,
+    "y": 284,
+    "w": 200,
+    "h": 96,
+    "color": "50F0A040",
+    "blur": 36
+   }
+  },
+  {
+   "id": "0:109",
+   "role": "dot",
+   "name": "End dot Pink",
+   "delay": 92,
+   "group": "dash"
+  },
+  {
+   "id": "0:220",
+   "role": "fade",
+   "name": "Glow Pink",
+   "delay": 82,
+   "dur": 40
+  },
+  {
+   "id": "0:155",
+   "styleId": "0:154",
+   "top": 336.799,
+   "role": "card",
+   "name": "Pink",
+   "hover": true,
+   "hoverScale": 1.03,
+   "delay": 82,
+   "phase": 0.6,
+   "glow": {
+    "x": 504.5,
+    "y": 366.8,
+    "w": 200,
+    "h": 96,
+    "color": "50E060F0",
+    "blur": 36
+   }
+  },
+  {
+   "id": "0:107",
+   "role": "dot",
+   "name": "End dot Purple",
+   "delay": 100,
+   "group": "dash"
+  },
+  {
+   "id": "0:221",
+   "role": "fade",
+   "name": "Glow Purple",
+   "delay": 90,
+   "dur": 40
+  },
+  {
+   "id": "0:135",
+   "styleId": "0:134",
+   "top": 419.398,
+   "role": "card",
+   "name": "Purple",
+   "hover": true,
+   "hoverScale": 1.03,
+   "delay": 90,
+   "phase": 0.8,
+   "glow": {
+    "x": 445.5,
+    "y": 449.4,
+    "w": 200,
+    "h": 96,
+    "color": "508B6BFF",
+    "blur": 36
+   }
+  }
+ ],
+ "dashLayer": true,
+ "remove": [
+  "0:104"
+ ]
+}
