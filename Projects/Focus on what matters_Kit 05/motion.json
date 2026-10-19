@@ -1,0 +1,497 @@
+{
+ "artboard": "Focus on what matters_Kit 05",
+ "viewModelName": "Kit 05 hover",
+ "items": [
+  {
+   "id": "0:222",
+   "role": "fade",
+   "name": "AI glow",
+   "delay": 0,
+   "dur": 50
+  },
+  {
+   "id": "0:221",
+   "styleId": "0:220",
+   "top": 224,
+   "role": "hero",
+   "name": "AI",
+   "hover": true,
+   "hoverScale": 1.05,
+   "unlock": 16
+  },
+  {
+   "id": "0:218",
+   "role": "connector",
+   "name": "Main line",
+   "delay": 65,
+   "dur": 60,
+   "reverse": true
+  },
+  {
+   "id": "0:130",
+   "styleId": "0:129",
+   "top": 146,
+   "role": "card",
+   "name": "Core",
+   "hover": true,
+   "hoverScale": 1.05,
+   "delay": 60,
+   "amp": 1,
+   "glow": {
+    "x": 206,
+    "y": 206,
+    "w": 170,
+    "h": 170,
+    "color": "504D75E2",
+    "blur": 40
+   },
+   "popIn": true,
+   "popFrom": 0.8,
+   "popLen": 44
+  },
+  {
+   "id": "0:189",
+   "role": "fade",
+   "name": "Orbit arc 1",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:190",
+   "role": "fade",
+   "name": "Orbit arc 2",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:191",
+   "role": "fade",
+   "name": "Orbit arc 3",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:192",
+   "role": "fade",
+   "name": "Orbit arc 4",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:193",
+   "role": "fade",
+   "name": "Orbit arc 5",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:194",
+   "role": "fade",
+   "name": "Orbit arc 6",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:195",
+   "role": "fade",
+   "name": "Orbit arc 7",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:196",
+   "role": "fade",
+   "name": "Orbit arc 8",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:197",
+   "role": "fade",
+   "name": "Orbit arc 9",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:198",
+   "role": "fade",
+   "name": "Orbit arc 10",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:199",
+   "role": "fade",
+   "name": "Orbit arc 11",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:200",
+   "role": "fade",
+   "name": "Orbit arc 12",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:201",
+   "role": "fade",
+   "name": "Orbit arc 13",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:202",
+   "role": "fade",
+   "name": "Orbit arc 14",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:203",
+   "role": "fade",
+   "name": "Orbit arc 15",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:204",
+   "role": "fade",
+   "name": "Orbit arc 16",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:205",
+   "role": "fade",
+   "name": "Orbit arc 17",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:206",
+   "role": "fade",
+   "name": "Orbit arc 18",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:207",
+   "role": "fade",
+   "name": "Orbit arc 19",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:208",
+   "role": "fade",
+   "name": "Orbit arc 20",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:209",
+   "role": "fade",
+   "name": "Orbit arc 21",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:210",
+   "role": "fade",
+   "name": "Orbit arc 22",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:211",
+   "role": "fade",
+   "name": "Orbit arc 23",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:212",
+   "role": "fade",
+   "name": "Orbit arc 24",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:213",
+   "role": "fade",
+   "name": "Orbit arc 25",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:214",
+   "role": "fade",
+   "name": "Orbit arc 26",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:215",
+   "role": "fade",
+   "name": "Orbit arc 27",
+   "delay": 70,
+   "dur": 60
+  },
+  {
+   "id": "0:156",
+   "styleId": "0:144",
+   "top": 8,
+   "role": "icon",
+   "name": "Chart",
+   "hover": true,
+   "hoverScale": 1.08,
+   "delay": 100,
+   "phase": 0.0,
+   "amp": 1.2,
+   "glow": {
+    "x": 86.4,
+    "y": 46,
+    "w": 96,
+    "h": 96,
+    "color": "502ABD76",
+    "blur": 30
+   }
+  },
+  {
+   "id": "0:184",
+   "styleId": "0:176",
+   "top": 51,
+   "role": "icon",
+   "name": "Energy",
+   "hover": true,
+   "hoverScale": 1.08,
+   "delay": 108,
+   "phase": 0.25,
+   "amp": 1.2,
+   "glow": {
+    "x": 371.4,
+    "y": 89,
+    "w": 96,
+    "h": 96,
+    "color": "50E060F0",
+    "blur": 30
+   }
+  },
+  {
+   "id": "0:175",
+   "styleId": "0:165",
+   "top": 335,
+   "role": "icon",
+   "name": "Target",
+   "hover": true,
+   "hoverScale": 1.08,
+   "delay": 116,
+   "phase": 0.5,
+   "amp": 1.2,
+   "glow": {
+    "x": 332.4,
+    "y": 373,
+    "w": 96,
+    "h": 96,
+    "color": "50FF8A4D",
+    "blur": 30
+   }
+  },
+  {
+   "id": "0:164",
+   "styleId": "0:157",
+   "top": 308,
+   "role": "icon",
+   "name": "User",
+   "hover": true,
+   "hoverScale": 1.08,
+   "delay": 124,
+   "phase": 0.75,
+   "amp": 1.2,
+   "glow": {
+    "x": 61,
+    "y": 346,
+    "w": 96,
+    "h": 96,
+    "color": "508B6BFF",
+    "blur": 30
+   }
+  },
+  {
+   "id": "0:227",
+   "role": "fade",
+   "name": "Core glow",
+   "delay": 60,
+   "dur": 60
+  },
+  {
+   "id": "0:226",
+   "role": "fade",
+   "name": "Static glow 0:226",
+   "delay": 100,
+   "dur": 40
+  },
+  {
+   "id": "0:223",
+   "role": "fade",
+   "name": "Static glow 0:223",
+   "delay": 108,
+   "dur": 40
+  },
+  {
+   "id": "0:224",
+   "role": "fade",
+   "name": "Static glow 0:224",
+   "delay": 116,
+   "dur": 40
+  },
+  {
+   "id": "0:225",
+   "role": "fade",
+   "name": "Static glow 0:225",
+   "delay": 124,
+   "dur": 40
+  }
+ ],
+ "micro": [
+  {
+   "type": "bars",
+   "bars": [
+    {
+     "id": "0:147",
+     "y": 25,
+     "half": 5,
+     "phase": 0
+    },
+    {
+     "id": "0:148",
+     "y": 22.917,
+     "half": 7.1,
+     "phase": 0.33
+    },
+    {
+     "id": "0:151",
+     "y": 20,
+     "half": 10,
+     "phase": 0.66
+    }
+   ]
+  },
+  {
+   "type": "pulse",
+   "ids": [
+    "0:179"
+   ],
+   "at": 40,
+   "peak": 1.2
+  },
+  {
+   "type": "hit",
+   "id": "0:168",
+   "x": 25.011,
+   "y": 8.31,
+   "dx": -2.4,
+   "dy": 2.4,
+   "rings": [
+    "0:169",
+    "0:170"
+   ],
+   "at": 90
+  },
+  {
+   "type": "bob",
+   "id": "0:159",
+   "y": 11.667,
+   "amp": 1.8,
+   "body": "0:160",
+   "at": 140
+  },
+  {
+   "type": "dashflow",
+   "ids": [
+    "0:189",
+    "0:190",
+    "0:191",
+    "0:192",
+    "0:193",
+    "0:194",
+    "0:195",
+    "0:196",
+    "0:197",
+    "0:198",
+    "0:199",
+    "0:200",
+    "0:201",
+    "0:202",
+    "0:203",
+    "0:204",
+    "0:205",
+    "0:206",
+    "0:207",
+    "0:208",
+    "0:209",
+    "0:210",
+    "0:211",
+    "0:212",
+    "0:213",
+    "0:214",
+    "0:215"
+   ],
+   "period": 7.714,
+   "turns": 16,
+   "saw": 45,
+   "dir": 1,
+   "layer": true
+  },
+  {
+   "type": "spoke",
+   "line": "0:134",
+   "dot": "0:133",
+   "start": 84,
+   "travel": 80,
+   "invert": true,
+   "inset": 14,
+   "noDash": true
+  },
+  {
+   "type": "spoke",
+   "line": "0:138",
+   "dot": "0:137",
+   "start": 196,
+   "travel": 80,
+   "invert": true,
+   "inset": 14,
+   "noDash": true
+  },
+  {
+   "type": "spoke",
+   "line": "0:142",
+   "dot": "0:141",
+   "start": 308,
+   "travel": 80,
+   "invert": true,
+   "inset": 14,
+   "noDash": true
+  },
+  {
+   "type": "spoke",
+   "line": "0:187",
+   "dot": "0:186",
+   "start": 420,
+   "travel": 80,
+   "invert": true,
+   "inset": 14,
+   "noDash": true
+  }
+ ],
+ "pulse": {
+  "fromX": 110,
+  "toX": 385,
+  "y": 286,
+  "after": "0:221",
+  "size": 8,
+  "start": 20
+ },
+ "spokeLoop": 540
+}

@@ -1,0 +1,185 @@
+{
+ "artboard": "Start with strategic clarity_Kit 01",
+ "viewModelName": "Kit 01 hover",
+ "items": [
+  {
+   "id": "0:225",
+   "role": "hero",
+   "name": "AI",
+   "styleId": "0:224",
+   "top": 202,
+   "hover": true,
+   "hoverScale": 1.05
+  },
+  {
+   "id": "0:223",
+   "role": "line",
+   "name": "Line"
+  },
+  {
+   "id": "0:169",
+   "role": "dot",
+   "name": "Dot"
+  },
+  {
+   "id": "0:170",
+   "role": "ring",
+   "name": "Orbit",
+   "dashId": "9:900",
+   "dashPeriod": 9,
+   "dashTurns": 14.14,
+   "dashDir": 1
+  },
+  {
+   "id": "0:222",
+   "styleId": "0:171",
+   "top": 136,
+   "role": "card",
+   "name": "Card",
+   "hover": true,
+   "hoverScale": 1.015,
+   "phase": 0.0,
+   "glow": {
+    "x": 475,
+    "y": 262,
+    "w": 250,
+    "h": 190,
+    "color": "3A4D75E2",
+    "blur": 44
+   },
+   "listenTo": "0:217"
+  },
+  {
+   "id": "0:154",
+   "styleId": "0:142",
+   "top": 123,
+   "role": "icon",
+   "name": "Security",
+   "hover": true,
+   "delay": 52,
+   "phase": 0.0,
+   "glow": {
+    "x": 335,
+    "y": 178,
+    "w": 92,
+    "h": 92,
+    "color": "402ABD76",
+    "blur": 34
+   }
+  },
+  {
+   "id": "0:140",
+   "styleId": "0:139",
+   "top": 90,
+   "role": "icon",
+   "name": "Limitation",
+   "hover": true,
+   "delay": 60,
+   "phase": 0.25,
+   "glow": {
+    "x": 551,
+    "y": 120,
+    "w": 92,
+    "h": 92,
+    "color": "40FF5800",
+    "blur": 34
+   }
+  },
+  {
+   "id": "0:117",
+   "styleId": "0:105",
+   "top": 285,
+   "role": "icon",
+   "name": "Settings",
+   "hover": true,
+   "delay": 68,
+   "phase": 0.5,
+   "glow": {
+    "x": 616,
+    "y": 340,
+    "w": 92,
+    "h": 92,
+    "color": "59B8FF7E",
+    "blur": 40
+   }
+  },
+  {
+   "id": "0:130",
+   "styleId": "0:118",
+   "top": 334,
+   "role": "icon",
+   "name": "View",
+   "hover": true,
+   "delay": 76,
+   "phase": 0.75,
+   "glow": {
+    "x": 389,
+    "y": 394,
+    "w": 92,
+    "h": 92,
+    "color": "407B5CFF",
+    "blur": 34
+   }
+  },
+  {
+   "id": "0:167",
+   "styleId": "0:166",
+   "top": 344,
+   "role": "pill",
+   "name": "Tag",
+   "delay": 84,
+   "amp": 2,
+   "phase": 0.125,
+   "hover": true,
+   "hoverScale": 1.06
+  }
+ ],
+ "pulse": {
+  "fromX": 115,
+  "toX": 316,
+  "y": 262,
+  "after": "0:225",
+  "size": 8
+ },
+ "burst": {
+  "parent": "0:222",
+  "cx": 234,
+  "cy": 69,
+  "angles": [
+   -135,
+   -90,
+   -45,
+   0
+  ],
+  "r0": 29,
+  "r1": 44,
+  "color": "FF2DB574",
+  "thickness": 2.5,
+  "start": 90
+ },
+ "micro": [
+  {
+   "type": "trimcheck",
+   "id": "0:145"
+  },
+  {
+   "type": "needle",
+   "id": "0:134",
+   "pivot": [
+    12.5,
+    12.5
+   ]
+  },
+  {
+   "type": "gear",
+   "id": "0:109"
+  },
+  {
+   "type": "blink",
+   "ids": [
+    "0:122",
+    "0:121"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,439 @@
+{
+ "artboard": "Move faster, think deeper_Kit 03",
+ "viewModelName": "Kit 03 hover",
+ "items": [
+  {
+   "id": "0:330",
+   "role": "fade",
+   "name": "AI glow",
+   "delay": 0,
+   "dur": 50
+  },
+  {
+   "id": "0:329",
+   "styleId": "0:328",
+   "top": 224,
+   "role": "hero",
+   "name": "AI",
+   "hover": true,
+   "hoverScale": 1.05,
+   "unlock": 16
+  },
+  {
+   "id": "0:327",
+   "role": "connector",
+   "name": "Line",
+   "delay": 71,
+   "dur": 50
+  },
+  {
+   "id": "0:123",
+   "role": "dot",
+   "name": "Start dot",
+   "delay": 103
+  },
+  {
+   "id": "0:313",
+   "styleId": "0:289",
+   "top": 218,
+   "role": "card",
+   "name": "Task 1",
+   "hover": true,
+   "hoverScale": 1.04,
+   "delay": 54,
+   "phase": 0.0,
+   "glow": {
+    "x": 296,
+    "y": 238,
+    "w": 190,
+    "h": 84,
+    "color": "502ABD76",
+    "blur": 30
+   },
+   "amp": 1
+  },
+  {
+   "id": "0:287",
+   "styleId": "0:263",
+   "top": 270,
+   "role": "card",
+   "name": "Task 2",
+   "hover": true,
+   "hoverScale": 1.04,
+   "delay": 62,
+   "phase": 0.15,
+   "glow": {
+    "x": 296,
+    "y": 290,
+    "w": 190,
+    "h": 84,
+    "color": "502ABD76",
+    "blur": 30
+   },
+   "amp": 1
+  },
+  {
+   "id": "0:261",
+   "styleId": "0:237",
+   "top": 322,
+   "role": "card",
+   "name": "Task 3",
+   "hover": true,
+   "hoverScale": 1.04,
+   "delay": 70,
+   "phase": 0.3,
+   "glow": {
+    "x": 296,
+    "y": 342,
+    "w": 190,
+    "h": 84,
+    "color": "502ABD76",
+    "blur": 30
+   },
+   "amp": 1
+  },
+  {
+   "id": "0:325",
+   "styleId": "0:324",
+   "top": 186,
+   "role": "pill",
+   "name": "Automated tag",
+   "delay": 80,
+   "amp": 1,
+   "phase": 0.3,
+   "hover": true,
+   "hoverScale": 1.06
+  },
+  {
+   "id": "0:288",
+   "role": "connector",
+   "name": "Left connector 1",
+   "delay": 60,
+   "dur": 60,
+   "group": "dash",
+   "dashId": "9:900",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:262",
+   "role": "connector",
+   "name": "Left connector 2",
+   "delay": 64,
+   "dur": 60,
+   "group": "dash",
+   "dashId": "9:901",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:236",
+   "role": "connector",
+   "name": "Left connector 3",
+   "delay": 68,
+   "dur": 60,
+   "group": "dash",
+   "dashId": "9:902",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": 1,
+   "streak": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:235",
+   "role": "dot",
+   "name": "Hub dot",
+   "delay": 100,
+   "group": "dash"
+  },
+  {
+   "id": "0:233",
+   "styleId": "0:232",
+   "top": 141.5,
+   "role": "card",
+   "name": "Window",
+   "hover": true,
+   "hoverScale": 1.015,
+   "delay": 84,
+   "phase": 0.1,
+   "amp": 1,
+   "glow": {
+    "x": 540,
+    "y": 259.5,
+    "w": 270,
+    "h": 290,
+    "color": "504D75E2",
+    "blur": 44
+   }
+  },
+  {
+   "id": "0:121",
+   "styleId": "0:120",
+   "top": 122.5,
+   "role": "icon",
+   "name": "Scan badge",
+   "delay": 104,
+   "amp": 1.5,
+   "phase": 0.6
+  },
+  {
+   "id": "0:183",
+   "styleId": "0:182",
+   "top": 264.5,
+   "role": "pill",
+   "name": "Details tag",
+   "delay": 112,
+   "amp": 1,
+   "phase": 0.8
+  },
+  {
+   "id": "0:111",
+   "role": "connector",
+   "name": "Down connector 1",
+   "delay": 124,
+   "dur": 50,
+   "group": "dash",
+   "dashId": "9:910",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": -1,
+   "streak": true,
+   "reverse": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:110",
+   "role": "dot",
+   "name": "End dot Eye",
+   "delay": 124,
+   "group": "dash"
+  },
+  {
+   "id": "0:165",
+   "styleId": "0:164",
+   "top": 401.5,
+   "role": "icon",
+   "name": "Eye",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 134,
+   "phase": 0.0,
+   "glow": {
+    "x": 450,
+    "y": 421.5,
+    "w": 84,
+    "h": 84,
+    "color": "50E060F0",
+    "blur": 28
+   },
+   "amp": 1.2
+  },
+  {
+   "id": "0:107",
+   "role": "connector",
+   "name": "Down connector 2",
+   "delay": 132,
+   "dur": 50,
+   "group": "dash",
+   "dashId": "9:911",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": -1,
+   "streak": true,
+   "reverse": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:106",
+   "role": "dot",
+   "name": "End dot Click",
+   "delay": 132,
+   "group": "dash"
+  },
+  {
+   "id": "0:155",
+   "styleId": "0:154",
+   "top": 401.5,
+   "role": "icon",
+   "name": "Click",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 142,
+   "phase": 0.25,
+   "glow": {
+    "x": 510,
+    "y": 421.5,
+    "w": 84,
+    "h": 84,
+    "color": "508B6BFF",
+    "blur": 28
+   },
+   "amp": 1.2
+  },
+  {
+   "id": "0:105",
+   "role": "connector",
+   "name": "Down connector 3",
+   "delay": 140,
+   "dur": 50,
+   "group": "dash",
+   "dashId": "9:912",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": -1,
+   "streak": true,
+   "reverse": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:104",
+   "role": "dot",
+   "name": "End dot Layers",
+   "delay": 140,
+   "group": "dash"
+  },
+  {
+   "id": "0:142",
+   "styleId": "0:141",
+   "top": 401.5,
+   "role": "icon",
+   "name": "Layers",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 150,
+   "phase": 0.5,
+   "glow": {
+    "x": 570,
+    "y": 421.5,
+    "w": 84,
+    "h": 84,
+    "color": "502ABD76",
+    "blur": 28
+   },
+   "amp": 1.2
+  },
+  {
+   "id": "0:109",
+   "role": "connector",
+   "name": "Down connector 4",
+   "delay": 148,
+   "dur": 50,
+   "group": "dash",
+   "dashId": "9:913",
+   "dashPeriod": 6,
+   "dashTurns": 24,
+   "dashDir": -1,
+   "streak": true,
+   "reverse": true,
+   "streakStart": 30
+  },
+  {
+   "id": "0:108",
+   "role": "dot",
+   "name": "End dot Sparkle",
+   "delay": 148,
+   "group": "dash"
+  },
+  {
+   "id": "0:131",
+   "styleId": "0:130",
+   "top": 401.5,
+   "role": "icon",
+   "name": "Sparkle",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 158,
+   "phase": 0.75,
+   "glow": {
+    "x": 630,
+    "y": 421.5,
+    "w": 84,
+    "h": 84,
+    "color": "50FF8A4D",
+    "blur": 28
+   },
+   "amp": 1.2
+  }
+ ],
+ "dashLayer": true,
+ "micro": [
+  {
+   "type": "gear",
+   "id": "0:244",
+   "layout": true,
+   "turns": 2
+  },
+  {
+   "type": "gear",
+   "id": "0:270",
+   "layout": true,
+   "turns": 2
+  },
+  {
+   "type": "gear",
+   "id": "0:296",
+   "layout": true,
+   "turns": 2
+  },
+  {
+   "type": "blink",
+   "ids": [
+    "0:115",
+    "0:116"
+   ],
+   "at": 150
+  },
+  {
+   "type": "blink",
+   "ids": [
+    "0:159",
+    "0:160"
+   ],
+   "at": 90
+  },
+  {
+   "type": "press",
+   "cursor": "0:146",
+   "rays": [
+    "0:147",
+    "0:148",
+    "0:149",
+    "0:150"
+   ],
+   "at": 60
+  },
+  {
+   "type": "layers",
+   "top": "0:137",
+   "bot": "0:135",
+   "topY": 5.833,
+   "botY": 16.25,
+   "at": 50
+  },
+  {
+   "type": "twinkle",
+   "id": "0:126",
+   "at": 40
+  },
+  {
+   "type": "gear",
+   "id": "0:203",
+   "turns": 1
+  }
+ ],
+ "pulse": {
+  "fromX": 110,
+  "toX": 226,
+  "y": 287,
+  "after": "0:329",
+  "size": 8,
+  "start": 20
+ }
+}

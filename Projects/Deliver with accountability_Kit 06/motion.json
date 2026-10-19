@@ -1,0 +1,498 @@
+{
+ "artboard": "Deliver with accountability_Kit 06",
+ "viewModelName": "Kit 06 hover",
+ "items": [
+  {
+   "id": "0:243",
+   "role": "fade",
+   "name": "AI glow",
+   "delay": 0,
+   "dur": 50
+  },
+  {
+   "id": "0:217",
+   "styleId": "0:211",
+   "top": 224,
+   "role": "hero",
+   "name": "AI",
+   "hover": true,
+   "hoverScale": 1.05,
+   "unlock": 16
+  },
+  {
+   "id": "0:106",
+   "role": "connector",
+   "name": "Main line",
+   "delay": 14,
+   "dur": 50,
+   "reverse": true,
+   "group": "dash"
+  },
+  {
+   "id": "0:105",
+   "role": "dot",
+   "name": "Main dot",
+   "delay": 60
+  },
+  {
+   "id": "0:234",
+   "role": "fade",
+   "name": "Window glow 0:234",
+   "delay": 40,
+   "dur": 50
+  },
+  {
+   "id": "0:235",
+   "role": "fade",
+   "name": "Window glow 0:235",
+   "delay": 40,
+   "dur": 50
+  },
+  {
+   "id": "0:236",
+   "role": "fade",
+   "name": "Window glow 0:236",
+   "delay": 40,
+   "dur": 50
+  },
+  {
+   "id": "0:195",
+   "styleId": "0:194",
+   "top": 111,
+   "role": "card",
+   "name": "Window",
+   "hover": true,
+   "hoverScale": 1.015,
+   "delay": 40,
+   "popIn": true,
+   "popFrom": 0.94,
+   "popLen": 44,
+   "amp": 1.2,
+   "glow": {
+    "x": 461,
+    "y": 208,
+    "w": 380,
+    "h": 250,
+    "color": "504D75E2",
+    "blur": 50
+   }
+  },
+  {
+   "id": "0:237",
+   "role": "fade",
+   "name": "Row glow 0:237",
+   "delay": 70,
+   "dur": 40
+  },
+  {
+   "id": "0:238",
+   "role": "fade",
+   "name": "Row glow 0:238",
+   "delay": 80,
+   "dur": 40
+  },
+  {
+   "id": "0:239",
+   "role": "fade",
+   "name": "Row glow 0:239",
+   "delay": 90,
+   "dur": 40
+  },
+  {
+   "id": "0:122",
+   "styleId": "0:108",
+   "top": 94,
+   "role": "icon",
+   "name": "Badge",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 110,
+   "amp": 1.5,
+   "glow": {
+    "x": 616,
+    "y": 119,
+    "w": 96,
+    "h": 96,
+    "color": "502ABD76",
+    "blur": 28
+   }
+  },
+  {
+   "id": "0:240",
+   "role": "fade",
+   "name": "Badge glow",
+   "delay": 110,
+   "dur": 40
+  },
+  {
+   "id": "0:200",
+   "role": "connector",
+   "name": "Down line 1",
+   "delay": 90,
+   "dur": 50,
+   "reverse": true,
+   "group": "dash",
+   "dashId": "9:900",
+   "dashPeriod": 6,
+   "dashTurns": 12,
+   "dashDir": -1,
+   "streak": true,
+   "streakStart": 70
+  },
+  {
+   "id": "0:199",
+   "role": "fade",
+   "name": "Arrow 1",
+   "delay": 130,
+   "dur": 20,
+   "group": "dash"
+  },
+  {
+   "id": "0:241",
+   "role": "fade",
+   "name": "Circle glow 1",
+   "delay": 100,
+   "dur": 40
+  },
+  {
+   "id": "0:233",
+   "styleId": "0:226",
+   "top": 359,
+   "role": "icon",
+   "name": "Green",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 100,
+   "phase": 0.0,
+   "amp": 1.2,
+   "glow": {
+    "x": 367,
+    "y": 391,
+    "w": 100,
+    "h": 100,
+    "color": "502ABD76",
+    "blur": 30
+   }
+  },
+  {
+   "id": "0:198",
+   "role": "connector",
+   "name": "Down line 2",
+   "delay": 96,
+   "dur": 50,
+   "reverse": true,
+   "group": "dash",
+   "dashId": "9:901",
+   "dashPeriod": 6,
+   "dashTurns": 12,
+   "dashDir": -1,
+   "streak": true,
+   "streakStart": 70
+  },
+  {
+   "id": "0:197",
+   "role": "fade",
+   "name": "Arrow 2",
+   "delay": 136,
+   "dur": 20,
+   "group": "dash"
+  },
+  {
+   "id": "0:244",
+   "role": "fade",
+   "name": "Circle glow 2",
+   "delay": 108,
+   "dur": 40
+  },
+  {
+   "id": "0:210",
+   "styleId": "0:203",
+   "top": 412,
+   "role": "icon",
+   "name": "Purple",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 108,
+   "phase": 0.3,
+   "amp": 1.2,
+   "glow": {
+    "x": 461,
+    "y": 444,
+    "w": 100,
+    "h": 100,
+    "color": "508B6BFF",
+    "blur": 30
+   }
+  },
+  {
+   "id": "0:202",
+   "role": "connector",
+   "name": "Down line 3",
+   "delay": 102,
+   "dur": 50,
+   "reverse": true,
+   "group": "dash",
+   "dashId": "9:902",
+   "dashPeriod": 6,
+   "dashTurns": 12,
+   "dashDir": -1,
+   "streak": true,
+   "streakStart": 70
+  },
+  {
+   "id": "0:201",
+   "role": "fade",
+   "name": "Arrow 3",
+   "delay": 142,
+   "dur": 20,
+   "group": "dash"
+  },
+  {
+   "id": "0:242",
+   "role": "fade",
+   "name": "Circle glow 3",
+   "delay": 116,
+   "dur": 40
+  },
+  {
+   "id": "0:225",
+   "styleId": "0:218",
+   "top": 359,
+   "role": "icon",
+   "name": "Orange",
+   "hover": true,
+   "hoverScale": 1.1,
+   "delay": 116,
+   "phase": 0.6,
+   "amp": 1.2,
+   "glow": {
+    "x": 558,
+    "y": 391,
+    "w": 100,
+    "h": 100,
+    "color": "50FF8A4D",
+    "blur": 30
+   }
+  }
+ ],
+ "micro": [
+  {
+   "type": "bob",
+   "id": "0:228",
+   "y": 8,
+   "amp": 1.4,
+   "body": "0:229",
+   "at": 40
+  },
+  {
+   "type": "bob",
+   "id": "0:205",
+   "y": 8,
+   "amp": 1.4,
+   "body": "0:206",
+   "at": 100
+  },
+  {
+   "type": "bob",
+   "id": "0:220",
+   "y": 8,
+   "amp": 1.4,
+   "body": "0:221",
+   "at": 160
+  },
+  {
+   "type": "pulse",
+   "ids": [
+    "0:143"
+   ],
+   "at": 30,
+   "peak": 1.35
+  },
+  {
+   "type": "pulse",
+   "ids": [
+    "0:158"
+   ],
+   "at": 90,
+   "peak": 1.35
+  },
+  {
+   "type": "pulse",
+   "ids": [
+    "0:173"
+   ],
+   "at": 150,
+   "peak": 1.35
+  },
+  {
+   "type": "pulse",
+   "ids": [
+    "0:114"
+   ],
+   "at": 100,
+   "peak": 1.12
+  },
+  {
+   "type": "sun",
+   "sun": "9:972",
+   "mountain": "9:973",
+   "x": 26.553,
+   "y": 18.383,
+   "dx": 3.2,
+   "dy": 2.2
+  }
+ ],
+ "dashLayer": true,
+ "transparentBg": true,
+ "streakThickness": 3,
+ "streakTaper": true,
+ "streakPeriod": 240,
+ "burst": {
+  "before": "0:122",
+  "cx": 616,
+  "cy": 119,
+  "angles": [
+   -135,
+   -90,
+   -45,
+   0
+  ],
+  "r0": 34,
+  "r1": 50,
+  "color": "FF2DB574",
+  "thickness": 2.5,
+  "start": 90
+ },
+ "pulse": {
+  "path": [
+   [
+    169.96,
+    283.9
+   ],
+   [
+    226.96,
+    283.9
+   ],
+   [
+    230.09,
+    283.69
+   ],
+   [
+    233.17,
+    283.08
+   ],
+   [
+    236.14,
+    282.07
+   ],
+   [
+    238.96,
+    280.68
+   ],
+   [
+    241.57,
+    278.94
+   ],
+   [
+    243.93,
+    276.87
+   ],
+   [
+    246.0,
+    274.51
+   ],
+   [
+    247.74,
+    271.9
+   ],
+   [
+    249.13,
+    269.08
+   ],
+   [
+    250.14,
+    266.11
+   ],
+   [
+    250.75,
+    263.03
+   ],
+   [
+    250.96,
+    259.9
+   ],
+   [
+    250.96,
+    231.5
+   ],
+   [
+    251.17,
+    228.37
+   ],
+   [
+    251.78,
+    225.29
+   ],
+   [
+    252.79,
+    222.32
+   ],
+   [
+    254.18,
+    219.5
+   ],
+   [
+    255.92,
+    216.89
+   ],
+   [
+    257.99,
+    214.53
+   ],
+   [
+    260.35,
+    212.46
+   ],
+   [
+    262.96,
+    210.72
+   ],
+   [
+    265.78,
+    209.33
+   ],
+   [
+    268.75,
+    208.32
+   ],
+   [
+    271.83,
+    207.71
+   ],
+   [
+    274.96,
+    207.5
+   ],
+   [
+    298.46,
+    207.5
+   ]
+  ],
+  "before": "0:107",
+  "size": 8,
+  "start": 20,
+  "fromX": 170,
+  "toX": 298,
+  "y": 284,
+  "after": "0:217"
+ },
+ "splitShapes": [
+  {
+   "id": "0:132",
+   "wrapperId": "9:970",
+   "styleId": "9:971",
+   "sunId": "9:972",
+   "mountainId": "9:973"
+  }
+ ]
+}
