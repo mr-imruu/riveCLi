@@ -660,7 +660,13 @@
                                                 <SolidColor colorValue="4D000BE3" name="Color" id="0:1246"/>
                                             </Fill>
                                             <LayoutComponent clip="true" width="76" height="52" styleId="0:194" name="Thumb" id="0:196">
-                                                <LayoutComponentStyle positionLeft="8" positionTop="8" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" name="Thumb Style" id="0:194"/><Fill name="Fill" id="0:2504"><LinearGradient startX="2.5" startY="0.5" endX="75.5" endY="55.5" name="Gradient" id="0:2505"><GradientStop colorValue="FFDCE4FF" position="0" id="0:2506"/><GradientStop colorValue="FFF1F7FF" position="1" id="0:2507"/></LinearGradient></Fill>
+                                                <LayoutComponentStyle positionLeft="8" positionTop="8" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" name="Thumb Style" id="0:194"/>
+                                                <Fill name="Fill" id="0:2504">
+                                                    <LinearGradient startX="2.5" startY="0.5" endX="75.5" endY="55.5" name="Gradient" id="0:2505">
+                                                        <GradientStop colorValue="FFDCE4FF" id="0:2506"/>
+                                                        <GradientStop colorValue="FFF1F7FF" position="1" id="0:2507"/>
+                                                    </LinearGradient>
+                                                </Fill>
                                                 <Node name="Thumb (Flat)" id="0:2500">
                                                     <Shape x="38" y="26" name="Vector" id="0:195">
                                                         <PointsPath isClosed="true" name="Path" id="0:1254">
@@ -2231,7 +2237,7 @@
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:2331"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:1343" id="0:2508"><KeyedProperty property="scaleX" id="0:2509"><KeyFrameDouble value="1" interpolationType="linear" id="0:2510"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2511"><KeyFrameDouble value="1" interpolationType="linear" id="0:2512"/></KeyedProperty><KeyedProperty property="x" id="0:2513"><KeyFrameDouble value="0" interpolationType="linear" id="0:2514"/></KeyedProperty><KeyedProperty property="y" id="0:2515"><KeyFrameDouble value="0" interpolationType="linear" id="0:2516"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="1" name="Hover AI" id="9:23">
             <KeyedObject objectId="0:225" id="0:2332">
                 <KeyedProperty property="scaleX" id="0:2333">
@@ -2241,7 +2247,7 @@
                     <KeyFrameDouble value="1.05" interpolationType="linear" id="0:2336"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:1343" id="0:2517"><KeyedProperty property="scaleX" id="0:2518"><KeyFrameDouble value="1.06" interpolationType="linear" id="0:2519"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2520"><KeyFrameDouble value="1.06" interpolationType="linear" id="0:2521"/></KeyedProperty><KeyedProperty property="x" id="0:2522"><KeyFrameDouble value="-3.6" interpolationType="linear" id="0:2523"/></KeyedProperty><KeyedProperty property="y" id="0:2524"><KeyFrameDouble value="-3.6" interpolationType="linear" id="0:2525"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="1" name="Rest Card" id="9:29">
             <KeyedObject objectId="0:222" id="0:2337">
                 <KeyedProperty property="scaleX" id="0:2338">
