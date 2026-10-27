@@ -145,20 +145,16 @@
             </LayoutComponent>
             <LayoutComponent clip="true" width="24" height="24" styleId="0:109" name="fi_12484558" id="0:119">
                 <LayoutComponentStyle positionLeft="13" positionTop="13" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="fi_12484558 Style" id="0:109"/>
-                <LayoutComponent width="24" height="24" name="fi_12484558 (Wrapper)" id="0:1038">
-                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="fi_12484558 (Wrapper) Style" id="0:4092"/>
+                <LayoutComponent width="24" height="24" styleId="0:4092" name="fi_12484558 (Wrapper)" id="0:1038">
                     <LayoutComponent width="23.952999" height="17.796" styleId="0:110" name="Layer_2_00000080916089816102197240000009771465326107243407_" id="0:118">
                         <LayoutComponentStyle positionLeft="0.046999998" positionTop="3.1029999" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Layer_2_00000080916089816102197240000009771465326107243407_ Style" id="0:110"/>
-                        <LayoutComponent width="23.952999" height="17.796" name="Layer_2_00000080916089816102197240000009771465326107243407_ (Wrapper)" id="0:1039">
-                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Layer_2_00000080916089816102197240000009771465326107243407_ (Wrapper) Style" id="0:4093"/>
+                        <LayoutComponent width="23.952999" height="17.796" styleId="0:4093" name="Layer_2_00000080916089816102197240000009771465326107243407_ (Wrapper)" id="0:1039">
                             <LayoutComponent width="23.952999" height="17.796" styleId="0:111" name="Layer_2_copy_11" id="0:117">
                                 <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Layer_2_copy_11 Style" id="0:111"/>
-                                <LayoutComponent width="23.952999" height="17.796" name="Layer_2_copy_11 (Wrapper)" id="0:1040">
-                                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Layer_2_copy_11 (Wrapper) Style" id="0:4094"/>
+                                <LayoutComponent width="23.952999" height="17.796" styleId="0:4094" name="Layer_2_copy_11 (Wrapper)" id="0:1040">
                                     <LayoutComponent width="23.952999" height="17.796" styleId="0:112" name="_63" id="0:116">
                                         <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="_63 Style" id="0:112"/>
-                                        <LayoutComponent width="23.952999" height="17.796" name="_63 (Wrapper)" id="0:1041">
-                                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="_63 (Wrapper) Style" id="0:4095"/>
+                                        <LayoutComponent width="23.952999" height="17.796" styleId="0:4095" name="_63 (Wrapper)" id="0:1041">
                                             <LayoutComponent width="23.952999" height="17.796" styleId="0:113" name="_63-2" id="0:115">
                                                 <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="_63-2 Style" id="0:113"/>
                                                 <Node name="_63-2 (Wrapper)" id="0:1042">
@@ -181,12 +177,16 @@
                                                     </Shape>
                                                 </Node>
                                             </LayoutComponent>
+                                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="_63 (Wrapper) Style" id="0:4095"/>
                                         </LayoutComponent>
                                     </LayoutComponent>
+                                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Layer_2_copy_11 (Wrapper) Style" id="0:4094"/>
                                 </LayoutComponent>
                             </LayoutComponent>
+                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Layer_2_00000080916089816102197240000009771465326107243407_ (Wrapper) Style" id="0:4093"/>
                         </LayoutComponent>
                     </LayoutComponent>
+                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="fi_12484558 (Wrapper) Style" id="0:4092"/>
                 </LayoutComponent>
             </LayoutComponent>
             <GridItemPlacement id="1:21"/>
@@ -224,8 +224,7 @@
                         <Feather strength="99.07" offsetX="-1" offsetY="-3.25" inner="true" name="Feather" id="0:1073"/>
                     </Fill>
                 </LayoutComponent>
-                <LayoutComponent width="322" height="194" name="Window (Wrapper)" id="0:1074">
-                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Window (Wrapper) Style" id="0:4096"/>
+                <LayoutComponent width="322" height="194" styleId="0:4096" name="Window (Wrapper)" id="0:1074">
                     <Shape blendModeValue="hue" x="309" y="190" name="Ellipse 2338" id="0:128">
                         <Ellipse width="96" height="64" name="Path" id="0:1075"/>
                         <Fill fillRule="clockwise" name="Fill" id="0:1076">
@@ -238,15 +237,20 @@
                     </Shape>
                     <LayoutComponent width="274.27701" height="128" styleId="0:129" name="Frame 2147242320" id="0:186">
                         <LayoutComponentStyle gapHorizontal="21" positionLeft="23.862" positionTop="41" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Frame 2147242320 Style" id="0:129"/>
-                        <LayoutComponent width="274.27701" height="128" name="Frame 2147242320 (Box)" id="1:18">
-                            <LayoutComponentStyle gapHorizontal="21" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Frame 2147242320 (Box) Style" id="0:4097"/>
+                        <LayoutComponent width="274.27701" height="128" styleId="0:4097" name="Frame 2147242320 (Box)" id="1:18">
                             <LayoutComponent clip="true" width="125.277" height="128" styleId="0:130" name="Image" id="0:138">
                                 <LayoutComponentStyle gapVertical="10.894" paddingLeft="10.894" paddingRight="10.894" paddingTop="10.894" paddingBottom="10.894" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" flexDirectionValue="column" cornerRadiusTL="10.894" cornerRadiusTR="10.894" cornerRadiusBL="10.894" cornerRadiusBR="10.894" name="Image Style" id="0:130"/>
                                 <Fill name="Fill" id="0:1081">
                                     <SolidColor colorValue="4D000BE3" name="Color" id="0:1082"/>
                                 </Fill>
                                 <LayoutComponent clip="true" width="103.489" height="70.808998" styleId="0:131" name="Thumb" id="0:133">
-                                    <LayoutComponentStyle positionLeft="10.894" positionTop="10.894" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="5.447" cornerRadiusTR="5.447" cornerRadiusBL="5.447" cornerRadiusBR="5.447" name="Thumb Style" id="0:131"/><Fill name="Fill" id="0:4102"><LinearGradient startX="3.404" startY="0.681" endX="102.809" endY="75.574" name="Gradient" id="0:4103"><GradientStop colorValue="FFDCE4FF" position="0" id="0:4104"/><GradientStop colorValue="FFF1F7FF" position="1" id="0:4105"/></LinearGradient></Fill>
+                                    <LayoutComponentStyle positionLeft="10.894" positionTop="10.894" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="5.447" cornerRadiusTR="5.447" cornerRadiusBL="5.447" cornerRadiusBR="5.447" name="Thumb Style" id="0:131"/>
+                                    <Fill name="Fill" id="0:4102">
+                                        <LinearGradient startX="3.404" startY="0.68099999" endX="102.809" endY="75.573997" name="Gradient" id="0:4103">
+                                            <GradientStop colorValue="FFDCE4FF" id="0:4104"/>
+                                            <GradientStop colorValue="FFF1F7FF" position="1" id="0:4105"/>
+                                        </LinearGradient>
+                                    </Fill>
                                     <LayoutComponent width="53.105999" height="36.765999" styleId="9:971" name="Image icon" id="9:970">
                                         <LayoutComponentStyle positionLeft="25.1915" positionTop="17.0215" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Image icon Style" id="9:971"/>
                                         <Node name="Image icon (Wrapper)" id="0:1089">
@@ -512,6 +516,7 @@
                                     </LayoutComponent>
                                 </LayoutComponent>
                             </LayoutComponent>
+                            <LayoutComponentStyle gapHorizontal="21" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Frame 2147242320 (Box) Style" id="0:4097"/>
                         </LayoutComponent>
                     </LayoutComponent>
                     <LayoutComponent clip="true" width="321" height="26" styleId="0:187" name="Header" id="0:191">
@@ -549,6 +554,7 @@
                             </Shape>
                         </Node>
                     </LayoutComponent>
+                    <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Window (Wrapper) Style" id="0:4096"/>
                 </LayoutComponent>
                 <GridItemPlacement id="1:27"/>
             </LayoutComponent>
@@ -1448,19 +1454,7 @@
                     </KeyFrameDouble>
                     <KeyFrameDouble value="1" interpolationType="linear" frame="40" id="0:1708"/>
                 </KeyedProperty>
-                <KeyedProperty property="scaleX" id="0:1709">
-                    <KeyFrameDouble value="0.88" interpolationType="cubic" id="0:1710">
-                        <CubicEaseInterpolator x1="0.16" y1="1" x2="0.30000001" id="0:1711"/>
-                    </KeyFrameDouble>
-                    <KeyFrameDouble value="1" interpolationType="linear" frame="66" id="0:1712"/>
-                </KeyedProperty>
-                <KeyedProperty property="scaleY" id="0:1713">
-                    <KeyFrameDouble value="0.88" interpolationType="cubic" id="0:1714">
-                        <CubicEaseInterpolator x1="0.16" y1="1" x2="0.30000001" id="0:1715"/>
-                    </KeyFrameDouble>
-                    <KeyFrameDouble value="1" interpolationType="linear" frame="66" id="0:1716"/>
-                </KeyedProperty>
-            </KeyedObject>
+                </KeyedObject>
             <KeyedObject objectId="0:105" id="0:1717">
                 <KeyedProperty property="opacity" id="0:1718">
                     <KeyFrameDouble interpolationType="linear" id="0:1719"/>
