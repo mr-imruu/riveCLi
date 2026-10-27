@@ -246,16 +246,7 @@
                                     <SolidColor colorValue="4D000BE3" name="Color" id="0:1082"/>
                                 </Fill>
                                 <LayoutComponent clip="true" width="103.489" height="70.808998" styleId="0:131" name="Thumb" id="0:133">
-                                    <LayoutComponentStyle positionLeft="10.894" positionTop="10.894" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="5.447" cornerRadiusTR="5.447" cornerRadiusBL="5.447" cornerRadiusBR="5.447" name="Thumb Style" id="0:131"/>
-                                    <Fill name="Fill" id="0:1083">
-                                        <SolidColor colorValue="99FFFFFF" name="Color" id="0:1084"/>
-                                    </Fill>
-                                    <Fill blendModeValue="additive" name="Fill" id="0:1085">
-                                        <LinearGradient startX="3.404" startY="0.68099999" endX="102.809" endY="75.573997" name="Gradient" id="0:1086">
-                                            <GradientStop colorValue="80000DFF" id="0:1087"/>
-                                            <GradientStop colorValue="80666666" position="1" id="0:1088"/>
-                                        </LinearGradient>
-                                    </Fill>
+                                    <LayoutComponentStyle positionLeft="10.894" positionTop="10.894" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="5.447" cornerRadiusTR="5.447" cornerRadiusBL="5.447" cornerRadiusBR="5.447" name="Thumb Style" id="0:131"/><Fill name="Fill" id="0:4102"><LinearGradient startX="3.404" startY="0.681" endX="102.809" endY="75.574" name="Gradient" id="0:4103"><GradientStop colorValue="FFDCE4FF" position="0" id="0:4104"/><GradientStop colorValue="FFF1F7FF" position="1" id="0:4105"/></LinearGradient></Fill>
                                     <LayoutComponent width="53.105999" height="36.765999" styleId="9:971" name="Image icon" id="9:970">
                                         <LayoutComponentStyle positionLeft="25.1915" positionTop="17.0215" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Image icon Style" id="9:971"/>
                                         <Node name="Image icon (Wrapper)" id="0:1089">

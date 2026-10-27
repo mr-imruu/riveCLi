@@ -660,16 +660,7 @@
                                                 <SolidColor colorValue="4D000BE3" name="Color" id="0:1246"/>
                                             </Fill>
                                             <LayoutComponent clip="true" width="76" height="52" styleId="0:194" name="Thumb" id="0:196">
-                                                <LayoutComponentStyle positionLeft="8" positionTop="8" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" name="Thumb Style" id="0:194"/>
-                                                <Fill name="Fill" id="0:1247">
-                                                    <SolidColor colorValue="99FFFFFF" name="Color" id="0:1248"/>
-                                                </Fill>
-                                                <Fill blendModeValue="additive" name="Fill" id="0:1249">
-                                                    <LinearGradient startX="2.5" startY="0.5" endX="75.5" endY="55.5" name="Gradient" id="0:1250">
-                                                        <GradientStop colorValue="80000DFF" id="0:1251"/>
-                                                        <GradientStop colorValue="80666666" position="1" id="0:1252"/>
-                                                    </LinearGradient>
-                                                </Fill>
+                                                <LayoutComponentStyle positionLeft="8" positionTop="8" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="4" cornerRadiusTR="4" cornerRadiusBL="4" cornerRadiusBR="4" name="Thumb Style" id="0:194"/><Fill name="Fill" id="0:2504"><LinearGradient startX="2.5" startY="0.5" endX="75.5" endY="55.5" name="Gradient" id="0:2505"><GradientStop colorValue="FFDCE4FF" position="0" id="0:2506"/><GradientStop colorValue="FFF1F7FF" position="1" id="0:2507"/></LinearGradient></Fill>
                                                 <Node name="Thumb (Flat)" id="0:2500">
                                                     <Shape x="38" y="26" name="Vector" id="0:195">
                                                         <PointsPath isClosed="true" name="Path" id="0:1254">
