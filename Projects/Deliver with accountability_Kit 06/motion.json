@@ -494,5 +494,9 @@
    "sunId": "9:972",
    "mountainId": "9:973"
   }
+ ],
+ "flatten": true,
+ "unrotate": [
+  "0:107"
  ]
 }

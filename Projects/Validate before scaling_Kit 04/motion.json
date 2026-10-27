@@ -413,5 +413,6 @@
  "streakPeriod": 360,
  "streakThickness": 3,
  "streakTaper": true,
- "transparentBg": true
+ "transparentBg": true,
+ "flatten": true
 }

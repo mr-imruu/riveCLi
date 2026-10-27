@@ -258,5 +258,6 @@
  "dashLayer": true,
  "remove": [
   "0:104"
- ]
+ ],
+ "flatten": true
 }
