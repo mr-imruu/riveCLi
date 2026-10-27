@@ -2427,7 +2427,7 @@
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:2142"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:222" id="0:2342"><KeyedProperty property="scaleX" id="0:2343"><KeyFrameDouble value="1" interpolationType="linear" id="0:2344"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2345"><KeyFrameDouble value="1" interpolationType="linear" id="0:2346"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="26" name="Wait AI" id="9:31">
             <KeyedObject objectId="0:116" id="0:2143">
                 <KeyedProperty property="opacity" id="0:2144">
@@ -2444,7 +2444,7 @@
                     <KeyFrameDouble value="1.05" interpolationType="linear" id="0:2150"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:222" id="0:2347"><KeyedProperty property="scaleX" id="0:2348"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:2349"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2350"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:2351"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="1" name="Rest Green" id="9:38">
             <KeyedObject objectId="0:215" id="0:2151">
                 <KeyedProperty property="scaleX" id="0:2152">

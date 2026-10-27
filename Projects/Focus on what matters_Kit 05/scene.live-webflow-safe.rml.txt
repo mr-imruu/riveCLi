@@ -4783,7 +4783,7 @@
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:3663"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:222" id="0:3991"><KeyedProperty property="scaleX" id="0:3992"><KeyFrameDouble value="1" interpolationType="linear" id="0:3993"/></KeyedProperty><KeyedProperty property="scaleY" id="0:3994"><KeyFrameDouble value="1" interpolationType="linear" id="0:3995"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="16" name="Wait AI" id="9:63">
             <KeyedObject objectId="0:221" id="0:3664">
                 <KeyedProperty property="opacity" id="0:3665">
@@ -4800,7 +4800,7 @@
                     <KeyFrameDouble value="1.05" interpolationType="linear" id="0:3671"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:222" id="0:3996"><KeyedProperty property="scaleX" id="0:3997"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:3998"/></KeyedProperty><KeyedProperty property="scaleY" id="0:3999"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:4000"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="1" name="Rest Core" id="9:70">
             <KeyedObject objectId="0:130" id="0:3672">
                 <KeyedProperty property="scaleX" id="0:3673">

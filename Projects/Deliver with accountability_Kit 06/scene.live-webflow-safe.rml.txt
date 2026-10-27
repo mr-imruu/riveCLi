@@ -225,12 +225,12 @@
                     </Fill>
                 </LayoutComponent>
                 <LayoutComponent width="322" height="194" styleId="0:4096" name="Window (Wrapper)" id="0:1074">
-                    <Shape blendModeValue="hue" x="309" y="190" name="Ellipse 2338" id="0:128">
+                    <Shape x="309" y="190" name="Ellipse 2338" id="0:128">
                         <Ellipse width="96" height="64" name="Path" id="0:1075"/>
                         <Fill fillRule="clockwise" name="Fill" id="0:1076">
                             <RadialGradient startX="-9" startY="-19" endX="53.146" endY="-19" name="Gradient" id="0:1077">
-                                <GradientStop colorValue="E5FF00AA" id="0:1078"/>
-                                <GradientStop colorValue="E5FFFFFF" position="1" id="0:1079"/>
+                                <GradientStop colorValue="9CFFA8D4" id="0:1078"/>
+                                <GradientStop colorValue="00FFC8E4" position="1" id="0:1079"/>
                             </RadialGradient>
                             <Feather strength="44" name="Feather" id="0:1080"/>
                         </Fill>
@@ -1454,7 +1454,7 @@
                     </KeyFrameDouble>
                     <KeyFrameDouble value="1" interpolationType="linear" frame="40" id="0:1708"/>
                 </KeyedProperty>
-                </KeyedObject>
+            </KeyedObject>
             <KeyedObject objectId="0:105" id="0:1717">
                 <KeyedProperty property="opacity" id="0:1718">
                     <KeyFrameDouble interpolationType="linear" id="0:1719"/>
@@ -3721,7 +3721,7 @@
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:3479"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:243" id="0:4106"><KeyedProperty property="scaleX" id="0:4107"><KeyFrameDouble value="1" interpolationType="linear" id="0:4108"/></KeyedProperty><KeyedProperty property="scaleY" id="0:4109"><KeyFrameDouble value="1" interpolationType="linear" id="0:4110"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="16" name="Wait AI" id="9:63">
             <KeyedObject objectId="0:217" id="0:3480">
                 <KeyedProperty property="opacity" id="0:3481">
@@ -3738,7 +3738,7 @@
                     <KeyFrameDouble value="1.05" interpolationType="linear" id="0:3487"/>
                 </KeyedProperty>
             </KeyedObject>
-        </LinearAnimation>
+        <KeyedObject objectId="0:243" id="0:4111"><KeyedProperty property="scaleX" id="0:4112"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:4113"/></KeyedProperty><KeyedProperty property="scaleY" id="0:4114"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:4115"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="1" name="Rest Window" id="9:70">
             <KeyedObject objectId="0:195" id="0:3488">
                 <KeyedProperty property="scaleX" id="0:3489">
