@@ -2427,7 +2427,8 @@
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:2142"/>
                 </KeyedProperty>
             </KeyedObject>
-        <KeyedObject objectId="0:222" id="0:2342"><KeyedProperty property="scaleX" id="0:2343"><KeyFrameDouble value="1" interpolationType="linear" id="0:2344"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2345"><KeyFrameDouble value="1" interpolationType="linear" id="0:2346"/></KeyedProperty></KeyedObject></LinearAnimation>
+            
+        <KeyedObject objectId="0:1016" id="0:2342"><KeyedProperty property="scaleX" id="0:2343"><KeyFrameDouble value="1" interpolationType="linear" id="0:2344"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2345"><KeyFrameDouble value="1" interpolationType="linear" id="0:2346"/></KeyedProperty><KeyedProperty property="x" id="0:2347"><KeyFrameDouble value="0" interpolationType="linear" id="0:2348"/></KeyedProperty><KeyedProperty property="y" id="0:2349"><KeyFrameDouble value="0" interpolationType="linear" id="0:2350"/></KeyedProperty></KeyedObject><KeyedObject objectId="0:222" id="0:2351"><KeyedProperty property="scaleX" id="0:2352"><KeyFrameDouble value="1" interpolationType="linear" id="0:2353"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2354"><KeyFrameDouble value="1" interpolationType="linear" id="0:2355"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="26" name="Wait AI" id="9:31">
             <KeyedObject objectId="0:116" id="0:2143">
                 <KeyedProperty property="opacity" id="0:2144">
@@ -2444,7 +2445,8 @@
                     <KeyFrameDouble value="1.05" interpolationType="linear" id="0:2150"/>
                 </KeyedProperty>
             </KeyedObject>
-        <KeyedObject objectId="0:222" id="0:2347"><KeyedProperty property="scaleX" id="0:2348"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:2349"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2350"><KeyFrameDouble value="1.45" interpolationType="linear" id="0:2351"/></KeyedProperty></KeyedObject></LinearAnimation>
+            
+        <KeyedObject objectId="0:1016" id="0:2356"><KeyedProperty property="scaleX" id="0:2357"><KeyFrameDouble value="1.06" interpolationType="linear" id="0:2358"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2359"><KeyFrameDouble value="1.06" interpolationType="linear" id="0:2360"/></KeyedProperty><KeyedProperty property="x" id="0:2361"><KeyFrameDouble value="-3.6" interpolationType="linear" id="0:2362"/></KeyedProperty><KeyedProperty property="y" id="0:2363"><KeyFrameDouble value="-3.6" interpolationType="linear" id="0:2364"/></KeyedProperty></KeyedObject><KeyedObject objectId="0:222" id="0:2365"><KeyedProperty property="scaleX" id="0:2366"><KeyFrameDouble value="1.12" interpolationType="linear" id="0:2367"/></KeyedProperty><KeyedProperty property="scaleY" id="0:2368"><KeyFrameDouble value="1.12" interpolationType="linear" id="0:2369"/></KeyedProperty></KeyedObject></LinearAnimation>
         <LinearAnimation duration="1" name="Rest Green" id="9:38">
             <KeyedObject objectId="0:215" id="0:2151">
                 <KeyedProperty property="scaleX" id="0:2152">
