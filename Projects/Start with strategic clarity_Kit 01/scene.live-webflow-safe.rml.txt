@@ -166,23 +166,27 @@
                                 </LayoutComponent>
                             </LayoutComponent>
                         </LayoutComponent>
-                        <Node name="Settings (Wrapper) (Free)" id="0:2544"><Shape x="55" y="55" opacity="0.60000002" name="Glow / gear" id="0:116">
-                            <Ellipse width="110" height="110" name="Path" id="0:991" />
-                            <Fill fillRule="clockwise" name="Fill" id="0:992">
-                                <SolidColor colorValue="1A4D75E2" name="Color" id="0:993" />
-                                <Feather strength="36" name="Feather" id="0:994" />
-                            </Fill>
-                        </Shape>
-                    </Node></LayoutComponent>
+                        <Node name="Settings (Wrapper) (Free)" id="0:2544">
+                            <Shape x="55" y="55" opacity="0.60000002" name="Glow / gear" id="0:116">
+                                <Ellipse width="110" height="110" name="Path" id="0:991" />
+                                <Fill fillRule="clockwise" name="Fill" id="0:992">
+                                    <SolidColor colorValue="1A4D75E2" name="Color" id="0:993" />
+                                    <Feather strength="36" name="Feather" id="0:994" />
+                                </Fill>
+                            </Shape>
+                        </Node>
+                    </LayoutComponent>
                 </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2545"><Shape x="616" y="340" opacity="0" name="Hover glow Settings" id="9:55">
-                    <Ellipse width="92" height="92" name="Path" id="0:995" />
-                    <Fill fillRule="clockwise" name="Fill" id="0:996">
-                        <SolidColor colorValue="59B8FF7E" name="Color" id="0:997" />
-                        <Feather strength="40" name="Feather" id="0:998" />
-                    </Fill>
-                </Shape>
-                </Node><LayoutComponent width="120" height="120" styleId="0:118" name="View" id="0:130">
+                <Node name="Container 3 (Wrapper) (Free)" id="0:2545">
+                    <Shape x="616" y="340" opacity="0" name="Hover glow Settings" id="9:55">
+                        <Ellipse width="92" height="92" name="Path" id="0:995" />
+                        <Fill fillRule="clockwise" name="Fill" id="0:996">
+                            <SolidColor colorValue="59B8FF7E" name="Color" id="0:997" />
+                            <Feather strength="40" name="Feather" id="0:998" />
+                        </Fill>
+                    </Shape>
+                </Node>
+                <LayoutComponent width="120" height="120" styleId="0:118" name="View" id="0:130">
                     <LayoutComponentStyle positionLeft="329" positionTop="334" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="View Style" id="0:118" />
                     <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:999" />
                     <LayoutComponent width="120" height="120" name="View (Wrapper)" id="0:1000">
@@ -249,23 +253,27 @@
                                 </LayoutComponent>
                             </LayoutComponent>
                         </LayoutComponent>
-                        <Node name="View (Wrapper) (Free)" id="0:2546"><Shape x="60" y="60" name="Glow / eye" id="0:129">
-                            <Ellipse width="120" height="120" name="Path" id="0:1036" />
-                            <Fill fillRule="clockwise" name="Fill" id="0:1037">
-                                <SolidColor colorValue="1A7B5CFF" name="Color" id="0:1038" />
-                                <Feather strength="36" name="Feather" id="0:1039" />
-                            </Fill>
-                        </Shape>
-                    </Node></LayoutComponent>
+                        <Node name="View (Wrapper) (Free)" id="0:2546">
+                            <Shape x="60" y="60" name="Glow / eye" id="0:129">
+                                <Ellipse width="120" height="120" name="Path" id="0:1036" />
+                                <Fill fillRule="clockwise" name="Fill" id="0:1037">
+                                    <SolidColor colorValue="1A7B5CFF" name="Color" id="0:1038" />
+                                    <Feather strength="36" name="Feather" id="0:1039" />
+                                </Fill>
+                            </Shape>
+                        </Node>
+                    </LayoutComponent>
                 </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2547"><Shape x="389" y="394" opacity="0" name="Hover glow View" id="9:63">
-                    <Ellipse width="92" height="92" name="Path" id="0:1040" />
-                    <Fill fillRule="clockwise" name="Fill" id="0:1041">
-                        <SolidColor colorValue="407B5CFF" name="Color" id="0:1042" />
-                        <Feather strength="34" name="Feather" id="0:1043" />
-                    </Fill>
-                </Shape>
-                </Node><LayoutComponent width="60" height="60" styleId="0:139" name="Limitation Shadow" id="0:140">
+                <Node name="Container 3 (Wrapper) (Free)" id="0:2547">
+                    <Shape x="389" y="394" opacity="0" name="Hover glow View" id="9:63">
+                        <Ellipse width="92" height="92" name="Path" id="0:1040" />
+                        <Fill fillRule="clockwise" name="Fill" id="0:1041">
+                            <SolidColor colorValue="407B5CFF" name="Color" id="0:1042" />
+                            <Feather strength="34" name="Feather" id="0:1043" />
+                        </Fill>
+                    </Shape>
+                </Node>
+                <LayoutComponent width="60" height="60" styleId="0:139" name="Limitation Shadow" id="0:140">
                     <LayoutComponentStyle positionLeft="521" positionTop="90" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="999" cornerRadiusTR="999" cornerRadiusBL="999" cornerRadiusBR="999" name="Limitation Shadow Style" id="0:139" />
                     <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:1044" />
                     <Fill fillRule="clockwise" name="Shadow" id="0:1045">
@@ -338,14 +346,16 @@
                         </LayoutComponent>
                     </LayoutComponent>
                 </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2548"><Shape x="551" y="120" opacity="0" name="Hover glow Limitation" id="9:47">
-                    <Ellipse width="92" height="92" name="Path" id="0:1086" />
-                    <Fill fillRule="clockwise" name="Fill" id="0:1087">
-                        <SolidColor colorValue="40FF5800" name="Color" id="0:1088" />
-                        <Feather strength="34" name="Feather" id="0:1089" />
-                    </Fill>
-                </Shape>
-                </Node><LayoutComponent width="110" height="110" styleId="0:142" name="Security-check" id="0:154">
+                <Node name="Container 3 (Wrapper) (Free)" id="0:2548">
+                    <Shape x="551" y="120" opacity="0" name="Hover glow Limitation" id="9:47">
+                        <Ellipse width="92" height="92" name="Path" id="0:1086" />
+                        <Fill fillRule="clockwise" name="Fill" id="0:1087">
+                            <SolidColor colorValue="40FF5800" name="Color" id="0:1088" />
+                            <Feather strength="34" name="Feather" id="0:1089" />
+                        </Fill>
+                    </Shape>
+                </Node>
+                <LayoutComponent width="110" height="110" styleId="0:142" name="Security-check" id="0:154">
                     <LayoutComponentStyle positionLeft="280" positionTop="123" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Security-check Style" id="0:142" />
                     <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:1090" />
                     <LayoutComponent width="110" height="110" name="Security-check (Wrapper)" id="0:1091">
@@ -417,44 +427,35 @@
                                 </LayoutComponent>
                             </LayoutComponent>
                         </LayoutComponent>
-                        <Node name="Security-check (Wrapper) (Free)" id="0:2549"><Shape x="55" y="55" name="Glow / shield" id="0:153">
-                            <Ellipse width="110" height="110" name="Path" id="0:1131" />
-                            <Fill fillRule="clockwise" name="Fill" id="0:1132">
-                                <SolidColor colorValue="1A2ABD76" name="Color" id="0:1133" />
-                                <Feather strength="36" name="Feather" id="0:1134" />
-                            </Fill>
-                        </Shape>
-                    </Node></LayoutComponent>
+                        <Node name="Security-check (Wrapper) (Free)" id="0:2549">
+                            <Shape x="55" y="55" name="Glow / shield" id="0:153">
+                                <Ellipse width="110" height="110" name="Path" id="0:1131" />
+                                <Fill fillRule="clockwise" name="Fill" id="0:1132">
+                                    <SolidColor colorValue="1A2ABD76" name="Color" id="0:1133" />
+                                    <Feather strength="36" name="Feather" id="0:1134" />
+                                </Fill>
+                            </Shape>
+                        </Node>
+                    </LayoutComponent>
                 </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2550"><Shape x="335" y="178" opacity="0" name="Hover glow Security" id="9:39">
-                    <Ellipse width="92" height="92" name="Path" id="0:1135" />
-                    <Fill fillRule="clockwise" name="Fill" id="0:1136">
-                        <SolidColor colorValue="402ABD76" name="Color" id="0:1137" />
-                        <Feather strength="34" name="Feather" id="0:1138" />
-                    </Fill>
-                </Shape>
-                </Node><LayoutComponent width="85" height="22" styleId="0:166" name="Tag Shadow" id="0:167">
-                    <LayoutComponentStyle positionLeft="433" positionTop="344" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" name="Tag Shadow Style" id="0:166" />
-                    <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:1139" />
-                    <LayoutComponent clip="true" width="85" height="22" styleId="0:157" name="Tag" id="0:168">
-                        <LayoutComponentStyle gapHorizontal="4" paddingLeft="8" paddingRight="8" paddingTop="2" paddingBottom="2" layoutAlignmentType="centerLeft" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" name="Tag Style" id="0:157" positionTypeValue="absolute" positionLeft="0" positionLeftUnitsValue="points" positionTop="0" positionTopUnitsValue="points" />
-                        <Fill name="Fill" id="0:1140">
-                            <RadialGradient startX="42.5" startY="11" endX="68.5" endY="11" name="Gradient" id="0:1141">
-                                <GradientStop colorValue="FF13A864" id="0:1142" />
-                                <GradientStop colorValue="FF2DB177" position="1" id="0:1143" />
-                            </RadialGradient>
+                <Node name="Container 3 (Wrapper) (Free)" id="0:2550">
+                    <Shape x="335" y="178" opacity="0" name="Hover glow Security" id="9:39">
+                        <Ellipse width="92" height="92" name="Path" id="0:1135" />
+                        <Fill fillRule="clockwise" name="Fill" id="0:1136">
+                            <SolidColor colorValue="402ABD76" name="Color" id="0:1137" />
+                            <Feather strength="34" name="Feather" id="0:1138" />
                         </Fill>
-                        <LayoutComponent clip="true" width="85" height="22" styleId="0:164" name="Inner Shadow" id="0:165">
-                            <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" name="Inner Shadow Style" id="0:164" />
-                            <Fill fillRule="clockwise" name="Inner Shadow" id="0:1144">
-                                <SolidColor colorValue="73FFFFFF" name="Color" id="0:1145" />
-                                <Feather strength="6" offsetY="1" inner="true" name="Feather" id="0:1146" />
-                            </Fill>
-                        </LayoutComponent>
-                        <LayoutComponent clip="true" width="11" height="11" styleId="0:158" name="icon/check 2" id="0:160">
-                            <LayoutComponentStyle name="icon/check 2 Style" id="0:158" positionTypeValue="absolute" positionLeft="8" positionLeftUnitsValue="points" positionTop="5.5" positionTopUnitsValue="points" layoutWidthScaleType="fixed" layoutHeightScaleType="fixed" />
-                            <Node name="icon/check 2 (Wrapper)" id="0:1147">
-                                <Shape x="5.5" y="5.5" name="Vector 3" id="0:159">
+                    </Shape>
+                </Node>
+                <Node x="475.5" y="355" name="Tag (Free)" id="7:4"><Text x="-19.5" y="-9" name="Approved" id="0:163">
+                                <TextStylePaint lineHeight="18" fontAssetId="0:161" familyName="Geist" styleName="Medium" name="Style 1" id="0:162">
+                                    <Fill name="Fill" id="0:1155">
+                                        <SolidColor colorValue="FFFFFFFF" name="Color" id="0:1156" />
+                                    </Fill>
+                                </TextStylePaint>
+                                <TextValueRun styleId="0:162" text="Approved" name="Run 1" id="0:1157" />
+                            </Text>
+                        <Node x="-29" y="0" name="Tag icon" id="7:3"><Shape x="0" y="0" name="Vector 3" id="0:159">
                                     <PointsPath name="Path" id="0:1148">
                                         <StraightVertex x="3.5" y="-2.5" id="0:1149" />
                                         <StraightVertex x="-1.312" y="2.5" id="0:1150" />
@@ -464,94 +465,93 @@
                                         <SolidColor colorValue="FFFFFFFF" name="Color" id="0:1153" />
                                     </Stroke>
                                 </Shape>
-                            </Node>
-                        </LayoutComponent>
-                        <Node name="Tag (Flat)" id="0:2551"><Text name="Approved" id="0:163" x="23" y="2">
-                            <TextStylePaint lineHeight="18" fontAssetId="0:161" familyName="Geist" styleName="Medium" name="Style 1" id="0:162">
-                                <Fill name="Fill" id="0:1155">
-                                    <SolidColor colorValue="FFFFFFFF" name="Color" id="0:1156" />
-                                </Fill>
-                            </TextStylePaint>
-                            <TextValueRun styleId="0:162" text="Approved" name="Run 1" id="0:1157" />
-                        </Text>
-                    </Node></LayoutComponent>
-                    <LayoutComponent width="77" height="14" styleId="0:155" name="Shadow" id="0:156">
-                        <LayoutComponentStyle positionLeft="4" positionTop="4" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="75" cornerRadiusTR="75" cornerRadiusBL="75" cornerRadiusBR="75" name="Shadow Style" id="0:155" />
-                        <Fill fillRule="clockwise" name="Shadow" id="0:1158">
+                            </Node><Shape x="0" y="0" name="Tag pill" id="7:1"><Rectangle width="85" height="22" cornerRadiusTL="79" cornerRadiusTR="79" cornerRadiusBL="79" cornerRadiusBR="79" name="Path" id="0:2558" /><Fill name="Fill" id="0:1140">
+                            <RadialGradient startX="0" startY="0" endX="26" endY="0" name="Gradient" id="0:1141">
+                                <GradientStop colorValue="FF13A864" id="0:1142" />
+                                <GradientStop colorValue="FF2DB177" position="1" id="0:1143" />
+                            </RadialGradient>
+                        </Fill>
+                        <Fill fillRule="clockwise" name="Inner Shadow" id="0:1144">
+                                <SolidColor colorValue="73FFFFFF" name="Color" id="0:1145" />
+                                <Feather strength="6" offsetY="1" inner="true" name="Feather" id="0:1146" />
+                            </Fill>
+                        </Shape><Shape x="0" y="0" name="Tag shadow" id="7:2"><Rectangle width="77" height="14" cornerRadiusTL="75" cornerRadiusTR="75" cornerRadiusBL="75" cornerRadiusBR="75" name="Path" id="0:2559" /><Fill fillRule="clockwise" name="Shadow" id="0:1158">
                             <SolidColor colorValue="FF2ABD76" name="Color" id="0:1159" />
                             <Feather strength="36" offsetX="-10" offsetY="16" name="Feather" id="0:1160" />
                         </Fill>
-                    </LayoutComponent>
-                </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2552"><Shape x="316" y="261" name="Dot" id="0:169">
-                    <Ellipse width="8" height="8" name="Path" id="0:1161" />
-                    <Fill fillRule="clockwise" name="Shadow" id="0:1162">
-                        <SolidColor colorValue="992152DB" name="Color" id="0:1163" />
-                        <Feather strength="8" name="Feather" id="0:1164" />
-                    </Fill>
-                    <Stroke thickness="4" name="Stroke" id="0:1165">
-                        <SolidColor colorValue="FFFFFFFF" name="Color" id="0:1166" />
-                    </Stroke>
-                    <Fill name="Fill" id="0:1167">
-                        <SolidColor colorValue="FF2152DB" name="Color" id="0:1168" />
-                    </Fill>
-                </Shape>
-                <Shape x="475" y="262" name="Orbit" id="0:170">
-                    <Ellipse width="318" height="318" name="Path" id="0:1169" />
-                    <Stroke thickness="2" cap="round" name="Stroke" id="0:1170">
-                        <SolidColor colorValue="BF4D75E2" name="Color" id="0:1171" />
-                        <DashPath name="Dashes" id="9:900">
-                            <Dash length="4" name="Dash" id="0:1172" />
-                            <Dash length="5" name="Gap" id="0:1173" />
-                        </DashPath>
-                    </Stroke>
-                </Shape>
-                </Node><LayoutComponent width="315" height="275" styleId="0:171" name="Inside" id="0:222">
+                    </Shape></Node><Node name="Container 3 (Wrapper) (Free)" id="0:2552">
+                    <Shape x="316" y="261" name="Dot" id="0:169">
+                        <Ellipse width="8" height="8" name="Path" id="0:1161" />
+                        <Fill fillRule="clockwise" name="Shadow" id="0:1162">
+                            <SolidColor colorValue="992152DB" name="Color" id="0:1163" />
+                            <Feather strength="8" name="Feather" id="0:1164" />
+                        </Fill>
+                        <Stroke thickness="4" name="Stroke" id="0:1165">
+                            <SolidColor colorValue="FFFFFFFF" name="Color" id="0:1166" />
+                        </Stroke>
+                        <Fill name="Fill" id="0:1167">
+                            <SolidColor colorValue="FF2152DB" name="Color" id="0:1168" />
+                        </Fill>
+                    </Shape>
+                    <Shape x="475" y="262" name="Orbit" id="0:170">
+                        <Ellipse width="318" height="318" name="Path" id="0:1169" />
+                        <Stroke thickness="2" cap="round" name="Stroke" id="0:1170">
+                            <SolidColor colorValue="BF4D75E2" name="Color" id="0:1171" />
+                            <DashPath name="Dashes" id="9:900">
+                                <Dash length="4" name="Dash" id="0:1172" />
+                                <Dash length="5" name="Gap" id="0:1173" />
+                            </DashPath>
+                        </Stroke>
+                    </Shape>
+                </Node>
+                <LayoutComponent width="315" height="275" styleId="0:171" name="Inside" id="0:222">
                     <LayoutComponentStyle positionLeft="325" positionTop="136" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Inside Style" id="0:171" />
                     <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:1174" />
                     <LayoutComponent width="315" height="275" name="Inside (Wrapper)" id="0:1175">
                         <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Inside (Wrapper) Style" id="0:2498" />
-                        <Node name="Inside (Wrapper) (Free)" id="0:2553"><Shape x="234" y="69" rotation="-2.3562" name="Burst 1" id="9:4">
-                            <PointsPath name="Path" id="0:1176">
-                                <StraightVertex x="29" id="0:1177" />
-                                <StraightVertex x="44" id="0:1178" />
-                            </PointsPath>
-                            <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1179">
-                                <SolidColor colorValue="FF2DB574" name="Color" id="0:1180" />
-                                <TrimPath modeValue="sequential" name="Trim" id="9:5" />
-                            </Stroke>
-                        </Shape>
-                        <Shape x="234" y="69" rotation="-1.5707999" name="Burst 2" id="9:6">
-                            <PointsPath name="Path" id="0:1181">
-                                <StraightVertex x="29" id="0:1182" />
-                                <StraightVertex x="44" id="0:1183" />
-                            </PointsPath>
-                            <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1184">
-                                <SolidColor colorValue="FF2DB574" name="Color" id="0:1185" />
-                                <TrimPath modeValue="sequential" name="Trim" id="9:7" />
-                            </Stroke>
-                        </Shape>
-                        <Shape x="234" y="69" rotation="-0.78539997" name="Burst 3" id="9:8">
-                            <PointsPath name="Path" id="0:1186">
-                                <StraightVertex x="29" id="0:1187" />
-                                <StraightVertex x="44" id="0:1188" />
-                            </PointsPath>
-                            <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1189">
-                                <SolidColor colorValue="FF2DB574" name="Color" id="0:1190" />
-                                <TrimPath modeValue="sequential" name="Trim" id="9:9" />
-                            </Stroke>
-                        </Shape>
-                        <Shape x="234" y="69" name="Burst 4" id="9:10">
-                            <PointsPath name="Path" id="0:1191">
-                                <StraightVertex x="29" id="0:1192" />
-                                <StraightVertex x="44" id="0:1193" />
-                            </PointsPath>
-                            <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1194">
-                                <SolidColor colorValue="FF2DB574" name="Color" id="0:1195" />
-                                <TrimPath modeValue="sequential" name="Trim" id="9:11" />
-                            </Stroke>
-                        </Shape>
-                        </Node><LayoutComponent width="44" height="44" styleId="0:182" name="Check Shadow" id="0:183">
+                        <Node name="Inside (Wrapper) (Free)" id="0:2553">
+                            <Shape x="234" y="69" rotation="-2.3562" name="Burst 1" id="9:4">
+                                <PointsPath name="Path" id="0:1176">
+                                    <StraightVertex x="29" id="0:1177" />
+                                    <StraightVertex x="44" id="0:1178" />
+                                </PointsPath>
+                                <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1179">
+                                    <SolidColor colorValue="FF2DB574" name="Color" id="0:1180" />
+                                    <TrimPath modeValue="sequential" name="Trim" id="9:5" />
+                                </Stroke>
+                            </Shape>
+                            <Shape x="234" y="69" rotation="-1.5707999" name="Burst 2" id="9:6">
+                                <PointsPath name="Path" id="0:1181">
+                                    <StraightVertex x="29" id="0:1182" />
+                                    <StraightVertex x="44" id="0:1183" />
+                                </PointsPath>
+                                <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1184">
+                                    <SolidColor colorValue="FF2DB574" name="Color" id="0:1185" />
+                                    <TrimPath modeValue="sequential" name="Trim" id="9:7" />
+                                </Stroke>
+                            </Shape>
+                            <Shape x="234" y="69" rotation="-0.78539997" name="Burst 3" id="9:8">
+                                <PointsPath name="Path" id="0:1186">
+                                    <StraightVertex x="29" id="0:1187" />
+                                    <StraightVertex x="44" id="0:1188" />
+                                </PointsPath>
+                                <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1189">
+                                    <SolidColor colorValue="FF2DB574" name="Color" id="0:1190" />
+                                    <TrimPath modeValue="sequential" name="Trim" id="9:9" />
+                                </Stroke>
+                            </Shape>
+                            <Shape x="234" y="69" name="Burst 4" id="9:10">
+                                <PointsPath name="Path" id="0:1191">
+                                    <StraightVertex x="29" id="0:1192" />
+                                    <StraightVertex x="44" id="0:1193" />
+                                </PointsPath>
+                                <Stroke thickness="2.5" cap="round" join="round" name="Stroke" id="0:1194">
+                                    <SolidColor colorValue="FF2DB574" name="Color" id="0:1195" />
+                                    <TrimPath modeValue="sequential" name="Trim" id="9:11" />
+                                </Stroke>
+                            </Shape>
+                        </Node>
+                        <LayoutComponent width="44" height="44" styleId="0:182" name="Check Shadow" id="0:183">
                             <LayoutComponentStyle positionLeft="212" positionTop="47" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" cornerRadiusTL="99" cornerRadiusTR="99" cornerRadiusBL="99" cornerRadiusBR="99" name="Check Shadow Style" id="0:182" />
                             <LayoutComponent clip="true" width="44" height="44" styleId="0:174" name="Check" id="0:184">
                                 <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="99" cornerRadiusTR="99" cornerRadiusBL="99" cornerRadiusBR="99" name="Check Style" id="0:174" />
@@ -628,27 +628,29 @@
                                 </LayoutComponent>
                                 <LayoutComponent width="184" height="140" name="Window (Wrapper)" id="0:1230">
                                     <LayoutComponentStyle positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Window (Wrapper) Style" id="0:2499" />
-                                    <Node name="Window (Wrapper) (Free)" id="0:2554"><Shape x="21" y="34" name="Ellipse 5" id="0:190">
-                                        <Ellipse width="96" height="64" name="Path" id="0:1231" />
-                                        <Fill fillRule="clockwise" name="Fill" id="0:1232">
-                                            <RadialGradient startX="-22.5" startY="-28" endX="39.924" endY="-28" name="Gradient" id="0:1233">
-                                                <GradientStop colorValue="E5002BFF" id="0:1234" />
-                                                <GradientStop colorValue="E5FFFFFF" position="1" id="0:1235" />
-                                            </RadialGradient>
-                                            <Feather strength="44" name="Feather" id="0:1236" />
-                                        </Fill>
-                                    </Shape>
-                                    <Shape blendModeValue="hue" x="171" y="136" name="Ellipse 4" id="0:191">
-                                        <Ellipse width="96" height="64" name="Path" id="0:1237" />
-                                        <Fill fillRule="clockwise" name="Fill" id="0:1238">
-                                            <RadialGradient startX="-9" startY="-19" endX="53.146" endY="-19" name="Gradient" id="0:1239">
-                                                <GradientStop colorValue="E5FF00AA" id="0:1240" />
-                                                <GradientStop colorValue="E5FFFFFF" position="1" id="0:1241" />
-                                            </RadialGradient>
-                                            <Feather strength="44" name="Feather" id="0:1242" />
-                                        </Fill>
-                                    </Shape>
-                                    </Node><LayoutComponent clip="true" width="183" height="114" styleId="0:192" name="Body" id="0:208">
+                                    <Node name="Window (Wrapper) (Free)" id="0:2554">
+                                        <Shape x="21" y="34" name="Ellipse 5" id="0:190">
+                                            <Ellipse width="96" height="64" name="Path" id="0:1231" />
+                                            <Fill fillRule="clockwise" name="Fill" id="0:1232">
+                                                <RadialGradient startX="-22.5" startY="-28" endX="39.924" endY="-28" name="Gradient" id="0:1233">
+                                                    <GradientStop colorValue="E5002BFF" id="0:1234" />
+                                                    <GradientStop colorValue="E5FFFFFF" position="1" id="0:1235" />
+                                                </RadialGradient>
+                                                <Feather strength="44" name="Feather" id="0:1236" />
+                                            </Fill>
+                                        </Shape>
+                                        <Shape blendModeValue="hue" x="171" y="136" name="Ellipse 4" id="0:191">
+                                            <Ellipse width="96" height="64" name="Path" id="0:1237" />
+                                            <Fill fillRule="clockwise" name="Fill" id="0:1238">
+                                                <RadialGradient startX="-9" startY="-19" endX="53.146" endY="-19" name="Gradient" id="0:1239">
+                                                    <GradientStop colorValue="E5FF00AA" id="0:1240" />
+                                                    <GradientStop colorValue="E5FFFFFF" position="1" id="0:1241" />
+                                                </RadialGradient>
+                                                <Feather strength="44" name="Feather" id="0:1242" />
+                                            </Fill>
+                                        </Shape>
+                                    </Node>
+                                    <LayoutComponent clip="true" width="183" height="114" styleId="0:192" name="Body" id="0:208">
                                         <LayoutComponentStyle gapHorizontal="12" paddingLeft="8" paddingRight="8" paddingTop="8" paddingBottom="8" positionLeft="1" positionTop="26" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="centerLeft" positionTypeValue="absolute" cornerRadiusBL="10" cornerRadiusBR="10" name="Body Style" id="0:192" />
                                         <Fill blendModeValue="softLight" name="Fill" id="0:1243">
                                             <SolidColor colorValue="FF007BFF" name="Color" id="0:1244" />
@@ -788,64 +790,70 @@
                                 </Stroke>
                             </LayoutComponent>
                         </LayoutComponent>
-                        <Node name="Inside (Wrapper) (Free)" id="0:2555"><Shape x="110" y="110" name="Glow / window blue" id="0:219">
-                            <Ellipse width="220" height="220" name="Path" id="0:1319" />
-                            <Fill fillRule="clockwise" name="Fill" id="0:1320">
-                                <SolidColor colorValue="1A8FB0FF" name="Color" id="0:1321" />
-                                <Feather strength="70" name="Feather" id="0:1322" />
-                            </Fill>
-                        </Shape>
-                        <Shape x="230" y="190" name="Glow / window warm" id="0:220">
-                            <Ellipse width="170" height="170" name="Path" id="0:1323" />
-                            <Fill fillRule="clockwise" name="Fill" id="0:1324">
-                                <SolidColor colorValue="142152DB" name="Color" id="0:1325" />
-                                <Feather strength="60" name="Feather" id="0:1326" />
-                            </Fill>
-                        </Shape>
-                        <Shape x="200" y="210" name="Glow / window pink" id="0:221">
-                            <Ellipse width="120" height="120" name="Path" id="0:1327" />
-                            <Fill fillRule="clockwise" name="Fill" id="0:1328">
-                                <SolidColor colorValue="1AFF7A9A" name="Color" id="0:1329" />
-                                <Feather strength="50" name="Feather" id="0:1330" />
-                            </Fill>
-                        </Shape>
-                    </Node></LayoutComponent>
+                        <Node name="Inside (Wrapper) (Free)" id="0:2555">
+                            <Shape x="110" y="110" name="Glow / window blue" id="0:219">
+                                <Ellipse width="220" height="220" name="Path" id="0:1319" />
+                                <Fill fillRule="clockwise" name="Fill" id="0:1320">
+                                    <SolidColor colorValue="1A8FB0FF" name="Color" id="0:1321" />
+                                    <Feather strength="70" name="Feather" id="0:1322" />
+                                </Fill>
+                            </Shape>
+                            <Shape x="230" y="190" name="Glow / window warm" id="0:220">
+                                <Ellipse width="170" height="170" name="Path" id="0:1323" />
+                                <Fill fillRule="clockwise" name="Fill" id="0:1324">
+                                    <SolidColor colorValue="142152DB" name="Color" id="0:1325" />
+                                    <Feather strength="60" name="Feather" id="0:1326" />
+                                </Fill>
+                            </Shape>
+                            <Shape x="200" y="210" name="Glow / window pink" id="0:221">
+                                <Ellipse width="120" height="120" name="Path" id="0:1327" />
+                                <Fill fillRule="clockwise" name="Fill" id="0:1328">
+                                    <SolidColor colorValue="1AFF7A9A" name="Color" id="0:1329" />
+                                    <Feather strength="50" name="Feather" id="0:1330" />
+                                </Fill>
+                            </Shape>
+                        </Node>
+                    </LayoutComponent>
                 </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2556"><Shape x="475" y="262" opacity="0" name="Hover glow Card" id="9:31">
-                    <Ellipse width="250" height="190" name="Path" id="0:1331" />
-                    <Fill fillRule="clockwise" name="Fill" id="0:1332">
-                        <SolidColor colorValue="3A4D75E2" name="Color" id="0:1333" />
-                        <Feather strength="44" name="Feather" id="0:1334" />
-                    </Fill>
-                </Shape>
-                <Shape x="249" y="262.005" name="Line" id="0:223">
-                    <PointsPath name="Path" id="0:1335">
-                        <StraightVertex x="-66" id="0:1336" />
-                        <StraightVertex x="66" id="0:1337" />
-                    </PointsPath>
-                    <Stroke thickness="2" name="Stroke" id="0:1338">
-                        <LinearGradient startX="-66" endX="66" name="Gradient" id="0:1339">
-                            <GradientStop colorValue="00FFFFFF" id="0:1340" />
-                            <GradientStop colorValue="FF2152DB" position="1" id="0:1341" />
-                        </LinearGradient>
-                    </Stroke>
-                </Shape>
-                </Node><LayoutComponent width="120" height="120" styleId="0:224" name="AI" id="0:225">
+                <Node name="Container 3 (Wrapper) (Free)" id="0:2556">
+                    <Shape x="475" y="262" opacity="0" name="Hover glow Card" id="9:31">
+                        <Ellipse width="250" height="190" name="Path" id="0:1331" />
+                        <Fill fillRule="clockwise" name="Fill" id="0:1332">
+                            <SolidColor colorValue="3A4D75E2" name="Color" id="0:1333" />
+                            <Feather strength="44" name="Feather" id="0:1334" />
+                        </Fill>
+                    </Shape>
+                    <Shape x="249" y="262.005" name="Line" id="0:223">
+                        <PointsPath name="Path" id="0:1335">
+                            <StraightVertex x="-66" id="0:1336" />
+                            <StraightVertex x="66" id="0:1337" />
+                        </PointsPath>
+                        <Stroke thickness="2" name="Stroke" id="0:1338">
+                            <LinearGradient startX="-66" endX="66" name="Gradient" id="0:1339">
+                                <GradientStop colorValue="00FFFFFF" id="0:1340" />
+                                <GradientStop colorValue="FF2152DB" position="1" id="0:1341" />
+                            </LinearGradient>
+                        </Stroke>
+                    </Shape>
+                </Node>
+                <LayoutComponent width="120" height="120" styleId="0:224" name="AI" id="0:225">
                     <LayoutComponentStyle positionLeft="55" positionTop="202" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="AI Style" id="0:224" />
                     <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:1342" />
                     <NestedArtboardLeaf fit="contain" artboardId="0:100" name="AI" id="0:1343" />
                 </LayoutComponent>
-                <Node name="Container 3 (Wrapper) (Free)" id="0:2557"><Shape x="115" y="262" opacity="0" name="Pulse" id="9:3">
-                    <Ellipse width="8" height="8" name="Path" id="0:1344" />
-                    <Fill fillRule="clockwise" name="Glow" id="0:1345">
-                        <SolidColor colorValue="992152DB" name="Color" id="0:1346" />
-                        <Feather strength="8" name="Feather" id="0:1347" />
-                    </Fill>
-                    <Fill name="Fill" id="0:1348">
-                        <SolidColor colorValue="FF2152DB" name="Color" id="0:1349" />
-                    </Fill>
-                </Shape>
-            </Node></LayoutComponent>
+                <Node name="Container 3 (Wrapper) (Free)" id="0:2557">
+                    <Shape x="115" y="262" opacity="0" name="Pulse" id="9:3">
+                        <Ellipse width="8" height="8" name="Path" id="0:1344" />
+                        <Fill fillRule="clockwise" name="Glow" id="0:1345">
+                            <SolidColor colorValue="992152DB" name="Color" id="0:1346" />
+                            <Feather strength="8" name="Feather" id="0:1347" />
+                        </Fill>
+                        <Fill name="Fill" id="0:1348">
+                            <SolidColor colorValue="FF2152DB" name="Color" id="0:1349" />
+                        </Fill>
+                    </Shape>
+                </Node>
+            </LayoutComponent>
         </LayoutComponent>
         <Shape x="115" y="282" opacity="0" name="Glow / AI" id="9:991">
             <Ellipse width="150" height="150" name="Path" id="0:2508" />
@@ -939,14 +947,14 @@
                     </BindablePropertyBoolean>
                 </ListenerViewModelChange>
             </StateMachineListenerSingle>
-            <StateMachineListenerSingle targetId="0:167" name="Tag enter" id="9:74">
+            <StateMachineListenerSingle targetId="7:1" name="Tag enter" id="9:74">
                 <ListenerViewModelChange id="0:1386">
                     <BindablePropertyBoolean propertyValue="true" id="0:1387">
                         <DataBindContext sourcePathIds="9:13-9:21" propertyKey="634" direction="true" id="0:1388" />
                     </BindablePropertyBoolean>
                 </ListenerViewModelChange>
             </StateMachineListenerSingle>
-            <StateMachineListenerSingle listenerTypeValue="exit" targetId="0:167" name="Tag exit" id="9:75">
+            <StateMachineListenerSingle listenerTypeValue="exit" targetId="7:1" name="Tag exit" id="9:75">
                 <ListenerViewModelChange id="0:1389">
                     <BindablePropertyBoolean id="0:1390">
                         <DataBindContext sourcePathIds="9:13-9:21" propertyKey="634" direction="true" id="0:1391" />
@@ -1448,7 +1456,7 @@
                     <KeyFrameDouble value="334" interpolationType="linear" frame="120" id="0:1683" />
                 </KeyedProperty>
             </KeyedObject>
-            <KeyedObject objectId="0:167" id="0:1684">
+            <KeyedObject objectId="7:4" id="0:1684">
                 <KeyedProperty property="opacity" id="0:1685">
                     <KeyFrameDouble interpolationType="linear" id="0:1686" />
                     <KeyFrameDouble interpolationType="cubic" frame="84" id="0:1687">
@@ -1471,13 +1479,13 @@
                     <KeyFrameDouble value="1" interpolationType="linear" frame="124" id="0:1699" />
                 </KeyedProperty>
             </KeyedObject>
-            <KeyedObject objectId="0:166" id="0:1700">
-                <KeyedProperty property="positionTop" id="0:1701">
-                    <KeyFrameDouble value="354" interpolationType="linear" id="0:1702" />
-                    <KeyFrameDouble value="354" interpolationType="cubic" frame="84" id="0:1703">
+            <KeyedObject objectId="7:4" id="0:1700">
+                <KeyedProperty property="y" id="0:1701">
+                    <KeyFrameDouble value="365" interpolationType="linear" id="0:1702" />
+                    <KeyFrameDouble value="365" interpolationType="cubic" frame="84" id="0:1703">
                         <CubicEaseInterpolator x1="0.16" y1="1" x2="0.30000001" id="0:1704" />
                     </KeyFrameDouble>
-                    <KeyFrameDouble value="344" interpolationType="linear" frame="128" id="0:1705" />
+                    <KeyFrameDouble value="355" interpolationType="linear" frame="128" id="0:1705" />
                 </KeyedProperty>
             </KeyedObject>
         </LinearAnimation>
@@ -1728,45 +1736,45 @@
                     <KeyFrameDouble value="334" interpolationType="linear" frame="720" id="0:1943" />
                 </KeyedProperty>
             </KeyedObject>
-            <KeyedObject objectId="0:166" id="0:1944">
-                <KeyedProperty property="positionTop" id="0:1945">
-                    <KeyFrameDouble value="344" interpolationType="linear" id="0:1946" />
-                    <KeyFrameDouble value="344.39841" interpolationType="linear" frame="20" id="0:1947" />
-                    <KeyFrameDouble value="344.57819" interpolationType="linear" frame="40" id="0:1948" />
-                    <KeyFrameDouble value="344.51761" interpolationType="linear" frame="60" id="0:1949" />
-                    <KeyFrameDouble value="344.22409" interpolationType="linear" frame="80" id="0:1950" />
-                    <KeyFrameDouble value="343.73291" interpolationType="linear" frame="100" id="0:1951" />
-                    <KeyFrameDouble value="343.10339" interpolationType="linear" frame="120" id="0:1952" />
-                    <KeyFrameDouble value="342.4115" interpolationType="linear" frame="140" id="0:1953" />
-                    <KeyFrameDouble value="341.74051" interpolationType="linear" frame="160" id="0:1954" />
-                    <KeyFrameDouble value="341.1716" interpolationType="linear" frame="180" id="0:1955" />
-                    <KeyFrameDouble value="340.77319" interpolationType="linear" frame="200" id="0:1956" />
-                    <KeyFrameDouble value="340.59341" interpolationType="linear" frame="220" id="0:1957" />
-                    <KeyFrameDouble value="340.6539" interpolationType="linear" frame="240" id="0:1958" />
-                    <KeyFrameDouble value="340.94751" interpolationType="linear" frame="260" id="0:1959" />
-                    <KeyFrameDouble value="341.4386" interpolationType="linear" frame="280" id="0:1960" />
-                    <KeyFrameDouble value="342.06812" interpolationType="linear" frame="300" id="0:1961" />
-                    <KeyFrameDouble value="342.7601" interpolationType="linear" frame="320" id="0:1962" />
-                    <KeyFrameDouble value="343.431" interpolationType="linear" frame="340" id="0:1963" />
-                    <KeyFrameDouble value="344" interpolationType="linear" frame="360" id="0:1964" />
-                    <KeyFrameDouble value="344.39841" interpolationType="linear" frame="380" id="0:1965" />
-                    <KeyFrameDouble value="344.57819" interpolationType="linear" frame="400" id="0:1966" />
-                    <KeyFrameDouble value="344.51761" interpolationType="linear" frame="420" id="0:1967" />
-                    <KeyFrameDouble value="344.22409" interpolationType="linear" frame="440" id="0:1968" />
-                    <KeyFrameDouble value="343.73291" interpolationType="linear" frame="460" id="0:1969" />
-                    <KeyFrameDouble value="343.10339" interpolationType="linear" frame="480" id="0:1970" />
-                    <KeyFrameDouble value="342.4115" interpolationType="linear" frame="500" id="0:1971" />
-                    <KeyFrameDouble value="341.74051" interpolationType="linear" frame="520" id="0:1972" />
-                    <KeyFrameDouble value="341.1716" interpolationType="linear" frame="540" id="0:1973" />
-                    <KeyFrameDouble value="340.77319" interpolationType="linear" frame="560" id="0:1974" />
-                    <KeyFrameDouble value="340.59341" interpolationType="linear" frame="580" id="0:1975" />
-                    <KeyFrameDouble value="340.6539" interpolationType="linear" frame="600" id="0:1976" />
-                    <KeyFrameDouble value="340.94751" interpolationType="linear" frame="620" id="0:1977" />
-                    <KeyFrameDouble value="341.4386" interpolationType="linear" frame="640" id="0:1978" />
-                    <KeyFrameDouble value="342.06812" interpolationType="linear" frame="660" id="0:1979" />
-                    <KeyFrameDouble value="342.7601" interpolationType="linear" frame="680" id="0:1980" />
-                    <KeyFrameDouble value="343.431" interpolationType="linear" frame="700" id="0:1981" />
-                    <KeyFrameDouble value="344" interpolationType="linear" frame="720" id="0:1982" />
+            <KeyedObject objectId="7:4" id="0:1944">
+                <KeyedProperty property="y" id="0:1945">
+                    <KeyFrameDouble value="355" interpolationType="linear" id="0:1946" />
+                    <KeyFrameDouble value="355.3984" interpolationType="linear" frame="20" id="0:1947" />
+                    <KeyFrameDouble value="355.5782" interpolationType="linear" frame="40" id="0:1948" />
+                    <KeyFrameDouble value="355.5176" interpolationType="linear" frame="60" id="0:1949" />
+                    <KeyFrameDouble value="355.2241" interpolationType="linear" frame="80" id="0:1950" />
+                    <KeyFrameDouble value="354.7329" interpolationType="linear" frame="100" id="0:1951" />
+                    <KeyFrameDouble value="354.1034" interpolationType="linear" frame="120" id="0:1952" />
+                    <KeyFrameDouble value="353.4115" interpolationType="linear" frame="140" id="0:1953" />
+                    <KeyFrameDouble value="352.7405" interpolationType="linear" frame="160" id="0:1954" />
+                    <KeyFrameDouble value="352.1716" interpolationType="linear" frame="180" id="0:1955" />
+                    <KeyFrameDouble value="351.7732" interpolationType="linear" frame="200" id="0:1956" />
+                    <KeyFrameDouble value="351.5934" interpolationType="linear" frame="220" id="0:1957" />
+                    <KeyFrameDouble value="351.6539" interpolationType="linear" frame="240" id="0:1958" />
+                    <KeyFrameDouble value="351.9475" interpolationType="linear" frame="260" id="0:1959" />
+                    <KeyFrameDouble value="352.4386" interpolationType="linear" frame="280" id="0:1960" />
+                    <KeyFrameDouble value="353.0681" interpolationType="linear" frame="300" id="0:1961" />
+                    <KeyFrameDouble value="353.7601" interpolationType="linear" frame="320" id="0:1962" />
+                    <KeyFrameDouble value="354.431" interpolationType="linear" frame="340" id="0:1963" />
+                    <KeyFrameDouble value="355" interpolationType="linear" frame="360" id="0:1964" />
+                    <KeyFrameDouble value="355.3984" interpolationType="linear" frame="380" id="0:1965" />
+                    <KeyFrameDouble value="355.5782" interpolationType="linear" frame="400" id="0:1966" />
+                    <KeyFrameDouble value="355.5176" interpolationType="linear" frame="420" id="0:1967" />
+                    <KeyFrameDouble value="355.2241" interpolationType="linear" frame="440" id="0:1968" />
+                    <KeyFrameDouble value="354.7329" interpolationType="linear" frame="460" id="0:1969" />
+                    <KeyFrameDouble value="354.1034" interpolationType="linear" frame="480" id="0:1970" />
+                    <KeyFrameDouble value="353.4115" interpolationType="linear" frame="500" id="0:1971" />
+                    <KeyFrameDouble value="352.7405" interpolationType="linear" frame="520" id="0:1972" />
+                    <KeyFrameDouble value="352.1716" interpolationType="linear" frame="540" id="0:1973" />
+                    <KeyFrameDouble value="351.7732" interpolationType="linear" frame="560" id="0:1974" />
+                    <KeyFrameDouble value="351.5934" interpolationType="linear" frame="580" id="0:1975" />
+                    <KeyFrameDouble value="351.6539" interpolationType="linear" frame="600" id="0:1976" />
+                    <KeyFrameDouble value="351.9475" interpolationType="linear" frame="620" id="0:1977" />
+                    <KeyFrameDouble value="352.4386" interpolationType="linear" frame="640" id="0:1978" />
+                    <KeyFrameDouble value="353.0681" interpolationType="linear" frame="660" id="0:1979" />
+                    <KeyFrameDouble value="353.7601" interpolationType="linear" frame="680" id="0:1980" />
+                    <KeyFrameDouble value="354.431" interpolationType="linear" frame="700" id="0:1981" />
+                    <KeyFrameDouble value="355" interpolationType="linear" frame="720" id="0:1982" />
                 </KeyedProperty>
             </KeyedObject>
             <KeyedObject objectId="9:2" id="0:1983">
@@ -2515,7 +2523,7 @@
             </KeyedObject>
         </LinearAnimation>
         <LinearAnimation duration="1" name="Rest Tag" id="9:69">
-            <KeyedObject objectId="0:167" id="0:2457">
+            <KeyedObject objectId="7:4" id="0:2457">
                 <KeyedProperty property="scaleX" id="0:2458">
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:2459" />
                 </KeyedProperty>
@@ -2525,7 +2533,7 @@
             </KeyedObject>
         </LinearAnimation>
         <LinearAnimation duration="1" name="Hover Tag" id="9:70">
-            <KeyedObject objectId="0:167" id="0:2462">
+            <KeyedObject objectId="7:4" id="0:2462">
                 <KeyedProperty property="scaleX" id="0:2463">
                     <KeyFrameDouble value="1.0599999" interpolationType="linear" id="0:2464" />
                 </KeyedProperty>
