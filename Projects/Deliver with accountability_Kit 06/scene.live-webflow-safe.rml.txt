@@ -225,7 +225,7 @@
                     </Fill>
                 </LayoutComponent>
                 <LayoutComponent width="322" height="194" styleId="0:4096" name="Window (Wrapper)" id="0:1074">
-                    <Shape x="309" y="190" name="Ellipse 2338" id="0:128">
+                    <Node name="Window (Wrapper) (Free)" id="0:4128"><Shape x="309" y="190" name="Ellipse 2338" id="0:128">
                         <Ellipse width="96" height="64" name="Path" id="0:1075" />
                         <Fill fillRule="clockwise" name="Fill" id="0:1076">
                             <RadialGradient startX="-9" startY="-19" endX="53.146" endY="-19" name="Gradient" id="0:1077">
@@ -235,7 +235,7 @@
                             <Feather strength="44" name="Feather" id="0:1080" />
                         </Fill>
                     </Shape>
-                    <LayoutComponent width="274.27701" height="128" styleId="0:129" name="Frame 2147242320" id="0:186">
+                    </Node><LayoutComponent width="274.27701" height="128" styleId="0:129" name="Frame 2147242320" id="0:186">
                         <LayoutComponentStyle gapHorizontal="21" positionLeft="23.862" positionTop="41" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Frame 2147242320 Style" id="0:129" />
                         <LayoutComponent width="274.27701" height="128" styleId="0:4097" name="Frame 2147242320 (Box)" id="1:18">
                             <LayoutComponent clip="true" width="125.277" height="128" styleId="0:130" name="Image" id="0:138">
@@ -819,23 +819,28 @@
                 <TextValueRun styleId="0:213" text="AI" name="Run 1" id="0:1389" />
             </Text>
             <GridItemPlacement id="1:24" />
-        <Node name="AI Ball (Flat)" id="0:4106"><Shape x="60" y="60" name="AI Ball" id="9:990"><Ellipse width="120" height="120" name="Path" id="0:4107" /><Fill name="Fill" id="0:1374">
-                <RadialGradient startX="-18.400002" startY="-23.200001" endX="61.599999999999994" endY="-23.200001" name="Gradient" id="0:1375">
-                    <GradientStop colorValue="FFB3C4F2" id="0:1376" />
-                    <GradientStop colorValue="FF5B83FF" position="0.34999999" id="0:1377" />
-                    <GradientStop colorValue="FF3764E3" position="0.80000001" id="0:1378" />
-                    <GradientStop colorValue="FF2152DB" position="1" id="0:1379" />
-                </RadialGradient>
-            </Fill>
-            <Fill fillRule="clockwise" name="Inner Shadow" id="0:1380">
-                    <SolidColor colorValue="40FFFFFF" name="Color" id="0:1381" />
-                    <Feather strength="32" offsetY="8" inner="true" name="Feather" id="0:1382" />
-                </Fill>
-                <Fill fillRule="clockwise" name="Inner Shadow" id="0:1383">
-                    <SolidColor colorValue="B2FFFFFF" name="Color" id="0:1384" />
-                    <Feather strength="24" offsetY="-4" inner="true" name="Feather" id="0:1385" />
-                </Fill>
-            </Shape></Node></LayoutComponent>
+            <Node name="AI Ball (Flat)" id="0:4106">
+                <Shape x="60" y="60" name="AI Ball" id="9:990">
+                    <Ellipse width="120" height="120" name="Path" id="0:4107" />
+                    <Fill name="Fill" id="0:1374">
+                        <RadialGradient startX="-18.400002" startY="-23.200001" endX="61.599998" endY="-23.200001" name="Gradient" id="0:1375">
+                            <GradientStop colorValue="FFB3C4F2" id="0:1376" />
+                            <GradientStop colorValue="FF5B83FF" position="0.34999999" id="0:1377" />
+                            <GradientStop colorValue="FF3764E3" position="0.80000001" id="0:1378" />
+                            <GradientStop colorValue="FF2152DB" position="1" id="0:1379" />
+                        </RadialGradient>
+                    </Fill>
+                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:1380">
+                        <SolidColor colorValue="40FFFFFF" name="Color" id="0:1381" />
+                        <Feather strength="32" offsetY="8" inner="true" name="Feather" id="0:1382" />
+                    </Fill>
+                    <Fill fillRule="clockwise" name="Inner Shadow" id="0:1383">
+                        <SolidColor colorValue="B2FFFFFF" name="Color" id="0:1384" />
+                        <Feather strength="24" offsetY="-4" inner="true" name="Feather" id="0:1385" />
+                    </Fill>
+                </Shape>
+            </Node>
+        </LayoutComponent>
         <LayoutComponent width="64" height="64" styleId="0:218" name="Frame 2147230241" id="0:225">
             <LayoutComponentStyle positionLeft="526" positionTop="359" positionLeftUnitsValue="points" positionTopUnitsValue="points" layoutAlignmentType="center" positionTypeValue="absolute" cornerRadiusTL="1141.714" cornerRadiusTR="1141.714" cornerRadiusBL="1141.714" cornerRadiusBR="1141.714" name="Frame 2147230241 Style" id="0:218" />
             <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:1390" />
@@ -3718,8 +3723,23 @@
                     <KeyFrameDouble value="1" interpolationType="linear" id="0:3479" />
                 </KeyedProperty>
             </KeyedObject>
-            
-        <KeyedObject objectId="0:243" id="0:4108"><KeyedProperty property="scaleX" id="0:4109"><KeyFrameDouble value="1" interpolationType="linear" id="0:4110"/></KeyedProperty><KeyedProperty property="scaleY" id="0:4111"><KeyFrameDouble value="1" interpolationType="linear" id="0:4112"/></KeyedProperty></KeyedObject><KeyedObject objectId="9:990" id="0:4113"><KeyedProperty property="scaleX" id="0:4114"><KeyFrameDouble value="1" interpolationType="linear" id="0:4115"/></KeyedProperty><KeyedProperty property="scaleY" id="0:4116"><KeyFrameDouble value="1" interpolationType="linear" id="0:4117"/></KeyedProperty></KeyedObject></LinearAnimation>
+            <KeyedObject objectId="0:243" id="0:4108">
+                <KeyedProperty property="scaleX" id="0:4109">
+                    <KeyFrameDouble value="1" interpolationType="linear" id="0:4110" />
+                </KeyedProperty>
+                <KeyedProperty property="scaleY" id="0:4111">
+                    <KeyFrameDouble value="1" interpolationType="linear" id="0:4112" />
+                </KeyedProperty>
+            </KeyedObject>
+            <KeyedObject objectId="9:990" id="0:4113">
+                <KeyedProperty property="scaleX" id="0:4114">
+                    <KeyFrameDouble value="1" interpolationType="linear" id="0:4115" />
+                </KeyedProperty>
+                <KeyedProperty property="scaleY" id="0:4116">
+                    <KeyFrameDouble value="1" interpolationType="linear" id="0:4117" />
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
         <LinearAnimation duration="16" name="Wait AI" id="9:63">
             <KeyedObject objectId="0:217" id="0:3480">
                 <KeyedProperty property="opacity" id="0:3481">
@@ -3736,8 +3756,23 @@
                     <KeyFrameDouble value="1.05" interpolationType="linear" id="0:3487" />
                 </KeyedProperty>
             </KeyedObject>
-            
-        <KeyedObject objectId="0:243" id="0:4118"><KeyedProperty property="scaleX" id="0:4119"><KeyFrameDouble value="1.12" interpolationType="linear" id="0:4120"/></KeyedProperty><KeyedProperty property="scaleY" id="0:4121"><KeyFrameDouble value="1.12" interpolationType="linear" id="0:4122"/></KeyedProperty></KeyedObject><KeyedObject objectId="9:990" id="0:4123"><KeyedProperty property="scaleX" id="0:4124"><KeyFrameDouble value="1.06" interpolationType="linear" id="0:4125"/></KeyedProperty><KeyedProperty property="scaleY" id="0:4126"><KeyFrameDouble value="1.06" interpolationType="linear" id="0:4127"/></KeyedProperty></KeyedObject></LinearAnimation>
+            <KeyedObject objectId="0:243" id="0:4118">
+                <KeyedProperty property="scaleX" id="0:4119">
+                    <KeyFrameDouble value="1.12" interpolationType="linear" id="0:4120" />
+                </KeyedProperty>
+                <KeyedProperty property="scaleY" id="0:4121">
+                    <KeyFrameDouble value="1.12" interpolationType="linear" id="0:4122" />
+                </KeyedProperty>
+            </KeyedObject>
+            <KeyedObject objectId="9:990" id="0:4123">
+                <KeyedProperty property="scaleX" id="0:4124">
+                    <KeyFrameDouble value="1.0599999" interpolationType="linear" id="0:4125" />
+                </KeyedProperty>
+                <KeyedProperty property="scaleY" id="0:4126">
+                    <KeyFrameDouble value="1.0599999" interpolationType="linear" id="0:4127" />
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
         <LinearAnimation duration="1" name="Rest Window" id="9:70">
             <KeyedObject objectId="0:195" id="0:3488">
                 <KeyedProperty property="scaleX" id="0:3489">

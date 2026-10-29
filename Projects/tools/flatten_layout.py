@@ -96,8 +96,20 @@ def place(container, stats):
     if st is None:
         return
     kids = flow_children(container)
-    if not kids or holds_text(container):
+    if not kids:
         return
+    texts = [el for el, kind in kids if kind == 'text']
+    if any(t_.get('sizingValue') == 'fixed' for t_ in texts):      # a text that already has its fixed box stays in the flow as it is
+        return
+    if texts:
+        # texts have no known width: place them only when nothing after them depends on it
+        row_ = st.get('flexDirectionValue', 'row') in ('row', 'rowReverse')
+        main_ = st.get('layoutAlignmentType', 'topLeft')
+        last_ok = kids[-1][1] == 'text' and len(texts) == 1
+        sole = len(kids) == 1
+        left_main = main_ in ('topLeft', 'centerLeft', 'bottomLeft') if row_ else main_.startswith('top')
+        if not ((last_ok and left_main) or (sole and main_ in ('center', 'centerLeft', 'topLeft'))):
+            return
     cw, ch = fnum(container.get('width')), fnum(container.get('height'))
     pl, pr = fnum(st.get('paddingLeft')), fnum(st.get('paddingRight'))
     pt, pb = fnum(st.get('paddingTop')), fnum(st.get('paddingBottom'))
@@ -115,6 +127,9 @@ def place(container, stats):
     for el, kind in kids:
         if kind == 'layout':
             sizes.append((fnum(el.get('width')), fnum(el.get('height'))))
+        elif kind == 'text':
+            paint = next((c for c in el if c.tag == 'TextStylePaint'), None)
+            sizes.append((0.0, fnum(paint.get('lineHeight') if paint is not None else None, fnum(paint.get('fontSize') if paint is not None else 16))))
         else:
             sizes.append(shape_size(el, inner_w, inner_h))
     inner_w, inner_h = cw - pl - pr, ch - pt - pb
@@ -147,7 +162,15 @@ def place(container, stats):
         co = {'left': 0, 'top': 0, 'center': (cross_room - csize) / 2, 'right': cross_room - csize, 'bottom': cross_room - csize}[cross_align]
         cpos = (pt if row else pl) + co
         left, top = (pos, cpos) if row else (cpos, pos)
-        if kind == 'layout':
+        if kind == 'text':
+            el.remove(part_of(el))
+            if len(kids) == 1 and main_align == 'center':        # a lone, centred text keeps itself centred
+                el.set('x', num(pl + inner_w / 2)); el.set('y', num(pt + inner_h / 2)); el.set('originX', '0.5'); el.set('originY', '0.5')
+                el.set('alignValue', 'center')
+            else:
+                el.set('x', num(left)); el.set('y', num(top))
+            moved.append(el)
+        elif kind == 'layout':
             est = style_of(el)
             est.set('positionTypeValue', 'absolute')
             for k, val in (('positionLeft', left), ('positionTop', top)):
@@ -169,6 +192,24 @@ def place(container, stats):
             container.remove(el)
             wrap.append(el)
         container.insert(at, wrap)
+
+
+def wrap_loose_shapes(root):
+    """Shapes and texts that sit straight under a layout box (no layout participant) are treated as flow items by
+    Webflow's runtime and get stretched. Put each run of them in a plain Node, which keeps them free."""
+    n = 0
+    for box in list(root.iter('LayoutComponent')):
+        run = []
+        for c in list(box) + [None]:
+            if c is not None and c.tag in ('Shape', 'Text') and part_of(c) is None:
+                run.append(c); continue
+            if run:
+                at = list(box).index(run[0])
+                node = ET.Element('Node', {'name': '%s (Free)' % (box.get('name') or 'box')})
+                for el in run:
+                    box.remove(el); node.append(el)
+                box.insert(at, node); n += 1; run = []
+    return n
 
 
 def nodes_to_layouts(root):
@@ -234,6 +275,7 @@ def flatten(text):
     root = ET.fromstring(text)
     stats = {'placed': 0}
     nodes_to_layouts(root)
+    wrap_loose_shapes(root)
     fix_lone_text(root)
     for el in list(root.iter('LayoutComponent')):      # a list: placing a box adds wrapper nodes, which must not disturb the walk
         place(el, stats)
