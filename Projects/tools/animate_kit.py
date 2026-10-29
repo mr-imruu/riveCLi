@@ -14,6 +14,10 @@ scene, base = os.path.join(proj, 'scene.rml'), os.path.join(proj, 'scene.base.tx
 if not os.path.exists(base):
     shutil.copy(scene, base)
 src = open(base).read()
+if cfg.get('flatten'):          # bake auto layout into absolute positions (see flatten_layout.py)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import flatten_layout
+    src, _placed = flatten_layout.flatten(src)
 
 _n = [0]
 def nid():
@@ -647,6 +651,44 @@ for sp in cfg.get('splitShapes', []):     # one shape holding two paths -> a fix
            '<Node name="Image icon (Wrapper)">%s%s</Node></LayoutComponent>') % (num(w_), num(h_), sp['styleId'], sp['wrapperId'], sp['styleId'],
               one(paths[0], 'Sun', sp['sunId']), one(paths[1], 'Mountain', sp['mountainId']))
     src = src[:mm.start()] + box + src[e:]
+
+if cfg.get('fixedSizes'):      # hug/fill sizes -> fixed, using the size Figma gave each box (older runtimes mis-compute hug/fill and lose the content)
+    def fixsz(m_):
+        el, st = m_.group(1), m_.group(2)
+        st = re.sub(r'layout(Width|Height)ScaleType="(?:fill|hug)"', r'layout\1ScaleType="fixed"', st)
+        return el + st
+    src = re.sub(r'(<LayoutComponent\b[^>]*>\s*)(<LayoutComponentStyle\b[^>]*/>)', fixsz, src)
+
+for ov in cfg.get('overlayShapes', []):    # lift one path of a shape out into its own free-standing shape (no new layout box), drawn above `before`
+    mm = re.search(r'<Shape\b[^>]*\bid="%s"[^>]*>' % re.escape(ov['shapeId']), src)
+    e = end_of(src, mm.start()); shp = src[mm.start():e]
+    paths = re.findall(r'<PointsPath[^>]*>[\s\S]*?</PointsPath>', shp)
+    fill = re.search(r'<Fill\b[\s\S]*?</Fill>', shp).group(0)
+    src = src[:mm.start()] + shp.replace(paths[ov.get('pathIndex', 0)], '', 1) + src[e:]
+    xml = '<Shape x="%s" y="%s" name="%s" id="%s"><Ellipse width="%s" height="%s" name="Path"/>%s</Shape>' % (num(ov['x']), num(ov['y']), ov['name'], ov['id'], num(ov['size']), num(ov['size']), fill)
+    bm = re.search(r'<(LayoutComponent|Shape)\b[^>]*\bid="%s"[^>]*>' % re.escape(ov['before']), src)
+    src = src[:bm.start()] + xml + src[bm.start():]
+
+for gid in cfg.get('unrotate', []):       # bake a rotated layout group's rotation into its children (some runtimes place a rotated layout differently)
+    mm = re.search(r'<LayoutComponent\b([^>]*)\bid="%s"([^>]*)>\s*<LayoutComponentStyle([^>]*)/>' % re.escape(gid), src)
+    if not mm:
+        print('WARN: no group', gid); continue
+    attrs = mm.group(1) + mm.group(2)
+    th = float(re.search(r'\brotation="([^"]*)"', attrs).group(1)); w_ = float(re.search(r'\bwidth="([^"]*)"', attrs).group(1)); h_ = float(re.search(r'\bheight="([^"]*)"', attrs).group(1))
+    sty = mm.group(3)
+    gl = float(re.search(r'positionLeft="([^"]*)"', sty).group(1)); gt = float(re.search(r'positionTop="([^"]*)"', sty).group(1))
+    cx, cy = gl + w_ / 2, gt + h_ / 2
+    e = end_of(src, mm.start()); grp = src[mm.start():e]
+    def fix_shape(m_):
+        x, y = float(m_.group(1)), float(m_.group(2)); rot = float(m_.group(3) or 0)
+        dx, dy = x - w_ / 2, y - h_ / 2
+        nx = cx + dx * math.cos(th) - dy * math.sin(th); ny = cy + dx * math.sin(th) + dy * math.cos(th)
+        return '<Shape x="%s" y="%s" rotation="%s"' % (num(nx), num(ny), num(rot + th))
+    grp2 = re.sub(r'<Shape x="([\d.\-]+)" y="([\d.\-]+)"(?: rotation="([\d.\-]+)")?', fix_shape, grp)
+    grp2 = re.sub(r'(<LayoutComponent\b[^>]*?) rotation="[^"]*"', r'\1', grp2, 1)
+    grp2 = grp2.replace('positionLeft="%s"' % re.search(r'positionLeft="([^"]*)"', sty).group(1), 'positionLeft="0"', 1).replace('positionTop="%s"' % re.search(r'positionTop="([^"]*)"', sty).group(1), 'positionTop="0"', 1)
+    grp2 = re.sub(r'<ComponentOrigin[^>]*/>', '', grp2, 1)
+    src = src[:mm.start()] + grp2 + src[e:]
 
 # a straight connector that crosses behind a card is split at its middle into two paths that both run outward
 for it in items:

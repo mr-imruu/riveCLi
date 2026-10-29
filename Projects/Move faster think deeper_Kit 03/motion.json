@@ -435,5 +435,6 @@
   "after": "0:329",
   "size": 8,
   "start": 20
- }
+ },
+ "flatten": true
 }

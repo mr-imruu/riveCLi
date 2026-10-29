@@ -493,5 +493,6 @@
   "size": 8,
   "start": 20
  },
- "spokeLoop": 540
+ "spokeLoop": 540,
+ "flatten": true
 }
