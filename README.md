@@ -1,6 +1,9 @@
 # riveCLi
 For helper of rive animation
 
+**Animated, Webflow-ready files:** see [HOWTO-ANIMATE-AND-WEBFLOW.md](HOWTO-ANIMATE-AND-WEBFLOW.md) (plugin Safe layout + `Animate.command`).
+
+
 Everything for turning Figma designs into Rive, with the Rive CLI.
 
 ```
