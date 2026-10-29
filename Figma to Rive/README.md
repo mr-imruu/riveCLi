@@ -82,7 +82,7 @@ keeps everything already in the file. Backups go to `Exports/backups/`. Nothing 
 Two checkboxes in the plugin: **frame properties become the artboard's** (or the frame is a layout box inside a plain
 artboard), and **components** (also create component artboards).
 
-**Webflow-safe layout** (off by default): for files that will play in the Rive element in Webflow, whose runtime (2.35)
+**Safe layout** (off by default; pick the target under it: **Webflow**, or **Framer**, which is locked for now): for Webflow, for files that will play in the Rive element in Webflow, whose runtime (2.35)
 differs from the Rive editor. It rewrites the output so it draws the same there: layout boxes in Nodes become layout
 boxes, rotations and flips are baked into shapes, centred text gets a fixed box, loose shapes are wrapped in Nodes, auto layout
 is baked into absolute positions, and hue/additive blends become plain gradients. Code: `webflow.js` (test it with
