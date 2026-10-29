@@ -43,6 +43,7 @@ for gid in unrot:
     n_un += 1
 b_ = F.bake_rotated_groups(root)
 b_ += F.bake_half_turn(root)
+b_ += F.bake_flipped_nodes(root)
 k = F.nodes_to_layouts(root)
 w_ = F.wrap_loose_shapes(root)
 m = F.fix_lone_text(root)

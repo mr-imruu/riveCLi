@@ -408,6 +408,61 @@ def bake_half_turn(root):
     return n
 
 
+def bake_flipped_nodes(root):
+    """Webflow's runtime places artwork under a mirrored Node (the converter's flip wrappers) differently. A Node with a
+    negative scale that holds only Nodes, shapes and plain unpainted layout boxes, and is not animated, is replaced by a
+    plain Node whose shapes carry the whole transform."""
+    keyed = {ko.get('objectId') for ko in root.iter('KeyedObject')}
+    parents = {c: p for p in root.iter() for c in p}
+    n = 0
+    def plain(e):
+        for c in e:
+            if c.tag in ('LayoutComponentStyle', 'ComponentOrigin'):
+                continue
+            if c.tag == 'Shape':
+                continue
+            if c.tag == 'Node' and plain(c):
+                continue
+            if c.tag == 'LayoutComponent' and not any(k.tag in ('Fill', 'Stroke') for k in c) and not c.get('rotation') and plain(c):
+                continue
+            return False
+        return True
+    def collect(e, chain, out):
+        for c in e:
+            if c.tag == 'Node':
+                collect(c, _mul(chain, _node_mat(c)), out)
+            elif c.tag == 'LayoutComponent':
+                st = style_of(c)
+                collect(c, _mul(chain, (1, 0, 0, 1, fnum(st.get('positionLeft')) if st is not None else 0, fnum(st.get('positionTop')) if st is not None else 0)), out)
+            elif c.tag == 'Shape':
+                out.append((c, chain))
+    for nd in list(root.iter('Node')):
+        if fnum(nd.get('scaleX'), 1) >= 0 and fnum(nd.get('scaleY'), 1) >= 0:
+            continue
+        if nd not in parents or parents[nd].tag != 'LayoutComponent':
+            continue
+        if any(x.get('id') in keyed for x in nd.iter()) or not plain(nd):
+            continue
+        out = []
+        collect(nd, _node_mat(nd), out)
+        if not out:
+            continue
+        for sh, chain in out:
+            a, b, c_, d, e_, f_ = _mul(chain, _node_mat(sh))
+            sx = math.hypot(a, b); sy = (a * d - b * c_) / (sx or 1)
+            sh.set('x', num(e_)); sh.set('y', num(f_)); sh.set('rotation', num(math.atan2(b, a)))
+            sh.set('scaleX', num(sx)); sh.set('scaleY', num(sy))
+        par = parents[nd]
+        at = list(par).index(nd)
+        par.remove(nd)
+        free = ET.Element('Node', {'name': '%s (Free)' % (nd.get('name') or 'art')})
+        for sh, chain in out:
+            free.append(sh)
+        par.insert(at, free)
+        n += 1
+    return n
+
+
 def wrap_loose_shapes(root):
     """Shapes and texts that sit straight under a layout box (no layout participant) are treated as flow items by
     Webflow's runtime and get stretched. Put each run of them in a plain Node, which keeps them free."""

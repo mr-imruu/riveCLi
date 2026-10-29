@@ -269,7 +269,7 @@
                     <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:272" />
                     <Fill fillRule="clockwise" name="Shadow" id="0:273">
                         <SolidColor colorValue="0A0004FF" name="Color" id="0:274" />
-                        <Feather strength="34.849998" offsetY="-23.71" name="Feather" id="0:275" />
+                        <Feather strength="34.849998" offsetY="-23.709999" name="Feather" id="0:275" />
                     </Fill>
                     <Fill fillRule="clockwise" name="Shadow" id="0:276">
                         <SolidColor colorValue="570004FF" name="Color" id="0:277" />
@@ -294,12 +294,7 @@
                                 <Feather strength="18" offsetY="-31" inner="true" name="Feather" id="0:288" />
                             </Fill>
                         </LayoutComponent>
-                        <Node y="0" scaleY="-1" name="Frame 1948755364 (Wrapper)" id="0:289" x="120" rotation="3.1416" scaleX="1">
-                            <LayoutComponent width="70.033997" height="70" styleId="0:110" name="Group" id="0:125">
-                                <LayoutComponentStyle positionLeft="24.983" positionTop="25" positionLeftUnitsValue="points" positionTopUnitsValue="points" positionTypeValue="absolute" name="Group Style" id="0:110" />
-                                <ComponentOrigin originX="0.5" originY="0.5" name="Origin" id="0:290" />
-                                <Node name="Group (Baked)" id="0:4025">
-                                    <Shape x="17.9664" y="41.393101" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:111">
+                        <Node name="Frame 1948755364 (Wrapper) (Free)" id="0:4031"><Shape x="77.0501" y="66.3928" rotation="-0.0004" scaleY="1" name="Vector" id="0:111" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:292">
                                             <CubicDetachedVertex inRotation="2.0799999" inDistance="5.737" outRotation="1.6950001" outDistance="0.098999999" x="17.42" y="0.36899999" id="0:293" />
                                             <CubicDetachedVertex inRotation="-1.429" inDistance="0.086999997" outRotation="1.774" outDistance="0.792" x="17.371" y="0.63999999" id="0:294" />
@@ -337,7 +332,7 @@
                                             </LinearGradient>
                                         </Fill>
                                     </Shape>
-                                    <Shape x="20.722601" y="45.840199" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:112">
+                                    <Shape x="74.2939" y="70.8399" rotation="-0.0004" scaleY="1" name="Vector" id="0:112" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:325">
                                             <CubicDetachedVertex outRotation="1.6950001" outDistance="0.098999999" x="20.177999" y="-4.0749998" id="0:326" />
                                             <CubicDetachedVertex inRotation="-1.429" inDistance="0.086999997" outRotation="1.774" outDistance="0.792" x="20.129" y="-3.8039999" id="0:327" />
@@ -389,7 +384,7 @@
                                             </LinearGradient>
                                         </Fill>
                                     </Shape>
-                                    <Shape x="35.016998" y="35" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:113">
+                                    <Shape x="59.9996" y="59.9996" rotation="-0.0004" scaleY="1" name="Vector" id="0:113" scaleX="1">
                                         <PointsPath isClosed="true" isClockwise="false" name="Path" id="0:372">
                                             <CubicDetachedVertex outRotation="-1.661" outDistance="1.632" x="34.676998" y="-5.9349999" id="0:373" />
                                             <CubicDetachedVertex inRotation="1.316" inDistance="1.171" outRotation="-1.827" outDistance="0.77600002" x="33.951" y="-10.059" id="0:374" />
@@ -668,7 +663,7 @@
                                             </LinearGradient>
                                         </Fill>
                                     </Shape>
-                                    <Shape x="9.3634005" y="7.0854998" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:114">
+                                    <Shape x="85.6534" y="32.0853" rotation="-0.0004" scaleY="1" name="Vector" id="0:114" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:621">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.36899999" outRotation="-1.571" outDistance="0.35699999" x="-0.65200001" y="-0.0060000001" id="0:622" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.36899999" outDistance="0.36899999" y="-0.65899998" id="0:623" />
@@ -679,7 +674,7 @@
                                             <SolidColor colorValue="FF7D9FF3" name="Color" id="0:627" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="4.7932" y="14.8207" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:115">
+                                    <Shape x="90.2235" y="39.8205" rotation="-0.0004" scaleY="1" name="Vector" id="0:115" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:628">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.097999997" outRotation="-1.571" outDistance="0.097999997" x="-0.185" id="0:629" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.111" outDistance="0.111" y="-0.185" id="0:630" />
@@ -690,7 +685,7 @@
                                             <SolidColor colorValue="FF7D9FF3" name="Color" id="0:634" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="6.211" y="5.6062999" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:116">
+                                    <Shape x="88.8058" y="30.6061" rotation="-0.0004" scaleY="1" name="Vector" id="0:116" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:635">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.086000003" outRotation="-1.571" outDistance="0.086000003" x="-0.148" y="-0.0060000001" id="0:636" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.086000003" outDistance="0.086000003" y="-0.154" id="0:637" />
@@ -701,7 +696,7 @@
                                             <SolidColor colorValue="FF7D9FF3" name="Color" id="0:641" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="2.4782" y="14.8197" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:117">
+                                    <Shape x="92.5385" y="39.8195" rotation="-0.0004" scaleY="1" name="Vector" id="0:117" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:642">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.271" outRotation="-1.571" outDistance="0.271" x="-0.49200001" id="0:643" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.28299999" outDistance="0.28299999" y="-0.49200001" id="0:644" />
@@ -712,7 +707,7 @@
                                             <SolidColor colorValue="FF7D9FF3" name="Color" id="0:648" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="6.3697" y="8.8262997" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:118">
+                                    <Shape x="88.6471" y="33.8261" rotation="-0.0004" scaleY="1" name="Vector" id="0:118" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:649">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.17200001" outRotation="-1.571" outDistance="0.17200001" x="-0.308" id="0:650" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.17200001" outDistance="0.17200001" y="-0.308" id="0:651" />
@@ -723,7 +718,7 @@
                                             <SolidColor colorValue="FF7D9FF3" name="Color" id="0:655" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="14.1298" y="1.1585" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:119">
+                                    <Shape x="80.887" y="26.1582" rotation="-0.0004" scaleY="1" name="Vector" id="0:119" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:656">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.17200001" outRotation="-1.571" outDistance="0.17200001" x="-0.308" id="0:657" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.17200001" outDistance="0.17200001" y="-0.308" id="0:658" />
@@ -734,7 +729,7 @@
                                             <SolidColor colorValue="FF7D9FF3" name="Color" id="0:662" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="51.0014" y="2.1224999" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:120">
+                                    <Shape x="44.0154" y="27.1219" rotation="-0.0004" scaleY="1" name="Vector" id="0:120" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:663">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.17200001" outRotation="-1.571" outDistance="0.17200001" x="-0.308" id="0:664" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.17200001" outDistance="0.17200001" y="-0.308" id="0:665" />
@@ -745,7 +740,7 @@
                                             <SolidColor colorValue="FF658EF1" name="Color" id="0:669" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="58.9771" y="7.7937999" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:121">
+                                    <Shape x="36.0397" y="32.7932" rotation="-0.0004" scaleY="1" name="Vector" id="0:121" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:670">
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.123" outRotation="-1.571" outDistance="0.111" x="-0.20900001" y="-0.0060000001" id="0:671" />
                                             <CubicDetachedVertex inRotation="3.142" inDistance="0.123" outDistance="0.123" y="-0.215" id="0:672" />
@@ -756,7 +751,7 @@
                                             <SolidColor colorValue="FF658EF1" name="Color" id="0:676" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="62.8228" y="8.4853001" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:122">
+                                    <Shape x="32.194" y="33.4847" rotation="-0.0004" scaleY="1" name="Vector" id="0:122" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:677">
                                             <CubicDetachedVertex inDistance="0.20900001" outRotation="3.142" outDistance="0.20900001" x="-0.0060000001" y="0.375" id="0:678" />
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.20900001" outRotation="-1.571" outDistance="0.20900001" x="-0.375" y="0.0060000001" id="0:679" />
@@ -767,7 +762,7 @@
                                             <SolidColor colorValue="FF658EF1" name="Color" id="0:683" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="60.903301" y="12.2155" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:123">
+                                    <Shape x="34.1134" y="37.2149" rotation="-0.0004" scaleY="1" name="Vector" id="0:123" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:684">
                                             <CubicDetachedVertex inDistance="0.419" outRotation="3.142" outDistance="0.43099999" x="-0.0060000001" y="0.78200001" id="0:685" />
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.43099999" outRotation="-1.571" outDistance="0.43099999" x="-0.78200001" y="0.0060000001" id="0:686" />
@@ -778,7 +773,7 @@
                                             <SolidColor colorValue="FF658EF1" name="Color" id="0:690" />
                                         </Fill>
                                     </Shape>
-                                    <Shape x="67.653801" y="15.8433" rotation="-3.1412001" scaleY="-1" name="Vector" id="0:124">
+                                    <Shape x="27.3629" y="40.8426" rotation="-0.0004" scaleY="1" name="Vector" id="0:124" scaleX="1">
                                         <PointsPath isClosed="true" name="Path" id="0:691">
                                             <CubicDetachedVertex inDistance="0.308" outRotation="3.142" outDistance="0.308" x="-0.012" y="0.55400002" id="0:692" />
                                             <CubicDetachedVertex inRotation="1.571" inDistance="0.29499999" outRotation="-1.571" outDistance="0.29499999" x="-0.55400002" y="0.012" id="0:693" />
@@ -789,9 +784,7 @@
                                             <SolidColor colorValue="FF658EF1" name="Color" id="0:697" />
                                         </Fill>
                                     </Shape>
-                                </Node>
-                            </LayoutComponent>
-                            <Shape x="82" y="28" rotation="3.142" name="Ellipse 2338" id="0:126">
+                                <Shape x="37.9998" y="27.9994" rotation="-0.0004" name="Ellipse 2338" id="0:126" scaleX="1" scaleY="-1">
                                 <Ellipse width="114" height="76" name="Path" id="0:698" />
                                 <Fill fillRule="clockwise" name="Fill" id="0:699">
                                     <RadialGradient startX="-7" startY="-10.5" endX="40.685001" endY="-10.5" name="Gradient" id="0:700">
@@ -801,8 +794,7 @@
                                     <Feather strength="44" name="Feather" id="0:703" />
                                 </Fill>
                             </Shape>
-                        </Node>
-                    </LayoutComponent>
+                        </Node></LayoutComponent>
                 </LayoutComponent>
                 <Node name="Group 1000001680 (Wrapper) (Free)" id="0:4019">
                     <Shape x="206" y="206" opacity="0" name="Hover glow Core" id="9:72">
