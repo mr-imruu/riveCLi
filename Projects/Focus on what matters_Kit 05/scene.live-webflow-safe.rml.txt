@@ -787,8 +787,8 @@
                                 <Shape x="37.9998" y="27.9994" rotation="-0.0004" name="Ellipse 2338" id="0:126" scaleX="1" scaleY="-1">
                                 <Ellipse width="114" height="76" name="Path" id="0:698" />
                                 <Fill fillRule="clockwise" name="Fill" id="0:699">
-                                    <RadialGradient startX="-7" startY="-10.5" endX="40.685001" endY="-10.5" name="Gradient" id="0:700">
-                                        <GradientStop colorValue="E50074F9" id="0:701" />
+                                    <RadialGradient startX="-7" startY="-10.5" endX="22" endY="-10.5" name="Gradient" id="0:700">
+                                        <GradientStop colorValue="990074F9" id="0:701" />
                                         <GradientStop colorValue="E5FFFFFF" position="1" id="0:702" />
                                     </RadialGradient>
                                     <Feather strength="44" name="Feather" id="0:703" />
