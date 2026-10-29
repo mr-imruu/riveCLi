@@ -41,6 +41,7 @@ for gid in unrot:
         if c.tag == 'ComponentOrigin':
             g.remove(c)
     n_un += 1
+b_ = F.bake_rotated_groups(root)
 k = F.nodes_to_layouts(root)
 w_ = F.wrap_loose_shapes(root)
 m = F.fix_lone_text(root)
@@ -48,4 +49,4 @@ stats = {'placed': 0}
 for el in list(root.iter('LayoutComponent')):
     F.place(el, stats)
 open(path, 'w').write(ET.tostring(root, encoding='unicode'))
-print('unrotated', n_un, 'wrappers->layouts', k, 'free-shape nodes', w_, 'text fixed', m, 'placed', stats['placed'])
+print('baked rotated groups', b_, 'unrotated', n_un, 'wrappers->layouts', k, 'free-shape nodes', w_, 'text fixed', m, 'placed', stats['placed'])

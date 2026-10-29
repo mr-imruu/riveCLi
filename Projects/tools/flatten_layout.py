@@ -10,7 +10,7 @@ flow would give it, so the picture no longer depends on the runtime's layout eng
 What it handles: row/column, the nine alignments, gaps, paddings, fixed/fill/hug (the size Figma gave each box is
 already on the element). A box that holds text is left as it is, since text sits inside its box by its own rules.
 """
-import re, sys
+import math, re, sys
 import xml.etree.ElementTree as ET
 
 
@@ -192,6 +192,179 @@ def place(container, stats):
             container.remove(el)
             wrap.append(el)
         container.insert(at, wrap)
+
+
+PAINT_STACKS = False
+
+
+def _mat(x, y, rot, sx, sy):
+    c, s_ = math.cos(rot), math.sin(rot)
+    return (c * sx, s_ * sx, -s_ * sy, c * sy, x, y)          # a b c d e f : [a c e; b d f]
+
+
+def _mul(m, n):
+    return (m[0] * n[0] + m[2] * n[1], m[1] * n[0] + m[3] * n[1], m[0] * n[2] + m[2] * n[3], m[1] * n[2] + m[3] * n[3],
+            m[0] * n[4] + m[2] * n[5] + m[4], m[1] * n[4] + m[3] * n[5] + m[5])
+
+
+def _node_mat(e):
+    return _mat(fnum(e.get('x')), fnum(e.get('y')), fnum(e.get('rotation')), fnum(e.get('scaleX'), 1), fnum(e.get('scaleY'), 1))
+
+
+def _paint_stack_to_ellipse(g):
+    """A round, rotated box whose paint lives on it and on same-sized round boxes inside it (shadows, a gradient,
+    inner shadows) becomes one Ellipse shape carrying all those paints, so the box holds only shapes."""
+    w, h = fnum(g.get('width')), fnum(g.get('height'))
+    paints = [c for c in g if c.tag in ('Fill', 'Stroke')]
+    boxes = [c for c in g if c.tag == 'LayoutComponent']
+    if not paints and not boxes:
+        return
+    def round_full(b):
+        st = style_of(b)
+        return (st is not None and st.get('cornerRadiusTL') and abs(fnum(b.get('width')) - w) < 1 and abs(fnum(b.get('height')) - h) < 1
+                and abs(fnum(st.get('rotation')) ) < 1e-6)
+    collected, hoisted = list(paints), []
+    th_ = fnum(g.get('rotation'))
+    kept = []
+    clipboxes = []
+    def walk(b):
+        for c in list(b):
+            if c.tag == 'LayoutComponent' and (c.get('name') or '') == 'Inner Shadow' and c.get('clip') == 'true' and round_full(c):
+                # an inner shadow needs its clip: it stays a box, with its offsets turned the way the rotation would turn them
+                for f in c.iter('Feather'):
+                    ox, oy = fnum(f.get('offsetX')), fnum(f.get('offsetY'))
+                    f.set('offsetX', num(ox * math.cos(th_) - oy * math.sin(th_))); f.set('offsetY', num(ox * math.sin(th_) + oy * math.cos(th_)))
+                kept.append(c)
+            elif c.tag == 'LayoutComponent' and b is g and c.get('clip') == 'true' and round_full(c) and any(k.tag in ('Node', 'Shape') for k in c):
+                # the frame that clips the artwork stays (its paint moves to the ball); its inner shadow turns with the rotation
+                for k in list(c):
+                    if k.tag in ('Fill', 'Stroke'):
+                        collected.append(k)
+                    elif k.tag == 'LayoutComponent' and (k.get('name') or '') == 'Inner Shadow':
+                        for f in k.iter('Feather'):
+                            ox, oy = fnum(f.get('offsetX')), fnum(f.get('offsetY'))
+                            f.set('offsetX', num(ox * math.cos(th_) - oy * math.sin(th_))); f.set('offsetY', num(ox * math.sin(th_) + oy * math.cos(th_)))
+                    elif k.tag == 'LayoutComponent':
+                        raise ValueError('frame holds more boxes')
+                c.set('bakeInto', '1'); clipboxes.append(c)
+            elif c.tag in ('Fill', 'Stroke') and b is not g:
+                collected.append(c)
+            elif c.tag == 'LayoutComponent' and round_full(c):
+                walk(c)
+            elif c.tag in ('Node', 'Shape'):
+                hoisted.append(c)
+            elif c.tag == 'LayoutComponent':
+                raise ValueError('not a plain paint stack')
+    try:
+        if not all(round_full(b) for b in boxes):
+            return
+        walk(g)
+    except ValueError:
+        return
+    ball = ET.Element('Shape', {'x': num(w / 2), 'y': num(h / 2), 'name': '%s (Ball)' % (g.get('name') or 'box')})
+    ET.SubElement(ball, 'Ellipse', {'width': num(w), 'height': num(h), 'name': 'Path'})
+    for f in collected:
+        for gr in f.iter():
+            if gr.tag in ('RadialGradient', 'LinearGradient'):
+                for k_, off in (('startX', w / 2), ('endX', w / 2), ('startY', h / 2), ('endY', h / 2)):
+                    if gr.get(k_) is not None:
+                        gr.set(k_, num(fnum(gr.get(k_)) - off))
+        ball.append(f)
+    for cb in clipboxes:
+        for k in list(cb):
+            if k in collected and k.tag in ('Fill', 'Stroke'):
+                cb.remove(k)
+    for p_ in paints:
+        if p_ in g: g.remove(p_)
+    for b in boxes:
+        if b not in clipboxes:
+            g.remove(b)
+    for k in kept:
+        k.set('keepInBake', '1')
+        g.insert(len([c for c in g if c.tag in ('LayoutComponentStyle', 'ComponentOrigin')]), k)
+    # the first child draws on top, so the ball goes last, below the hoisted pieces
+    for hz in hoisted:
+        g.append(hz)
+    g.append(ball)
+
+
+def bake_rotated_groups(root):
+    """Webflow's runtime ignores rotation on a layout box. A rotated box that holds only shapes (and Nodes) gets its
+    rotation moved into the shapes, which do rotate, and the animation keys of their position are moved with them."""
+    parents = {c: p for p in root.iter() for c in p}
+    done = 0
+    for g in list(root.iter('LayoutComponent'))[::-1]:        # inner boxes first
+        th = fnum(g.get('rotation'))
+        if abs(th) < 1e-6:
+            continue
+        if PAINT_STACKS:
+            _paint_stack_to_ellipse(g)      # experimental: round logo stacks; the clip frame is not handled yet
+        ok, shapes, owners = True, [], []
+        def collect(e, chain, owner=None):
+            nonlocal ok
+            owner = owner if owner is not None else g
+            for c in e:
+                if c.tag in ('LayoutComponentStyle', 'ComponentOrigin', 'Fill', 'Stroke'):
+                    if c.tag in ('Fill', 'Stroke') and e is g:
+                        ok = False          # the box has its own paint: leave it
+                    continue
+                if c.tag == 'Node':
+                    collect(c, _mul(chain, _node_mat(c)), owner)
+                elif c.tag == 'Shape':
+                    shapes.append((c, chain, owner))
+                elif c.tag == 'LayoutComponent' and c.get('keepInBake'):
+                    pass
+                elif c.tag == 'LayoutComponent' and c.get('bakeInto'):
+                    cst = style_of(c)
+                    owners.append(c)
+                    collect(c, _mul(chain, (1, 0, 0, 1, fnum(cst.get('positionLeft')) if cst is not None else 0, fnum(cst.get('positionTop')) if cst is not None else 0)), c)
+                elif c.tag == 'LayoutComponent' and not any(k.tag in ('Fill', 'Stroke') for k in c) and abs(fnum(c.get('rotation'))) < 1e-6:
+                    cst = style_of(c)       # a plain, unpainted, unrotated box (already baked): its shapes take its offset
+                    collect(c, _mul(chain, (1, 0, 0, 1, fnum(cst.get('positionLeft')) if cst is not None else 0, fnum(cst.get('positionTop')) if cst is not None else 0)))
+                else:
+                    ok = False
+        collect(g, (1, 0, 0, 1, 0, 0))
+        if not ok or not shapes:
+            continue
+        w, h = fnum(g.get('width')), fnum(g.get('height'))
+        org = next((c for c in g if c.tag == 'ComponentOrigin'), None)
+        px, py = (fnum(org.get('originX')) * w, fnum(org.get('originY')) * h) if org is not None else (0.0, 0.0)
+        rot_about = _mul(_mat(px, py, 0, 1, 1), _mul(_mat(0, 0, th, 1, 1), _mat(-px, -py, 0, 1, 1)))
+        for sh, chain, owner in shapes:
+            m = _mul(rot_about, _mul(chain, _node_mat(sh)))
+            a, b, c_, d, e_, f_ = m
+            sx = math.hypot(a, b); sy = (a * d - b * c_) / (sx or 1)
+            sh.set('x', num(e_)); sh.set('y', num(f_)); sh.set('rotation', num(math.atan2(b, a)))
+            if abs(sx - 1) > 1e-6: sh.set('scaleX', num(sx))
+            if abs(sy - 1) > 1e-6: sh.set('scaleY', num(sy))
+            # animation keys of the shape's x / y follow the same move
+            sid = sh.get('id')
+            for ko in root.iter('KeyedObject'):
+                if ko.get('objectId') != sid:
+                    continue
+                props = {kp.get('property'): kp for kp in ko if kp.tag == 'KeyedProperty'}
+                if 'x' in props and 'y' in props:
+                    kx = [k for k in props['x'] if k.tag == 'KeyFrameDouble']; ky = [k for k in props['y'] if k.tag == 'KeyFrameDouble']
+                    for k1, k2 in zip(kx, ky):
+                        px_, py_ = _mul(rot_about, _mul(chain, (1, 0, 0, 1, fnum(k1.get('value')), fnum(k2.get('value')))))[4:]
+                        k1.set('value', num(px_)); k2.set('value', num(py_))
+        parents = {c: p_ for p_ in root.iter() for c in p_}      # fresh: inner boxes were rebuilt
+        for sh, chain, owner in shapes:
+            parents[sh].remove(sh)
+        for ow in [g] + owners:
+            for c in [c for c in ow if c.tag == 'Node' or (c.tag == 'LayoutComponent' and not c.get('keepInBake') and not c.get('bakeInto'))]:
+                ow.remove(c)
+            for c in ow:
+                for flag in ('keepInBake', 'bakeInto'):
+                    if c.get(flag):
+                        del c.attrib[flag]
+            node = ET.SubElement(ow, 'Node', {'name': '%s (Baked)' % (ow.get('name') or 'box')})
+            for sh, chain, owner in shapes:
+                if owner is ow:
+                    node.append(sh)
+        del g.attrib['rotation']
+        done += 1
+    return done
 
 
 def wrap_loose_shapes(root):
