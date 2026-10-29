@@ -82,6 +82,13 @@ keeps everything already in the file. Backups go to `Exports/backups/`. Nothing 
 Two checkboxes in the plugin: **frame properties become the artboard's** (or the frame is a layout box inside a plain
 artboard), and **components** (also create component artboards).
 
+**Webflow-safe layout** (off by default): for files that will play in the Rive element in Webflow, whose runtime (2.35)
+differs from the Rive editor. It rewrites the output so it draws the same there: layout boxes in Nodes become layout
+boxes, rotations and flips are baked into shapes, centred text gets a fixed box, loose shapes are wrapped in Nodes, auto layout
+is baked into absolute positions, and hue/additive blends become plain gradients. Code: `webflow.js` (test it with
+`node test/webflow-run.js <snapshot.json> <out dir> js`). Not handled here: scale on layout boxes is ignored by Webflow, so hover and
+entrance scaling must be built from shapes. Other targets (Framer, ...) can get their own switch the same way.
+
 ## Not converted yet (the plugin lists these when it meets them)
 Angular/diamond gradients (first stop used), shadow spread, background blur, linear burn blend, shadow/blur on text,
 image modes crop/tile (shown as fill), inside/outside strokes combined with a shadow on plain shapes (drawn centred), justified text,

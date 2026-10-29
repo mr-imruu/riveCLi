@@ -164,6 +164,7 @@
     <label class="chk" title="Each main component becomes its own Rive component artboard."><input type="checkbox" id="optComp" checked><span>Components as artboards</span></label>
     <label class="chk" title="Instances become live nested artboards of their component. Needs Components on. Off: plain layout."><input type="checkbox" id="optLink" checked><span>Link instances to components</span></label>
     <label class="chk" title="Inner shadows also cover the layers inside, like Figma."><input type="checkbox" id="optInner" checked><span>Inner shadows over contents</span></label>
+    <label class="chk" title="For the Rive element in Webflow. Rewrites layout so it draws the same there: no layout boxes in Nodes, rotations and flips baked into shapes, fixed text boxes, no hue or additive blends. Off: the normal Rive output."><input type="checkbox" id="optWebflow"><span>Webflow-safe layout</span></label>
     <label class="chk" title="Open Rive file only. The old artboard is swapped for the new one, even after a rename. Edits you made to it in Rive are lost (a backup is saved). Off: saves a new artboard."><input type="checkbox" id="optReplace" checked><span>Update replaces the artboard</span></label>
     <label class="chk" title="Pushes as soon as the export verifies. Updates still wait for you."><input type="checkbox" id="optAuto"><span>Push automatically</span></label>
   </div>
@@ -178,11 +179,12 @@
 </div>
 <script>/*__CONVERT__*/</script>
 <script>/*__ANALYZE__*/</script>
+<script>/*__WEBFLOW__*/</script>
 <script>/*__ZIP__*/</script>
 <script>
 var HELPER = 'http://localhost:4747';
 var projEl = document.getElementById('projname'), detectedEl = document.getElementById('detected'), nameEdited = false;
-var out = document.getElementById('out'), tokenEl = document.getElementById('token'), linkEl = document.getElementById('filelink'), optArt = document.getElementById('optArtboard'), optComp = document.getElementById('optComp'), optInner = document.getElementById('optInner'), optAuto = document.getElementById('optAuto'), optReplace = document.getElementById('optReplace'), optLink = document.getElementById('optLink'), mode = 'send', last = null;
+var out = document.getElementById('out'), tokenEl = document.getElementById('token'), linkEl = document.getElementById('filelink'), optArt = document.getElementById('optArtboard'), optComp = document.getElementById('optComp'), optInner = document.getElementById('optInner'), optAuto = document.getElementById('optAuto'), optReplace = document.getElementById('optReplace'), optLink = document.getElementById('optLink'), optWeb = document.getElementById('optWebflow'), mode = 'send', last = null;
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 parent.postMessage({ pluginMessage: { type: 'loadSettings' } }, '*');
 function ask(m) { mode = m; parent.postMessage({ pluginMessage: { type: 'convert', components: optComp.checked } }, '*'); }
@@ -220,7 +222,7 @@ function showSelection(sel) {
   if (isFrame) keepFrameName(sel);
 }
 function toB64(u8) { var s = '', i, CH = 0x8000; for (i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
-function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked, replace: optReplace.checked, link: optLink.checked }; }
+function opts() { return { artboard: optArt.checked, comp: optComp.checked, inner: optInner.checked, autoPush: optAuto.checked, replace: optReplace.checked, link: optLink.checked, webflow: optWeb.checked }; }
 var dests = {}, curDest = 'account', artTarget = null, forceReplace = false, viaUpdate = false, snaps = {}, resendPrev = null, selKey = null, links = {}, recents = [], curFile = '';
 function linkChanged() { if (!curFile || curDest !== 'open') return; var v = linkEl.value.trim(); if (v) links[curFile] = v; else delete links[curFile]; saveSettings(); }
 function ago(t) { var d = Math.max(0, Date.now() - t) / 1000; return d < 60 ? 'just now' : d < 3600 ? Math.floor(d / 60) + ' min ago' : d < 86400 ? Math.floor(d / 3600) + ' h ago' : Math.floor(d / 86400) + ' d ago'; }
@@ -619,12 +621,13 @@ onmessage = function (e) {
     return;
   }
   if (m.type === 'settings' && refreshing) { var wait = Math.max(0, 800 - (Date.now() - refreshing)); refreshing = false; recents = m.recents || recents; snaps = m.snaps || snaps; delAsk = null; setTimeout(function () { renderRecents(); resolveNames(); syncAccount(); }, wait); return; }
-  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); syncAccount(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; } showSelection(m.selection); return; }
+  if (m.type === 'settings') { tokenEl.value = m.token; if (!m.token) toggleSettings(true); checkHelper(); links = m.links || {}; recents = m.recents || []; snaps = m.snaps || {}; dests = m.dests || {}; var sf = m.selection && m.selection.file; if (m.fileLink && sf && !links[sf]) links[sf] = m.fileLink; renderRecents(); resolveNames(); syncAccount(); if (m.opts) { optArt.checked = m.opts.artboard !== false; optComp.checked = m.opts.comp !== false; optInner.checked = m.opts.inner !== false; optAuto.checked = m.opts.autoPush === true; optReplace.checked = m.opts.replace !== false; optLink.checked = m.opts.link !== false; optWeb.checked = m.opts.webflow === true; } showSelection(m.selection); return; }
   if (m.type === 'error') { artTarget = null; forceReplace = false; viaUpdate = false; if (resendPrev !== null) { linkEl.value = resendPrev; resendPrev = null; }
     out.innerHTML = '<div class="box bad">' + esc(m.message) + '</div>'; return; }
   if (m.type !== 'snapshot') return;
   var name = projectName(m, 'figma-import');
   var res = FigmaToRive.convert({ nodes: m.nodes, components: m.components, images: m.images }, { name: name, frameMode: optArt.checked ? 'artboard' : 'layout', componentArtboards: optComp.checked, linkComponents: optLink.checked, innerShadowOverChildren: optInner.checked });
+  if (optWeb.checked && window.WebflowSafe) res.rml = WebflowSafe.apply(res.rml);
   last = { name: name, bytes: m.imageBytes || {} };
   if (mode === 'zip') { out.innerHTML = '<div class="box ok">Converted ' + m.nodes.length + ' frame(s).</div>' + notesHtml(res) + warningsHtml(res) + zipHtml(res, name); return; }
   if (m.fileName) curFile = curFile || m.fileName;
