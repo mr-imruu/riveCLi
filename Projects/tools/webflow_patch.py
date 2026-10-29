@@ -42,6 +42,7 @@ for gid in unrot:
             g.remove(c)
     n_un += 1
 b_ = F.bake_rotated_groups(root)
+b_ += F.bake_half_turn(root)
 k = F.nodes_to_layouts(root)
 w_ = F.wrap_loose_shapes(root)
 m = F.fix_lone_text(root)

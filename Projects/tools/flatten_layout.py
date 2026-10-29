@@ -367,6 +367,47 @@ def bake_rotated_groups(root):
     return done
 
 
+def bake_half_turn(root):
+    """A round layout box turned by 180 degrees (Kit 05's logo) that still holds paint after bake_rotated_groups:
+    drop the rotation and turn what it carries instead - gradient points and shadow offsets of its boxes are mirrored
+    through the centre, and the Nodes with the artwork are rotated 180 degrees about the centre."""
+    n = 0
+    for g in list(root.iter('LayoutComponent')):
+        if abs(abs(fnum(g.get('rotation'))) - math.pi) > 1e-2:
+            continue
+        w, h = fnum(g.get('width')), fnum(g.get('height'))
+        def mirror(box):
+            for f in box:
+                if f.tag in ('Fill', 'Stroke'):
+                    for gr in f.iter():
+                        if gr.tag in ('RadialGradient', 'LinearGradient'):
+                            for k_, c_ in (('startX', w), ('endX', w), ('startY', h), ('endY', h)):
+                                if gr.get(k_) is not None:
+                                    gr.set(k_, num(c_ - fnum(gr.get(k_))))
+                    for fe in f.iter('Feather'):
+                        for k_ in ('offsetX', 'offsetY'):
+                            if fe.get(k_) is not None:
+                                fe.set(k_, num(-fnum(fe.get(k_))))
+            for c in box:
+                if c.tag == 'LayoutComponent':
+                    mirror(c)
+        mirror(g)
+        turn = _mul(_mat(w / 2, h / 2, 0, 1, 1), _mul(_mat(0, 0, math.pi, 1, 1), _mat(-w / 2, -h / 2, 0, 1, 1)))
+        def turn_nodes(box):
+            for c in box:
+                if c.tag == 'Node':
+                    a, b, c_, d, e_, f_ = _mul(turn, _node_mat(c))
+                    sx = math.hypot(a, b); sy = (a * d - b * c_) / (sx or 1)
+                    c.set('x', num(e_)); c.set('y', num(f_)); c.set('rotation', num(math.atan2(b, a)))
+                    c.set('scaleX', num(sx)); c.set('scaleY', num(sy))
+                elif c.tag == 'LayoutComponent':
+                    turn_nodes(c)
+        turn_nodes(g)
+        del g.attrib['rotation']
+        n += 1
+    return n
+
+
 def wrap_loose_shapes(root):
     """Shapes and texts that sit straight under a layout box (no layout participant) are treated as flow items by
     Webflow's runtime and get stretched. Put each run of them in a plain Node, which keeps them free."""
